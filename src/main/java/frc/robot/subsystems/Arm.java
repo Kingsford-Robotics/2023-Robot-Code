@@ -44,7 +44,7 @@ public class Arm extends SubsystemBase {
         armMotor.configMotionAcceleration((int)(RobotConstants.armMaxAcceleration * RobotConstants.armGearRatio));
         
         //Acceleration smoothing
-        armMotor.configMotionSCurveStrength(3);
+        armMotor.configMotionSCurveStrength(RobotConstants.sCurveStrength);
 
         /*Arm Encoder Setup*/
         angleEncoder = new CANCoder(RobotConstants.ArmEncoderID);
@@ -85,17 +85,36 @@ public class Arm extends SubsystemBase {
         armGrab.toggle();
     }
 
+    void close(){
+        armGrab.set(kForward);
+    }
+
+    void open(){
+        armGrab.set(kReverse);
+    }
+
+    boolean isOpen(){
+        return armGrab.get() == kReverse;
+    }
+
     void toggleExtension(){
         armExtension.toggle();
     }
 
-    void setArmSpeedPercent(double speed){
-        armMotor.set(ControlMode.PercentOutput, speed);
+    void extend(){
+        armExtension.set(kForward);
     }
 
-    void setArmSpeedRadiansSec(double speed)
-    {
-        armMotor.set(ControlMode.Velocity, speed);
+    void retract(){
+        armExtension.set(kReverse);
+    }
+
+    boolean isExtended(){
+        return armExtension.get() == kForward;
+    }
+
+    void setArmSpeedPercent(double speed){
+        armMotor.set(ControlMode.PercentOutput, speed);
     }
 
     void setArmPosition(double position){
