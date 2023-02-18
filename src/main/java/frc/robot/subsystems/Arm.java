@@ -21,7 +21,7 @@ import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import static edu.wpi.first.wpilibj.DoubleSolenoid.Value.*;
 
 public class Arm extends SubsystemBase {
-    /** Creates a new Elevator. */
+    /** Creates a new Arm. */
     private TalonFX armMotor;
     private CANCoder angleEncoder;
 
@@ -45,7 +45,7 @@ public class Arm extends SubsystemBase {
         armMotor.configMotionAcceleration((int)(RobotConstants.armMaxAcceleration * RobotConstants.armGearRatio));
         
         //Acceleration smoothing
-        armMotor.configMotionSCurveStrength(RobotConstants.sCurveStrength);
+        armMotor.configMotionSCurveStrength(RobotConstants.armSCurveStrength);
 
         /*Arm Encoder Setup*/
         angleEncoder = new CANCoder(RobotConstants.ArmEncoderID);
