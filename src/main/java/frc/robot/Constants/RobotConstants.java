@@ -26,10 +26,17 @@ public final class RobotConstants {
     public static final int armGrabSolenoidREV = 4;
 
     /*Arm Constants*/
-    public static final double armMaxSpeed = 0.5;   //Max speed in radians/s
-    public static final double armMaxAccel = 0.5;   //Max acceleration in radians/s^2
+    public static final double armMaxVelocity = 0.5;   //Max speed in radians/s
+    public static final double armMaxAcceleration = 0.5;   //Max acceleration in radians/s^2
 
-    public static final double armKp = 0.1;
-    public static final double armKg = 0.1;
-    public static final double armKd = 0.1;
+    //Configure arm gravity compensation
+    public static final double armMaxGravityComp = 0.0;
+
+    //Configure arm PID constants
+    public static final double armKp = 0.0;
+    public static final double armKi = 0.0;
+    public static final double armKd = 0.0;
+
+    /*Arm Gear Ratio*/
+    public static final double armGearRatio = 1.0;
 }

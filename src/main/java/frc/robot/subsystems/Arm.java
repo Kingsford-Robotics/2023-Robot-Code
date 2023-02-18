@@ -8,14 +8,13 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.RobotConstants;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.ctre.phoenix.motorcontrol.DemandType;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
 import com.ctre.phoenix.sensors.AbsoluteSensorRange;
 import com.ctre.phoenix.sensors.CANCoder;
 import com.ctre.phoenix.sensors.CANCoderConfiguration;
 
-import edu.wpi.first.math.controller.ArmFeedforward;
-import edu.wpi.first.math.controller.ProfiledPIDController;
-import edu.wpi.first.math.trajectory.TrapezoidProfile;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import static edu.wpi.first.wpilibj.DoubleSolenoid.Value.*;
@@ -28,15 +27,25 @@ public class Arm extends SubsystemBase {
     private DoubleSolenoid armExtension;
     private DoubleSolenoid armGrab;
 
-    private ArmFeedforward feedforward;
-    private ProfiledPIDController controller;
-
     public Arm() {
+        /*Arm Motor Setup*/
         armMotor = new TalonFX(RobotConstants.armMotorID);
+        armMotor.configFactoryDefault();
         armMotor.setNeutralMode(com.ctre.phoenix.motorcontrol.NeutralMode.Brake);
-       
-        angleEncoder = new CANCoder(RobotConstants.ArmEncoderID);
         
+        //Set motor pid constants
+        armMotor.config_kP(0, RobotConstants.armKp);
+        armMotor.config_kI(0, RobotConstants.armKi);
+        armMotor.config_kD(0, RobotConstants.armKd);
+
+        //Configure motionmagic acceleration and velocity from radian/s and radians/s^2 using gear ratio
+        armMotor.configMotionCruiseVelocity((int)(RobotConstants.armMaxVelocity * RobotConstants.armGearRatio));
+        armMotor.configMotionAcceleration((int)(RobotConstants.armMaxAcceleration * RobotConstants.armGearRatio));
+        
+        //Acceleration smoothing
+        armMotor.configMotionSCurveStrength(3);
+
+        angleEncoder = new CANCoder(RobotConstants.ArmEncoderID);
         angleEncoder.configFactoryDefault();
         CANCoderConfiguration encoderConfig = new CANCoderConfiguration();
         encoderConfig.absoluteSensorRange = AbsoluteSensorRange.Unsigned_0_to_360;
@@ -55,27 +64,16 @@ public class Arm extends SubsystemBase {
         );
 
         armExtension.set(kReverse);
-        armGrab.set(kForward);   
-  
-        feedforward = new ArmFeedforward(0.1, 0.1, 0.1);  // kS, kV, kA constants for feedforward controller 
-
-        controller = new ProfiledPIDController(
-            0.1, 
-            0.0, 
-            0.0,  
-            new TrapezoidProfile.Constraints(
-                0,
-                0)
-        );
+        armGrab.set(kForward);     
     }
 
-    double getAngle(){
+    Rotation2d getAngle(){
         if (angleEncoder.getAbsolutePosition() - RobotConstants.ArmEncoderOffset < 0){
-            return 360 + angleEncoder.getAbsolutePosition() - RobotConstants.ArmEncoderOffset;
+            return Rotation2d.fromDegrees(360 + angleEncoder.getAbsolutePosition() - RobotConstants.ArmEncoderOffset);
         }
         else
         {
-            return angleEncoder.getAbsolutePosition() - RobotConstants.ArmEncoderOffset;
+            return Rotation2d.fromDegrees(angleEncoder.getAbsolutePosition() - RobotConstants.ArmEncoderOffset);
         }
     }
 
@@ -95,9 +93,9 @@ public class Arm extends SubsystemBase {
     {
         armMotor.set(ControlMode.Velocity, speed);
     }
-    
+
     void setArmPosition(double position){
-        controller.setGoal(position);
+        armMotor.set(ControlMode.MotionMagic, position, DemandType.ArbitraryFeedForward, RobotConstants.armMaxGravityComp * Math.cos(getAngle().getRadians()));
     }
 
     @Override
