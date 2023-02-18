@@ -11,7 +11,7 @@ public final class RobotConstants {
     
     //TODO: Find all device IDs.
     public static final int ArmEncoderID = 0;
-    public static final double ArmEncoderOffset = 0.0;
+    public static final double ArmEncoderOffset = 0.0;  //TODO: Set to cancoder angle in degrees at horizontal.
     
     /*Motor IDs*/
     public static final int armMotorID = 0;
@@ -41,9 +41,9 @@ public final class RobotConstants {
     public static final double armMaxAcceleration = armCruiseVelocity * 1.0 / timeToMaxSpeed;   //Max acceleration in sensor_units/100ms per second
 
     public static final int sCurveStrength = 3;
-    
-    //Configure arm gravity compensation
-    public static final double armMaxGravityComp = 0.0;     //TODO: Find gravity compensation coefficient.
+
+    //TODO: Set to minimum percent output needed to hold arm up at horizontal.
+    public static final double armMaxGravityComp = 0.15;     //TODO: Find gravity compensation coefficient.
 
     //Configure arm PID constants
 

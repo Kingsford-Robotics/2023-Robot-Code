@@ -5,6 +5,7 @@
 package frc.robot.subsystems;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.lib.math.Conversions;
 import frc.robot.Constants.RobotConstants;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
@@ -69,16 +70,9 @@ public class Arm extends SubsystemBase {
         //Set default arm position
         armExtension.set(kReverse); //Arm retracted
         armGrab.set(kForward);      //Claw open
-    }
 
-    Rotation2d getAngle(){
-        if (angleEncoder.getAbsolutePosition() - RobotConstants.ArmEncoderOffset < 0){
-            return Rotation2d.fromDegrees(360 + angleEncoder.getAbsolutePosition() - RobotConstants.ArmEncoderOffset);
-        }
-        else
-        {
-            return Rotation2d.fromDegrees(angleEncoder.getAbsolutePosition() - RobotConstants.ArmEncoderOffset);
-        }
+        //Reset encoder to absolute position
+        resetToAbsolute();      //TODO: Check if wait is needed. May be good from delay when initializing Swerve subsystem.
     }
 
     void toggleGrab(){
@@ -121,9 +115,21 @@ public class Arm extends SubsystemBase {
         armMotor.set(ControlMode.MotionMagic, position, DemandType.ArbitraryFeedForward, RobotConstants.armMaxGravityComp * Math.cos(getAngle().getRadians()));
     }
 
+    public void resetToAbsolute(){
+        double absolutePosition = Conversions.degreesToFalcon(getCanCoder().getDegrees() - RobotConstants.ArmEncoderOffset, RobotConstants.armGearRatio);
+        armMotor.setSelectedSensorPosition(absolutePosition);
+    }
+
+    public Rotation2d getCanCoder(){
+        return Rotation2d.fromDegrees(angleEncoder.getAbsolutePosition());
+    }
+
+    private Rotation2d getAngle(){
+        return Rotation2d.fromDegrees(Conversions.falconToDegrees(armMotor.getSelectedSensorPosition(), RobotConstants.armGearRatio));
+    }
+
     @Override
     public void periodic() {
-        // This method will be called once per scheduler run
-
+        // This method will be called once per scheduler run\
     }
 }
