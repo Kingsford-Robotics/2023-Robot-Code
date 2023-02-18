@@ -33,24 +33,27 @@ public class Arm extends SubsystemBase {
         armMotor.configFactoryDefault();
         armMotor.setNeutralMode(com.ctre.phoenix.motorcontrol.NeutralMode.Brake);
         
-        //Set motor pid constants
+        //Set motor PID constants
         armMotor.config_kP(0, RobotConstants.armKp);
         armMotor.config_kI(0, RobotConstants.armKi);
         armMotor.config_kD(0, RobotConstants.armKd);
+        armMotor.config_kF(0, RobotConstants.armKF);
 
-        //Configure motionmagic acceleration and velocity from radian/s and radians/s^2 using gear ratio
-        armMotor.configMotionCruiseVelocity((int)(RobotConstants.armMaxVelocity * RobotConstants.armGearRatio));
+        //Configure Motion Magic
+        armMotor.configMotionCruiseVelocity((int)(RobotConstants.armCruiseVelocity * RobotConstants.armGearRatio));
         armMotor.configMotionAcceleration((int)(RobotConstants.armMaxAcceleration * RobotConstants.armGearRatio));
         
         //Acceleration smoothing
         armMotor.configMotionSCurveStrength(3);
 
+        /*Arm Encoder Setup*/
         angleEncoder = new CANCoder(RobotConstants.ArmEncoderID);
         angleEncoder.configFactoryDefault();
         CANCoderConfiguration encoderConfig = new CANCoderConfiguration();
         encoderConfig.absoluteSensorRange = AbsoluteSensorRange.Unsigned_0_to_360;
         angleEncoder.configAllSettings(encoderConfig);
 
+        /*Pneumatics Setup*/
         armExtension = new DoubleSolenoid(
             PneumaticsModuleType.CTREPCM, 
             RobotConstants.armExtensionSolenoidFWD, 
@@ -63,8 +66,9 @@ public class Arm extends SubsystemBase {
             RobotConstants.armGrabSolenoidREV
         );
 
-        armExtension.set(kReverse);
-        armGrab.set(kForward);     
+        //Set default arm position
+        armExtension.set(kReverse); //Arm retracted
+        armGrab.set(kForward);      //Claw open
     }
 
     Rotation2d getAngle(){

@@ -26,8 +26,18 @@ public final class RobotConstants {
     public static final int armGrabSolenoidREV = 4;
 
     /*Arm Constants*/
-    public static final double armMaxVelocity = 0.5;   //Max speed in radians/s
-    public static final double armMaxAcceleration = 0.5;   //Max acceleration in radians/s^2
+
+    //Configure arm motion magic constants.
+
+    //TODO: Tune these values.
+    //Values are set off of theoretical free speed RPM.
+    //Free speed is 6380 RPM.
+    
+    private static final double percentSpeed = 0.5; //Percent of max speed to cruise at.
+    public static final double armCruiseVelocity = 6380.0 * (2480.0 / 600.0) * percentSpeed; //Cruise velocity in sensor units per 100ms 
+    
+    private static final double timeToMaxSpeed = 0.5; //Time to reach cruise velocity in seconds
+    public static final double armMaxAcceleration = armCruiseVelocity * 1.0 / timeToMaxSpeed;   //Max acceleration in sensor units per 100ms^2
 
     //Configure arm gravity compensation
     public static final double armMaxGravityComp = 0.0;
@@ -36,6 +46,10 @@ public final class RobotConstants {
     public static final double armKp = 0.0;
     public static final double armKi = 0.0;
     public static final double armKd = 0.0;
+
+    //F-gain = (PercentOutput X 1023) / Speed(Encoder Units/100ms)
+    //6380 RPM is the free speed of the arm motor.
+    public static final double armKF = (1.0 * 1023) / (6380 * (2048.0 / 600.0));    //TODO: Find actual speed at lower output percent for free motor.
 
     /*Arm Gear Ratio*/
     public static final double armGearRatio = 1.0;
