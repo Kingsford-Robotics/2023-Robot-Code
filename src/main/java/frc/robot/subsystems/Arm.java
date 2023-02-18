@@ -28,6 +28,9 @@ public class Arm extends SubsystemBase {
     private DoubleSolenoid armExtension;
     private DoubleSolenoid armGrab;
 
+    private ArmFeedforward feedforward;
+    private ProfiledPIDController controller;
+
     public Arm() {
         armMotor = new TalonFX(RobotConstants.armMotorID);
         armMotor.setNeutralMode(com.ctre.phoenix.motorcontrol.NeutralMode.Brake);
@@ -54,9 +57,9 @@ public class Arm extends SubsystemBase {
         armExtension.set(kReverse);
         armGrab.set(kForward);   
   
-        ArmFeedforward feedforward = new ArmFeedforward(0.1, 0.1, 0.1);  // kS, kV, kA constants for feedforward controller 
+        feedforward = new ArmFeedforward(0.1, 0.1, 0.1);  // kS, kV, kA constants for feedforward controller 
 
-        ProfiledPIDController controller = new ProfiledPIDController(
+        controller = new ProfiledPIDController(
             0.1, 
             0.0, 
             0.0,  
@@ -84,8 +87,17 @@ public class Arm extends SubsystemBase {
         armExtension.toggle();
     }
 
-    void setArmSpeed(double speed){
+    void setArmSpeedPercent(double speed){
         armMotor.set(ControlMode.PercentOutput, speed);
+    }
+
+    void setArmSpeedRadiansSec(double speed)
+    {
+        armMotor.set(ControlMode.Velocity, speed);
+    }
+    
+    void setArmPosition(double position){
+        controller.setGoal(position);
     }
 
     @Override
