@@ -4,6 +4,8 @@
 
 package frc.robot.Constants;
 
+import edu.wpi.first.math.util.Units;
+
 /** Add your docs here. */
 public final class RobotConstants {
     /*Sensors*/
@@ -52,7 +54,7 @@ public final class RobotConstants {
         public static final double armGearRatio = 9.0 * 72.0 /22.0; //Motor revolutions to output shaft revolutions.
     }
   
-    public final class Elevator{
+    public static final class Elevator{
         public static final int elevatorMotorID = 0;
 
         /*Limit Switches*/
@@ -86,6 +88,9 @@ public final class RobotConstants {
 
         /*Elevator Gear Ratio*/
         public static final double elevatorGearRatio = 9.0 * 72.0 /22.0; //Motor revolutions to output shaft revolutions.
+
+        //Total travel / number revolutions. 
+        public static final double elevatorTravelPerRev = Units.inchesToMeters(50.0) / 50; //TODO: Set to actual travel per revolution of elevator.
     }
 
     public final class Intake{

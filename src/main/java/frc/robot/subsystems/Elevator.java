@@ -5,6 +5,7 @@
 package frc.robot.subsystems;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.ctre.phoenix.motorcontrol.DemandType;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
 
 import edu.wpi.first.wpilibj.DigitalInput;
@@ -48,6 +49,10 @@ public class Elevator extends SubsystemBase {
     elevatorMotor.set(ControlMode.PercentOutput, speed);
   }
 
+  public void setElevatorPosition(double position){
+    elevatorMotor.set(ControlMode.MotionMagic, position, DemandType.ArbitraryFeedForward, RobotConstants.Elevator.elevatorGravityComp);
+  }
+
   public boolean getTopLimitSwitch(){
     return topLimitSwitch.get();
   }
@@ -64,7 +69,8 @@ public class Elevator extends SubsystemBase {
     
     zeroElevator.addCommands(
       new InstantCommand(() -> {
-        this.setElevatorSpeed(-0.1);}
+        if(!this.getBottomLimitSwitch())
+          this.setElevatorSpeed(-0.1);}
       ),
 
       new WaitUntilCommand(() -> this.getBottomLimitSwitch()),
@@ -80,6 +86,7 @@ public class Elevator extends SubsystemBase {
 
   @Override
   public void periodic() {
+
     // This method will be called once per scheduler run
   }
 }
