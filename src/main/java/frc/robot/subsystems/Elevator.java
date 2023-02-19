@@ -4,17 +4,14 @@
 
 package frc.robot.subsystems;
 
-import java.util.Set;
-
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
 
 import edu.wpi.first.wpilibj.DigitalInput;
-import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-import edu.wpi.first.wpilibj2.command.Subsystem;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.lib.math.Conversions;
+import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import frc.robot.Constants.RobotConstants;
 
 public class Elevator extends SubsystemBase {
@@ -26,68 +23,60 @@ public class Elevator extends SubsystemBase {
   private DigitalInput bottomLimitSwitch;
   
   public Elevator() {
-    elevatorMotor = new TalonFX(0);
+    elevatorMotor = new TalonFX(RobotConstants.Elevator.elevatorMotorID);
     elevatorMotor.configFactoryDefault();
     elevatorMotor.setNeutralMode(com.ctre.phoenix.motorcontrol.NeutralMode.Brake);
 
     //Set motor PID constants
-    elevatorMotor.config_kP(0, RobotConstants.elevatorKp);
-    elevatorMotor.config_kI(0, RobotConstants.elevatorKi);
-    elevatorMotor.config_kD(0, RobotConstants.elevatorKd);
-    elevatorMotor.config_kF(0, RobotConstants.elevatorKF);
+    elevatorMotor.config_kP(0, RobotConstants.Elevator.elevatorKp);
+    elevatorMotor.config_kI(0, RobotConstants.Elevator.elevatorKi);
+    elevatorMotor.config_kD(0, RobotConstants.Elevator.elevatorKd);
+    elevatorMotor.config_kF(0, RobotConstants.Elevator.elevatorKF);
 
     //Configure Motion Magic
-    elevatorMotor.configMotionCruiseVelocity((int)(RobotConstants.elevatorCruiseVelocity * RobotConstants.elevatorGearRatio));
-    elevatorMotor.configMotionAcceleration((int)(RobotConstants.elevatorMaxAcceleration * RobotConstants.elevatorGearRatio));
+    elevatorMotor.configMotionCruiseVelocity(RobotConstants.Elevator.elevatorCruiseVelocity);
+    elevatorMotor.configMotionAcceleration(RobotConstants.Elevator.elevatorMaxAcceleration);
     
     //Acceleration smoothing
-    elevatorMotor.configMotionSCurveStrength(RobotConstants.elevatorSCurveStrength);
+    elevatorMotor.configMotionSCurveStrength(RobotConstants.Elevator.elevatorSCurveStrength);
 
-    topLimitSwitch = new DigitalInput(RobotConstants.elevatorTopLimitSwitchID);
-    bottomLimitSwitch = new DigitalInput(RobotConstants.elevatorBottomLimitSwitchID);
+    topLimitSwitch = new DigitalInput(RobotConstants.Elevator.elevatorTopLimitSwitchID);
+    bottomLimitSwitch = new DigitalInput(RobotConstants.Elevator.elevatorBottomLimitSwitchID);
   }
 
   public void setElevatorSpeed(double speed){
     elevatorMotor.set(ControlMode.PercentOutput, speed);
   }
 
-  //TODO: Call at the beginning of autonomous. Ensures elevator is calibrated with the limit switches.
-  public SequentialCommandGroup resetToAbsolute(){
-    //TODO: Not done; fix sequential command group structure. Look at examples of using lambdas.  
-    return new SequentialCommandGroup(
-        new Command(){
-          @Override
-          public void initialize() {
-            elevatorMotor.setSelectedSensorPosition(0);
-          }
-          @Override
-          public boolean isFinished() {
-            return true;
-          }
-          @Override
-          public Set<Subsystem> getRequirements() {
-            // TODO Auto-generated method stub
-            return null;
-          }
-        },
-        new Command(){
-          @Override
-          public void initialize() {
-            elevatorMotor.set(ControlMode.MotionMagic, 0);
-          }
-          @Override
-          public boolean isFinished() {
-            return true;
-          }
+  public boolean getTopLimitSwitch(){
+    return topLimitSwitch.get();
+  }
 
-          @Override
-          public Set<Subsystem> getRequirements() {
-            // TODO Auto-generated method stub
-            return null;
-          }
-        }
-      );
-}
+  public boolean getBottomLimitSwitch(){
+    return bottomLimitSwitch.get();
+  }
+
+  //TODO: Call at the beginning of auton.
+  public SequentialCommandGroup zeroElevator()
+  {
+    SequentialCommandGroup zeroElevator = new SequentialCommandGroup();
+    zeroElevator.addRequirements(this);
+    
+    zeroElevator.addCommands(
+      new InstantCommand(() -> {
+        this.setElevatorSpeed(-0.1);}
+      ),
+
+      new WaitUntilCommand(() -> this.getBottomLimitSwitch()),
+
+      new InstantCommand(() -> {
+        this.setElevatorSpeed(0);
+        this.elevatorMotor.setSelectedSensorPosition(0);}
+      )
+    );
+
+    return zeroElevator;
+  }
 
   @Override
   public void periodic() {

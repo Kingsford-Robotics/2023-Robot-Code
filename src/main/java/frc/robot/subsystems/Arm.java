@@ -30,25 +30,25 @@ public class Arm extends SubsystemBase {
 
     public Arm() {
         /*Arm Motor Setup*/
-        armMotor = new TalonFX(RobotConstants.armMotorID);
+        armMotor = new TalonFX(RobotConstants.Arm.armMotorID);
         armMotor.configFactoryDefault();
         armMotor.setNeutralMode(com.ctre.phoenix.motorcontrol.NeutralMode.Brake);
         
         //Set motor PID constants
-        armMotor.config_kP(0, RobotConstants.armKp);
-        armMotor.config_kI(0, RobotConstants.armKi);
-        armMotor.config_kD(0, RobotConstants.armKd);
-        armMotor.config_kF(0, RobotConstants.armKF);
+        armMotor.config_kP(0, RobotConstants.Arm.armKp);
+        armMotor.config_kI(0, RobotConstants.Arm.armKi);
+        armMotor.config_kD(0, RobotConstants.Arm.armKd);
+        armMotor.config_kF(0, RobotConstants.Arm.armKF);
 
         //Configure Motion Magic
-        armMotor.configMotionCruiseVelocity((int)(RobotConstants.armCruiseVelocity * RobotConstants.armGearRatio));
-        armMotor.configMotionAcceleration((int)(RobotConstants.armMaxAcceleration * RobotConstants.armGearRatio));
+        armMotor.configMotionCruiseVelocity(RobotConstants.Arm.armCruiseVelocity);
+        armMotor.configMotionAcceleration(RobotConstants.Arm.armMaxAcceleration);
         
         //Acceleration smoothing
-        armMotor.configMotionSCurveStrength(RobotConstants.armSCurveStrength);
+        armMotor.configMotionSCurveStrength(RobotConstants.Arm.armSCurveStrength);
 
         /*Arm Encoder Setup*/
-        angleEncoder = new CANCoder(RobotConstants.ArmEncoderID);
+        angleEncoder = new CANCoder(RobotConstants.Arm.armEncoderID);
         angleEncoder.configFactoryDefault();
         CANCoderConfiguration encoderConfig = new CANCoderConfiguration();
         encoderConfig.absoluteSensorRange = AbsoluteSensorRange.Unsigned_0_to_360;
@@ -57,14 +57,14 @@ public class Arm extends SubsystemBase {
         /*Pneumatics Setup*/
         armExtension = new DoubleSolenoid(
             PneumaticsModuleType.CTREPCM, 
-            RobotConstants.armExtensionSolenoidFWD, 
-            RobotConstants.armExtensionSolenoidREV
+            RobotConstants.Arm.armExtensionSolenoidFWD, 
+            RobotConstants.Arm.armExtensionSolenoidREV
         );
 
         armGrab = new DoubleSolenoid(
             PneumaticsModuleType.CTREPCM, 
-            RobotConstants.armGrabSolenoidFWD, 
-            RobotConstants.armGrabSolenoidREV
+            RobotConstants.Arm.armGrabSolenoidFWD, 
+            RobotConstants.Arm.armGrabSolenoidREV
         );
 
         //Set default arm position
@@ -112,11 +112,11 @@ public class Arm extends SubsystemBase {
     }
 
     public void setArmPosition(double position){
-        armMotor.set(ControlMode.MotionMagic, position, DemandType.ArbitraryFeedForward, RobotConstants.armMaxGravityComp * Math.cos(getAngle().getRadians()));
+        armMotor.set(ControlMode.MotionMagic, position, DemandType.ArbitraryFeedForward, RobotConstants.Arm.armMaxGravityComp * Math.cos(getAngle().getRadians()));
     }
 
     public void resetToAbsolute(){
-        double absolutePosition = Conversions.degreesToFalcon(getCanCoder().getDegrees() - RobotConstants.ArmEncoderOffset, RobotConstants.armGearRatio);
+        double absolutePosition = Conversions.degreesToFalcon(getCanCoder().getDegrees() - RobotConstants.Arm.armEncoderOffset, RobotConstants.Arm.armGearRatio);
         armMotor.setSelectedSensorPosition(absolutePosition);
     }
 
@@ -125,11 +125,11 @@ public class Arm extends SubsystemBase {
     }
 
     public Rotation2d getAngle(){
-        return Rotation2d.fromDegrees(Conversions.falconToDegrees(armMotor.getSelectedSensorPosition(), RobotConstants.armGearRatio));
+        return Rotation2d.fromDegrees(Conversions.falconToDegrees(armMotor.getSelectedSensorPosition(), RobotConstants.Arm.armGearRatio));
     }
 
     public double getVelocity(){
-        return Conversions.falconToRPM(armMotor.getSelectedSensorVelocity(), RobotConstants.armGearRatio);
+        return Conversions.falconToRPM(armMotor.getSelectedSensorVelocity(), RobotConstants.Arm.armGearRatio);
     }
 
     @Override
