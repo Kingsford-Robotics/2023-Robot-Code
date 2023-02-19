@@ -5,43 +5,56 @@
 package frc.robot.subsystems;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.lib.math.Conversions;
 import frc.robot.Constants.RobotConstants;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.ctre.phoenix.motorcontrol.DemandType;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
 import com.ctre.phoenix.sensors.AbsoluteSensorRange;
 import com.ctre.phoenix.sensors.CANCoder;
 import com.ctre.phoenix.sensors.CANCoderConfiguration;
 
-import edu.wpi.first.math.controller.ArmFeedforward;
-import edu.wpi.first.math.controller.ProfiledPIDController;
-import edu.wpi.first.math.trajectory.TrapezoidProfile;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import static edu.wpi.first.wpilibj.DoubleSolenoid.Value.*;
 
 public class Arm extends SubsystemBase {
-    /** Creates a new Elevator. */
+    /** Creates a new Arm. */
     private TalonFX armMotor;
     private CANCoder angleEncoder;
 
     private DoubleSolenoid armExtension;
     private DoubleSolenoid armGrab;
 
-    private ArmFeedforward feedforward;
-    private ProfiledPIDController controller;
-
     public Arm() {
+        /*Arm Motor Setup*/
         armMotor = new TalonFX(RobotConstants.armMotorID);
+        armMotor.configFactoryDefault();
         armMotor.setNeutralMode(com.ctre.phoenix.motorcontrol.NeutralMode.Brake);
-       
-        angleEncoder = new CANCoder(RobotConstants.ArmEncoderID);
         
+        //Set motor PID constants
+        armMotor.config_kP(0, RobotConstants.armKp);
+        armMotor.config_kI(0, RobotConstants.armKi);
+        armMotor.config_kD(0, RobotConstants.armKd);
+        armMotor.config_kF(0, RobotConstants.armKF);
+
+        //Configure Motion Magic
+        armMotor.configMotionCruiseVelocity((int)(RobotConstants.armCruiseVelocity * RobotConstants.armGearRatio));
+        armMotor.configMotionAcceleration((int)(RobotConstants.armMaxAcceleration * RobotConstants.armGearRatio));
+        
+        //Acceleration smoothing
+        armMotor.configMotionSCurveStrength(RobotConstants.armSCurveStrength);
+
+        /*Arm Encoder Setup*/
+        angleEncoder = new CANCoder(RobotConstants.ArmEncoderID);
         angleEncoder.configFactoryDefault();
         CANCoderConfiguration encoderConfig = new CANCoderConfiguration();
         encoderConfig.absoluteSensorRange = AbsoluteSensorRange.Unsigned_0_to_360;
         angleEncoder.configAllSettings(encoderConfig);
 
+        /*Pneumatics Setup*/
         armExtension = new DoubleSolenoid(
             PneumaticsModuleType.CTREPCM, 
             RobotConstants.armExtensionSolenoidFWD, 
@@ -54,55 +67,73 @@ public class Arm extends SubsystemBase {
             RobotConstants.armGrabSolenoidREV
         );
 
-        armExtension.set(kReverse);
-        armGrab.set(kForward);   
-  
-        feedforward = new ArmFeedforward(0.1, 0.1, 0.1);  // kS, kV, kA constants for feedforward controller 
+        //Set default arm position
+        armExtension.set(kReverse); //Arm retracted
+        armGrab.set(kForward);      //Claw open
 
-        controller = new ProfiledPIDController(
-            0.1, 
-            0.0, 
-            0.0,  
-            new TrapezoidProfile.Constraints(
-                0,
-                0)
-        );
+        //Reset encoder to absolute position
+        resetToAbsolute();      //TODO: Check if wait is needed. May be good from delay when initializing Swerve subsystem.
     }
 
-    double getAngle(){
-        if (angleEncoder.getAbsolutePosition() - RobotConstants.ArmEncoderOffset < 0){
-            return 360 + angleEncoder.getAbsolutePosition() - RobotConstants.ArmEncoderOffset;
-        }
-        else
-        {
-            return angleEncoder.getAbsolutePosition() - RobotConstants.ArmEncoderOffset;
-        }
-    }
-
-    void toggleGrab(){
+    public void toggleGrab(){
         armGrab.toggle();
     }
 
-    void toggleExtension(){
+    public void close(){
+        armGrab.set(kForward);
+    }
+
+    public void open(){
+        armGrab.set(kReverse);
+    }
+
+    public boolean isOpen(){
+        return armGrab.get() == kReverse;
+    }
+
+    public void toggleExtension(){
         armExtension.toggle();
     }
 
-    void setArmSpeedPercent(double speed){
+    public void extend(){
+        armExtension.set(kForward);
+    }
+
+    public void retract(){
+        armExtension.set(kReverse);
+    }
+
+    public boolean isExtended(){
+        return armExtension.get() == kForward;
+    }
+
+    public void setArmSpeedPercent(double speed){
         armMotor.set(ControlMode.PercentOutput, speed);
     }
 
-    void setArmSpeedRadiansSec(double speed)
-    {
-        armMotor.set(ControlMode.Velocity, speed);
+    public void setArmPosition(double position){
+        armMotor.set(ControlMode.MotionMagic, position, DemandType.ArbitraryFeedForward, RobotConstants.armMaxGravityComp * Math.cos(getAngle().getRadians()));
     }
-    
-    void setArmPosition(double position){
-        controller.setGoal(position);
+
+    public void resetToAbsolute(){
+        double absolutePosition = Conversions.degreesToFalcon(getCanCoder().getDegrees() - RobotConstants.ArmEncoderOffset, RobotConstants.armGearRatio);
+        armMotor.setSelectedSensorPosition(absolutePosition);
+    }
+
+    public Rotation2d getCanCoder(){
+        return Rotation2d.fromDegrees(angleEncoder.getAbsolutePosition());
+    }
+
+    public Rotation2d getAngle(){
+        return Rotation2d.fromDegrees(Conversions.falconToDegrees(armMotor.getSelectedSensorPosition(), RobotConstants.armGearRatio));
+    }
+
+    public double getVelocity(){
+        return Conversions.falconToRPM(armMotor.getSelectedSensorVelocity(), RobotConstants.armGearRatio);
     }
 
     @Override
     public void periodic() {
-        // This method will be called once per scheduler run
-
+        // This method will be called once per scheduler run\
     }
 }
