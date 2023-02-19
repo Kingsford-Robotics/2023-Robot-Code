@@ -4,10 +4,17 @@
 
 package frc.robot.subsystems;
 
+import java.util.Set;
+
+import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
 
 import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.Subsystem;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.lib.math.Conversions;
 import frc.robot.Constants.RobotConstants;
 
 public class Elevator extends SubsystemBase {
@@ -39,6 +46,48 @@ public class Elevator extends SubsystemBase {
     topLimitSwitch = new DigitalInput(RobotConstants.elevatorTopLimitSwitchID);
     bottomLimitSwitch = new DigitalInput(RobotConstants.elevatorBottomLimitSwitchID);
   }
+
+  public void setElevatorSpeed(double speed){
+    elevatorMotor.set(ControlMode.PercentOutput, speed);
+  }
+
+  //TODO: Call at the beginning of autonomous. Ensures elevator is calibrated with the limit switches.
+  public SequentialCommandGroup resetToAbsolute(){
+    //TODO: Not done; fix sequential command group structure. Look at examples of using lambdas.  
+    return new SequentialCommandGroup(
+        new Command(){
+          @Override
+          public void initialize() {
+            elevatorMotor.setSelectedSensorPosition(0);
+          }
+          @Override
+          public boolean isFinished() {
+            return true;
+          }
+          @Override
+          public Set<Subsystem> getRequirements() {
+            // TODO Auto-generated method stub
+            return null;
+          }
+        },
+        new Command(){
+          @Override
+          public void initialize() {
+            elevatorMotor.set(ControlMode.MotionMagic, 0);
+          }
+          @Override
+          public boolean isFinished() {
+            return true;
+          }
+
+          @Override
+          public Set<Subsystem> getRequirements() {
+            // TODO Auto-generated method stub
+            return null;
+          }
+        }
+      );
+}
 
   @Override
   public void periodic() {

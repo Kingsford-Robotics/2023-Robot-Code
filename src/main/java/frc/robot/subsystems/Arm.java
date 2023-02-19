@@ -75,43 +75,43 @@ public class Arm extends SubsystemBase {
         resetToAbsolute();      //TODO: Check if wait is needed. May be good from delay when initializing Swerve subsystem.
     }
 
-    void toggleGrab(){
+    public void toggleGrab(){
         armGrab.toggle();
     }
 
-    void close(){
+    public void close(){
         armGrab.set(kForward);
     }
 
-    void open(){
+    public void open(){
         armGrab.set(kReverse);
     }
 
-    boolean isOpen(){
+    public boolean isOpen(){
         return armGrab.get() == kReverse;
     }
 
-    void toggleExtension(){
+    public void toggleExtension(){
         armExtension.toggle();
     }
 
-    void extend(){
+    public void extend(){
         armExtension.set(kForward);
     }
 
-    void retract(){
+    public void retract(){
         armExtension.set(kReverse);
     }
 
-    boolean isExtended(){
+    public boolean isExtended(){
         return armExtension.get() == kForward;
     }
 
-    void setArmSpeedPercent(double speed){
+    public void setArmSpeedPercent(double speed){
         armMotor.set(ControlMode.PercentOutput, speed);
     }
 
-    void setArmPosition(double position){
+    public void setArmPosition(double position){
         armMotor.set(ControlMode.MotionMagic, position, DemandType.ArbitraryFeedForward, RobotConstants.armMaxGravityComp * Math.cos(getAngle().getRadians()));
     }
 
@@ -124,8 +124,12 @@ public class Arm extends SubsystemBase {
         return Rotation2d.fromDegrees(angleEncoder.getAbsolutePosition());
     }
 
-    private Rotation2d getAngle(){
+    public Rotation2d getAngle(){
         return Rotation2d.fromDegrees(Conversions.falconToDegrees(armMotor.getSelectedSensorPosition(), RobotConstants.armGearRatio));
+    }
+
+    public double getVelocity(){
+        return Conversions.falconToRPM(armMotor.getSelectedSensorVelocity(), RobotConstants.armGearRatio);
     }
 
     @Override
