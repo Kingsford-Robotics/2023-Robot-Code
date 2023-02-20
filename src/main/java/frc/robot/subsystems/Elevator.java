@@ -64,9 +64,33 @@ public class Elevator extends SubsystemBase {
     return bottomLimitSwitch.get();
   }
 
+<<<<<<< HEAD
   //Returns elevator position in meters from lowest position.
   public double getElevatorPosition(){
     return elevatorMotor.getSelectedSensorPosition() / 2048.0 * RobotConstants.Elevator.elevatorTravelPerRev;
+=======
+  //Change to integrated in auton during first place operation unless elevator can be put to zero position.
+  public SequentialCommandGroup zeroElevator()
+  {
+    SequentialCommandGroup zeroElevator = new SequentialCommandGroup();
+    zeroElevator.addRequirements(this);
+    
+    zeroElevator.addCommands(
+      new InstantCommand(() -> {
+        if(!this.getBottomLimitSwitch())
+          this.setElevatorSpeed(-0.1);}
+      ),
+
+      new WaitUntilCommand(() -> this.getBottomLimitSwitch()),
+
+      new InstantCommand(() -> {
+        this.setElevatorSpeed(0);
+        this.elevatorMotor.setSelectedSensorPosition(0);}
+      )
+    );
+
+    return zeroElevator;
+>>>>>>> 9e16694c429261654ccf9ecabc4c31880869b939
   }
 
   @Override
