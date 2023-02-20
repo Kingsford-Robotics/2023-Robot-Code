@@ -61,7 +61,7 @@ public class Elevator extends SubsystemBase {
     return bottomLimitSwitch.get();
   }
 
-  //TODO: Call at the beginning of auton.
+  //Change to integrated in auton during first place operation unless elevator can be put to zero position.
   public SequentialCommandGroup zeroElevator()
   {
     SequentialCommandGroup zeroElevator = new SequentialCommandGroup();
