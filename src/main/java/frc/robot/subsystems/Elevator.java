@@ -13,6 +13,7 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
+import frc.lib.math.Conversions;
 import frc.robot.Constants.RobotConstants;
 
 public class Elevator extends SubsystemBase {
@@ -49,7 +50,9 @@ public class Elevator extends SubsystemBase {
     elevatorMotor.set(ControlMode.PercentOutput, speed);
   }
 
+  //Set elevator height in meters from lowest position.
   public void setElevatorPosition(double position){
+    double encoderPosition = position / RobotConstants.Elevator.elevatorTravelPerRev * 2048.0;
     elevatorMotor.set(ControlMode.MotionMagic, position, DemandType.ArbitraryFeedForward, RobotConstants.Elevator.elevatorGravityComp);
   }
 
@@ -61,27 +64,9 @@ public class Elevator extends SubsystemBase {
     return bottomLimitSwitch.get();
   }
 
-  //TODO: Call at the beginning of auton.
-  public SequentialCommandGroup zeroElevator()
-  {
-    SequentialCommandGroup zeroElevator = new SequentialCommandGroup();
-    zeroElevator.addRequirements(this);
-    
-    zeroElevator.addCommands(
-      new InstantCommand(() -> {
-        if(!this.getBottomLimitSwitch())
-          this.setElevatorSpeed(-0.1);}
-      ),
-
-      new WaitUntilCommand(() -> this.getBottomLimitSwitch()),
-
-      new InstantCommand(() -> {
-        this.setElevatorSpeed(0);
-        this.elevatorMotor.setSelectedSensorPosition(0);}
-      )
-    );
-
-    return zeroElevator;
+  //Returns elevator position in meters from lowest position.
+  public double getElevatorPosition(){
+    return elevatorMotor.getSelectedSensorPosition() / 2048.0 * RobotConstants.Elevator.elevatorTravelPerRev;
   }
 
   @Override
