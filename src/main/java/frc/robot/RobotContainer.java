@@ -20,6 +20,7 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.PrintCommand;
 import frc.robot.Constants.DrivetrainConstants;
 import frc.robot.Constants.OIConstants;
+import frc.robot.subsystems.Arm;
 import frc.robot.commands.TeleopSwerve;
 import frc.robot.subsystems.DashboardDisplay;
 import frc.robot.subsystems.Swerve;
@@ -50,6 +51,7 @@ public class RobotContainer {
     };
     /* Subsystems */
     private final Swerve s_Swerve = new Swerve();
+    private final Arm m_Arm = new Arm();
     private final DashboardDisplay m_Display = new DashboardDisplay(s_Swerve);
     
     FollowPathWithEvents autoCommand = null;
@@ -72,6 +74,11 @@ public class RobotContainer {
                         () -> OIConstants.slowSpeed.getAsBoolean(),
                         () -> centerOfRotation.getAsInt()));
 
+
+        m_Arm.setDefaultCommand(
+            //Create instant command to control arm speed
+            new InstantCommand(() -> m_Arm.setArmSpeedPercent(OIConstants.armSpeed.get()), m_Arm)
+        );
         // Configure the button bindings
         configureButtonBindings();
         configureAutoCommands();

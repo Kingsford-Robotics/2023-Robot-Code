@@ -16,8 +16,12 @@ import com.ctre.phoenix.sensors.CANCoder;
 import com.ctre.phoenix.sensors.CANCoderConfiguration;
 
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
+
 import static edu.wpi.first.wpilibj.DoubleSolenoid.Value.*;
 
 public class Arm extends SubsystemBase {
@@ -28,27 +32,30 @@ public class Arm extends SubsystemBase {
     private DoubleSolenoid armExtension;
     private DoubleSolenoid armGrab;
 
+    private ShuffleboardTab armTab;
+    private GenericEntry gyroAngle;
+
     public Arm() {
         /*Arm Motor Setup*/
-        armMotor = new TalonFX(RobotConstants.Arm.armMotorID);
+        armMotor = new TalonFX(RobotConstants.ArmConstants.armMotorID);
         armMotor.configFactoryDefault();
         armMotor.setNeutralMode(com.ctre.phoenix.motorcontrol.NeutralMode.Brake);
         
         //Set motor PID constants
-        armMotor.config_kP(0, RobotConstants.Arm.armKp);
-        armMotor.config_kI(0, RobotConstants.Arm.armKi);
-        armMotor.config_kD(0, RobotConstants.Arm.armKd);
-        armMotor.config_kF(0, RobotConstants.Arm.armKF);
+        armMotor.config_kP(0, RobotConstants.ArmConstants.armKp);
+        armMotor.config_kI(0, RobotConstants.ArmConstants.armKi);
+        armMotor.config_kD(0, RobotConstants.ArmConstants.armKd);
+        armMotor.config_kF(0, RobotConstants.ArmConstants.armKF);
 
         //Configure Motion Magic
-        armMotor.configMotionCruiseVelocity(RobotConstants.Arm.armCruiseVelocity);
-        armMotor.configMotionAcceleration(RobotConstants.Arm.armMaxAcceleration);
+        armMotor.configMotionCruiseVelocity(RobotConstants.ArmConstants.armCruiseVelocity);
+        armMotor.configMotionAcceleration(RobotConstants.ArmConstants.armMaxAcceleration);
         
         //Acceleration smoothing
-        armMotor.configMotionSCurveStrength(RobotConstants.Arm.armSCurveStrength);
+        armMotor.configMotionSCurveStrength(RobotConstants.ArmConstants.armSCurveStrength);
 
         /*Arm Encoder Setup*/
-        angleEncoder = new CANCoder(RobotConstants.Arm.armEncoderID);
+        angleEncoder = new CANCoder(RobotConstants.ArmConstants.armEncoderID);
         angleEncoder.configFactoryDefault();
         CANCoderConfiguration encoderConfig = new CANCoderConfiguration();
         encoderConfig.absoluteSensorRange = AbsoluteSensorRange.Unsigned_0_to_360;
@@ -57,15 +64,19 @@ public class Arm extends SubsystemBase {
         /*Pneumatics Setup*/
         armExtension = new DoubleSolenoid(
             PneumaticsModuleType.CTREPCM, 
-            RobotConstants.Arm.armExtensionSolenoidFWD, 
-            RobotConstants.Arm.armExtensionSolenoidREV
+            RobotConstants.ArmConstants.armExtensionSolenoidFWD, 
+            RobotConstants.ArmConstants.armExtensionSolenoidREV
         );
 
         armGrab = new DoubleSolenoid(
             PneumaticsModuleType.CTREPCM, 
-            RobotConstants.Arm.armGrabSolenoidFWD, 
-            RobotConstants.Arm.armGrabSolenoidREV
+            RobotConstants.ArmConstants.armGrabSolenoidFWD, 
+            RobotConstants.ArmConstants.armGrabSolenoidREV
         );
+
+        /*Shuffleboard Setup*/
+        armTab = Shuffleboard.getTab("Arm");
+        gyroAngle = armTab.add("Gyro Angle", 0).getEntry();
 
         //Set default arm position
         armExtension.set(kReverse); //Arm retracted
@@ -112,11 +123,11 @@ public class Arm extends SubsystemBase {
     }
 
     public void setArmPosition(double position){
-        armMotor.set(ControlMode.MotionMagic, position, DemandType.ArbitraryFeedForward, RobotConstants.Arm.armMaxGravityComp * Math.cos(getAngle().getRadians()));
+        armMotor.set(ControlMode.MotionMagic, position, DemandType.ArbitraryFeedForward, RobotConstants.ArmConstants.armMaxGravityComp * Math.cos(getAngle().getRadians()));
     }
 
     public void resetToAbsolute(){
-        double absolutePosition = Conversions.degreesToFalcon(getCanCoder().getDegrees() - RobotConstants.Arm.armEncoderOffset, RobotConstants.Arm.armGearRatio);
+        double absolutePosition = Conversions.degreesToFalcon(getCanCoder().getDegrees() - RobotConstants.ArmConstants.armEncoderOffset, RobotConstants.ArmConstants.armGearRatio);
         armMotor.setSelectedSensorPosition(absolutePosition);
     }
 
@@ -125,21 +136,23 @@ public class Arm extends SubsystemBase {
     }
 
     public Rotation2d getAngle(){
-        return Rotation2d.fromDegrees(Conversions.falconToDegrees(armMotor.getSelectedSensorPosition(), RobotConstants.Arm.armGearRatio));
+        return Rotation2d.fromDegrees(Conversions.falconToDegrees(armMotor.getSelectedSensorPosition(), RobotConstants.ArmConstants.armGearRatio));
     }
 
     public double getVelocity(){
-        return Conversions.falconToRPM(armMotor.getSelectedSensorVelocity(), RobotConstants.Arm.armGearRatio);
+        return Conversions.falconToRPM(armMotor.getSelectedSensorVelocity(), RobotConstants.ArmConstants.armGearRatio);
     }
 
-    public double[] getArmXY()
+    //Gets the X and Y position of the arm in meters relative to the ground and the elevator. (0,0) is the ground directly under the elevator.
+    public double[] getArmXY(double elevatorHeight)
     {
         double[] armXY = new double[2];
-        armXY[0] = Math.cos(getAngle().getRadians());
-        armXY[1] = Math.sin(getAngle().getRadians());
+        double armAngleRadians = getAngle().getRadians();
+        armXY[0] = isExtended()? RobotConstants.ArmConstants.armExtendedLength * Math.cos(armAngleRadians): RobotConstants.ArmConstants.armRetractedLength * Math.cos(armAngleRadians);
+        armXY[1] = isExtended()? elevatorHeight - RobotConstants.ArmConstants.armExtendedLength * Math.sin(armAngleRadians): RobotConstants.ArmConstants.armRetractedLength * Math.sin(armAngleRadians);
         return armXY;
     }
-    
+
     public static boolean isCollision(double elevatorHeight)
     {
         
@@ -151,8 +164,11 @@ public class Arm extends SubsystemBase {
         // This method will be called once per scheduler run
 
         //Stop arm if outside range
-        if(getAngle().getDegrees() > RobotConstants.Arm.armMaxAngle || getAngle().getDegrees() < RobotConstants.Arm.armMinAngle){
-            armMotor.set(ControlMode.PercentOutput, 0);
-        }
+       // if(getAngle().getDegrees() > RobotConstants.ArmConstants.armMaxAngle || getAngle().getDegrees() < RobotConstants.ArmConstants.armMinAngle){
+           // armMotor.set(ControlMode.PercentOutput, 0);
+       // }
+
+        //Add arm angle degrees to shuffleboard
+        gyroAngle.setDouble(getAngle().getDegrees());
     }
 }

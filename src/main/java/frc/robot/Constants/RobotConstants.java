@@ -11,8 +11,17 @@ public final class RobotConstants {
     /*Sensors*/
     public static final int pigeonID = 1;
 
-    public static final class Arm {
-        public static final int armMotorID = 0;
+
+    public static final class HeightZones
+    {
+        double outside = Units.inchesToMeters(2.0);
+        double midBot = Units.inchesToMeters(14.0);
+        double Turntable = Units.inchesToMeters(8.0);
+
+
+    }
+    public static final class ArmConstants {
+        public static final int armMotorID = 12;
         
         /*Arm Pneumatics*/
         public static final int armExtensionSolenoidFWD = 1;
@@ -22,7 +31,7 @@ public final class RobotConstants {
         public static final int armGrabSolenoidREV = 4;
 
         /*Arm Encoder Values*/
-        public static final int armEncoderID = 0;
+        public static final int armEncoderID = 10;
         public static final double armEncoderOffset = 0.0;  //TODO: Set to cancoder angle in degrees at horizontal.
 
         /*Arm Motion Magic Constants*/
@@ -54,15 +63,16 @@ public final class RobotConstants {
         public static final double armGearRatio = 9.0 * 72.0 /22.0; //Motor revolutions to output shaft revolutions.
 
         /*Arm Limits*/
-        public static final double armMaxAngle = 45; //TODO: Set to actual max angle of arm.
-        public static final double armMinAngle = -180;  //TODO: Set to actual min angle of arm.
+        public static final double armMaxAngle = 30;
+        public static final double armMinAngle = -135;
 
-        public static final double armRetractedLength = Units.inchesToMeters(10.0); //TODO: Set to actual length of arm when retracted.
-        public static final double armExtendedLength = Units.inchesToMeters(20.0);  //TODO: Set to actual length of arm when extended.
+        //Arm Lengths from pivot point to end of arm.
+        public static final double armRetractedLength = Units.inchesToMeters(41.0);
+        public static final double armExtendedLength = Units.inchesToMeters(49.0);
     }
   
-    public static final class Elevator{
-        public static final int elevatorMotorID = 0;
+    public static final class ElevatorConstants{
+        public static final int elevatorMotorID = 11;
 
         /*Limit Switches*/
         public static final int elevatorTopLimitSwitchID = 0;

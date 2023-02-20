@@ -21,25 +21,25 @@ public class Elevator extends SubsystemBase {
   private DigitalInput bottomLimitSwitch;
   
   public Elevator() {
-    elevatorMotor = new TalonFX(RobotConstants.Elevator.elevatorMotorID);
+    elevatorMotor = new TalonFX(RobotConstants.ElevatorConstants.elevatorMotorID);
     elevatorMotor.configFactoryDefault();
     elevatorMotor.setNeutralMode(com.ctre.phoenix.motorcontrol.NeutralMode.Brake);
 
     //Set motor PID constants
-    elevatorMotor.config_kP(0, RobotConstants.Elevator.elevatorKp);
-    elevatorMotor.config_kI(0, RobotConstants.Elevator.elevatorKi);
-    elevatorMotor.config_kD(0, RobotConstants.Elevator.elevatorKd);
-    elevatorMotor.config_kF(0, RobotConstants.Elevator.elevatorKF);
+    elevatorMotor.config_kP(0, RobotConstants.ElevatorConstants.elevatorKp);
+    elevatorMotor.config_kI(0, RobotConstants.ElevatorConstants.elevatorKi);
+    elevatorMotor.config_kD(0, RobotConstants.ElevatorConstants.elevatorKd);
+    elevatorMotor.config_kF(0, RobotConstants.ElevatorConstants.elevatorKF);
 
     //Configure Motion Magic
-    elevatorMotor.configMotionCruiseVelocity(RobotConstants.Elevator.elevatorCruiseVelocity);
-    elevatorMotor.configMotionAcceleration(RobotConstants.Elevator.elevatorMaxAcceleration);
+    elevatorMotor.configMotionCruiseVelocity(RobotConstants.ElevatorConstants.elevatorCruiseVelocity);
+    elevatorMotor.configMotionAcceleration(RobotConstants.ElevatorConstants.elevatorMaxAcceleration);
     
     //Acceleration smoothing
-    elevatorMotor.configMotionSCurveStrength(RobotConstants.Elevator.elevatorSCurveStrength);
+    elevatorMotor.configMotionSCurveStrength(RobotConstants.ElevatorConstants.elevatorSCurveStrength);
 
-    topLimitSwitch = new DigitalInput(RobotConstants.Elevator.elevatorTopLimitSwitchID);
-    bottomLimitSwitch = new DigitalInput(RobotConstants.Elevator.elevatorBottomLimitSwitchID);
+    topLimitSwitch = new DigitalInput(RobotConstants.ElevatorConstants.elevatorTopLimitSwitchID);
+    bottomLimitSwitch = new DigitalInput(RobotConstants.ElevatorConstants.elevatorBottomLimitSwitchID);
   }
 
   public void setElevatorSpeed(double speed){
@@ -48,8 +48,8 @@ public class Elevator extends SubsystemBase {
 
   //Set elevator height in meters from lowest position.
   public void setElevatorPosition(double position){
-    double encoderPosition = position / RobotConstants.Elevator.elevatorTravelPerRev * 2048.0;
-    elevatorMotor.set(ControlMode.MotionMagic, encoderPosition, DemandType.ArbitraryFeedForward, RobotConstants.Elevator.elevatorGravityComp);
+    double encoderPosition = position / RobotConstants.ElevatorConstants.elevatorTravelPerRev * 2048.0;
+    elevatorMotor.set(ControlMode.MotionMagic, encoderPosition, DemandType.ArbitraryFeedForward, RobotConstants.ElevatorConstants.elevatorGravityComp);
   }
 
   public boolean getTopLimitSwitch(){
@@ -62,7 +62,7 @@ public class Elevator extends SubsystemBase {
 
   //Returns elevator position in meters from lowest position.
   public double getElevatorPosition(){
-    return elevatorMotor.getSelectedSensorPosition() / 2048.0 * RobotConstants.Elevator.elevatorTravelPerRev;
+    return elevatorMotor.getSelectedSensorPosition() / 2048.0 * RobotConstants.ElevatorConstants.elevatorTravelPerRev;
   }
 
   @Override
