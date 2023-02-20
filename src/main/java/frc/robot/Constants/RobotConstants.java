@@ -11,7 +11,7 @@ public final class RobotConstants {
     /*Sensors*/
     public static final int pigeonID = 1;
 
-    public final class Arm {
+    public static final class Arm {
         public static final int armMotorID = 0;
         
         /*Arm Pneumatics*/
@@ -52,6 +52,13 @@ public final class RobotConstants {
 
         /*Arm Gear Ratio*/
         public static final double armGearRatio = 9.0 * 72.0 /22.0; //Motor revolutions to output shaft revolutions.
+
+        /*Arm Limits*/
+        public static final double armMaxAngle = 45; //TODO: Set to actual max angle of arm.
+        public static final double armMinAngle = -180;  //TODO: Set to actual min angle of arm.
+
+        public static final double armRetractedLength = Units.inchesToMeters(10.0); //TODO: Set to actual length of arm when retracted.
+        public static final double armExtendedLength = Units.inchesToMeters(20.0);  //TODO: Set to actual length of arm when extended.
     }
   
     public static final class Elevator{

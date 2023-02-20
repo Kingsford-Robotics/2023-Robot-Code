@@ -132,8 +132,27 @@ public class Arm extends SubsystemBase {
         return Conversions.falconToRPM(armMotor.getSelectedSensorVelocity(), RobotConstants.Arm.armGearRatio);
     }
 
+    public double[] getArmXY()
+    {
+        double[] armXY = new double[2];
+        armXY[0] = Math.cos(getAngle().getRadians());
+        armXY[1] = Math.sin(getAngle().getRadians());
+        return armXY;
+    }
+    
+    public static boolean isCollision(double elevatorHeight)
+    {
+        
+        return true;
+    }
+
     @Override
     public void periodic() {
-        // This method will be called once per scheduler run\
+        // This method will be called once per scheduler run
+
+        //Stop arm if outside range
+        if(getAngle().getDegrees() > RobotConstants.Arm.armMaxAngle || getAngle().getDegrees() < RobotConstants.Arm.armMinAngle){
+            armMotor.set(ControlMode.PercentOutput, 0);
+        }
     }
 }

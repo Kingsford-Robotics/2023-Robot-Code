@@ -9,11 +9,7 @@ import com.ctre.phoenix.motorcontrol.DemandType;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
 
 import edu.wpi.first.wpilibj.DigitalInput;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
-import frc.lib.math.Conversions;
 import frc.robot.Constants.RobotConstants;
 
 public class Elevator extends SubsystemBase {
@@ -53,7 +49,7 @@ public class Elevator extends SubsystemBase {
   //Set elevator height in meters from lowest position.
   public void setElevatorPosition(double position){
     double encoderPosition = position / RobotConstants.Elevator.elevatorTravelPerRev * 2048.0;
-    elevatorMotor.set(ControlMode.MotionMagic, position, DemandType.ArbitraryFeedForward, RobotConstants.Elevator.elevatorGravityComp);
+    elevatorMotor.set(ControlMode.MotionMagic, encoderPosition, DemandType.ArbitraryFeedForward, RobotConstants.Elevator.elevatorGravityComp);
   }
 
   public boolean getTopLimitSwitch(){
@@ -64,38 +60,24 @@ public class Elevator extends SubsystemBase {
     return bottomLimitSwitch.get();
   }
 
-<<<<<<< HEAD
   //Returns elevator position in meters from lowest position.
   public double getElevatorPosition(){
     return elevatorMotor.getSelectedSensorPosition() / 2048.0 * RobotConstants.Elevator.elevatorTravelPerRev;
-=======
-  //Change to integrated in auton during first place operation unless elevator can be put to zero position.
-  public SequentialCommandGroup zeroElevator()
-  {
-    SequentialCommandGroup zeroElevator = new SequentialCommandGroup();
-    zeroElevator.addRequirements(this);
-    
-    zeroElevator.addCommands(
-      new InstantCommand(() -> {
-        if(!this.getBottomLimitSwitch())
-          this.setElevatorSpeed(-0.1);}
-      ),
-
-      new WaitUntilCommand(() -> this.getBottomLimitSwitch()),
-
-      new InstantCommand(() -> {
-        this.setElevatorSpeed(0);
-        this.elevatorMotor.setSelectedSensorPosition(0);}
-      )
-    );
-
-    return zeroElevator;
->>>>>>> 9e16694c429261654ccf9ecabc4c31880869b939
   }
 
   @Override
   public void periodic() {
-
     // This method will be called once per scheduler run
+
+    //Stop motor if moving up and top limit switch pressed
+    if(elevatorMotor.getMotorOutputPercent() > 0 && getTopLimitSwitch()){
+      elevatorMotor.set(ControlMode.PercentOutput, 0);
+      
+    }
+
+    //Stop motor if moving down and bottom limit switch pressed
+    if(elevatorMotor.getMotorOutputPercent() < 0 && getBottomLimitSwitch()){
+      elevatorMotor.set(ControlMode.PercentOutput, 0);
+    }
   }
 }
