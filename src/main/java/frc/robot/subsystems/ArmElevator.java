@@ -11,8 +11,8 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class ArmElevator extends SubsystemBase {
   /** Creates a new ArmElevator. */
-  public Arm arm;
-  public Elevator elevator;
+  private Arm arm;
+  private Elevator elevator;
 
   private ShuffleboardTab ArmElevatorTab;
   private GenericEntry armEncoderAngle;
@@ -30,8 +30,45 @@ public class ArmElevator extends SubsystemBase {
     armCANCoderAngle = ArmElevatorTab.add("Arm CANCoder Angle", 0).getEntry();
     armXY = ArmElevatorTab.add("Arm XY", "").getEntry();
     elevatorHeight = ArmElevatorTab.add("Elevator Height", 0).getEntry();
+  }
 
-    arm.setArmAngle(45);
+  public void setArmAngle(double angle) {
+    arm.setArmAngle(angle);
+  }
+
+  public void setArmPercent(double percent) {
+    arm.setArmSpeedPercent(percent);
+  }
+
+  public void setElevatorHeight(double height) {
+    elevator.setElevatorHeight(height);
+  }
+
+  public void setElevatorPercent(double percent)
+  {
+    elevator.setElevatorSpeed(percent);
+  }
+
+  public void toggleExtension() {
+    arm.toggleExtension();
+  }
+
+  public void extendArm() {
+    arm.extend();
+  }
+
+  public void retractArm() {
+    arm.retract();
+  }
+
+  public void closeClaw()
+  {
+    arm.close();
+  }
+
+  public void openClaw()
+  {
+    arm.open();
   }
 
   @Override

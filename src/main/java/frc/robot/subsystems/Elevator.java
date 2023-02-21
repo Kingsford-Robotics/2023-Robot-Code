@@ -47,8 +47,8 @@ public class Elevator extends SubsystemBase {
   }
 
   //Set elevator height in meters from lowest position.
-  public void setElevatorPosition(double position){
-    double encoderPosition = position / RobotConstants.ElevatorConstants.elevatorTravelPerRev * 2048.0;
+  public void setElevatorHeight(double height){
+    double encoderPosition = height / RobotConstants.ElevatorConstants.elevatorTravelPerRev * 2048.0;
     elevatorMotor.set(ControlMode.MotionMagic, encoderPosition, DemandType.ArbitraryFeedForward, RobotConstants.ElevatorConstants.elevatorGravityComp);
   }
 

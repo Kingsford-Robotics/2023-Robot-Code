@@ -82,9 +82,9 @@ public class Arm extends SubsystemBase {
         armExtension.set(kReverse); //Arm retracted
         armGrab.set(kForward);      //Claw open
 
-        Timer.delay(1.0);
+        Timer.delay(0.3);   //Check to see if this is needed. May be good from delay when initializing Swerve subsystem.
         //Reset encoder to absolute position
-        resetToAbsolute();      //TODO: Check if wait is needed. May be good from delay when initializing Swerve subsystem.
+        resetToAbsolute();
     }
 
     public void toggleGrab(){
@@ -116,8 +116,7 @@ public class Arm extends SubsystemBase {
     }
 
     public boolean isExtended(){
-        //return armExtension.get() == kForward;
-        return true;
+        return armExtension.get() == kForward;
     }
 
     public void setArmSpeedPercent(double speed){
@@ -163,6 +162,15 @@ public class Arm extends SubsystemBase {
     }
 
     //Gets the X and Y position of the arm in meters relative to the ground and the elevator. (0,0) is the ground directly under the elevator.
+    public double[] getArmXY(double elevatorHeight, boolean isExtended)
+    {
+        double[] armXY = new double[2];
+        double armAngleRadians = getAngle().getRadians();
+        armXY[0] = isExtended? RobotConstants.ArmConstants.armExtendedLength * Math.cos(armAngleRadians): RobotConstants.ArmConstants.armRetractedLength * Math.cos(armAngleRadians);
+        armXY[1] = isExtended? elevatorHeight - RobotConstants.ArmConstants.armExtendedLength * Math.sin(armAngleRadians): RobotConstants.ArmConstants.armRetractedLength * Math.sin(armAngleRadians);
+        return armXY;
+    }
+
     public double[] getArmXY(double elevatorHeight)
     {
         double[] armXY = new double[2];
@@ -170,14 +178,5 @@ public class Arm extends SubsystemBase {
         armXY[0] = isExtended()? RobotConstants.ArmConstants.armExtendedLength * Math.cos(armAngleRadians): RobotConstants.ArmConstants.armRetractedLength * Math.cos(armAngleRadians);
         armXY[1] = isExtended()? elevatorHeight - RobotConstants.ArmConstants.armExtendedLength * Math.sin(armAngleRadians): RobotConstants.ArmConstants.armRetractedLength * Math.sin(armAngleRadians);
         return armXY;
-    }
-
-    public static boolean isCollision(double elevatorHeight)
-    {
-        return true;
-    }
-
-    @Override
-    public void periodic() {
     }
 }

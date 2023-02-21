@@ -72,12 +72,6 @@ public class RobotContainer {
                         () -> OIConstants.robotCentric.getAsBoolean(),
                         () -> OIConstants.slowSpeed.getAsBoolean(),
                         () -> centerOfRotation.getAsInt()));
-
-
-        m_ArmElevator.setDefaultCommand(
-            //Create instant command to control arm speed
-            new InstantCommand(() -> m_ArmElevator.arm.setArmSpeedPercent(OIConstants.armSpeed.get()), m_ArmElevator)
-        );
         // Configure the button bindings
         configureButtonBindings();
         configureAutoCommands();
