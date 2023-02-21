@@ -7,8 +7,28 @@ package frc.robot.subsystems;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class JetsonXavier extends SubsystemBase {
-  /** Creates a new JetsonXavieer. */
-  public JetsonXavier() {}
+  private class targetInfo
+  {
+    public enum targetType = {CONE, CUBE};
+    public double[] position;
+    public boolean trackingStatus;
+    public targetType type;
+    public double confidence;
+  }
+  
+  //Check arraylist syntax.
+  private ArrayList<targetInfo> targets;
+  private double gyroAngle;
+  private double[] robotPose;
+  private boolean isTracking;
+  
+  /** Creates a new Jetson Xavier. */
+  public JetsonXavier() {
+    targets = new ArrayList<targetInfo>;
+    gyroAngle = 0.0;
+    robotPose = new double[3];
+    isTracking = false;
+  }
 
   @Override
   public void periodic() {
