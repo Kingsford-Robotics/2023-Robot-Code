@@ -11,8 +11,8 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class ArmElevator extends SubsystemBase {
   /** Creates a new ArmElevator. */
-  private Arm arm;
-  private Elevator elevator;
+  public Arm arm;
+  public Elevator elevator;
 
   private ShuffleboardTab ArmElevatorTab;
   private GenericEntry armEncoderAngle;
@@ -24,11 +24,11 @@ public class ArmElevator extends SubsystemBase {
   public ArmElevator() {
     arm = new Arm();
     elevator = new Elevator();
-    ArmElevatorTab = Shuffleboard.getTab("Arm/Elevator");
+    ArmElevatorTab = Shuffleboard.getTab("Arm_Elevator");
 
     armEncoderAngle = ArmElevatorTab.add("Arm Encoder Angle", 0).getEntry();
     armCANCoderAngle = ArmElevatorTab.add("Arm CANCoder Angle", 0).getEntry();
-    armXY = ArmElevatorTab.add("Arm XY", new int[]{0,0}).getEntry();
+    armXY = ArmElevatorTab.add("Arm XY", "").getEntry();
     elevatorHeight = ArmElevatorTab.add("Elevator Height", 0).getEntry();
   }
 
@@ -36,7 +36,7 @@ public class ArmElevator extends SubsystemBase {
   public void periodic() {
     armEncoderAngle.setDouble(arm.getAngle().getDegrees());
     armCANCoderAngle.setDouble(arm.getAngle().getDegrees());
-    armXY.setDoubleArray(arm.getArmXY(elevator.getElevatorPosition()));
     elevatorHeight.setDouble(elevator.getElevatorPosition());
+    armXY.setString(String.valueOf(arm.getArmXY(elevator.getElevatorPosition())[0]) + ", " + String.valueOf(arm.getArmXY(elevator.getElevatorPosition())[1]));
   }
 }

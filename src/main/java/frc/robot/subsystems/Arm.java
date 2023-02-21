@@ -18,12 +18,9 @@ import com.ctre.phoenix.sensors.SensorInitializationStrategy;
 import com.ctre.phoenix.sensors.SensorTimeBase;
 
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
-import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 
 import static edu.wpi.first.wpilibj.DoubleSolenoid.Value.*;
 
@@ -119,7 +116,8 @@ public class Arm extends SubsystemBase {
     }
 
     public boolean isExtended(){
-        return armExtension.get() == kForward;
+        //return armExtension.get() == kForward;
+        return true;
     }
 
     public void setArmSpeedPercent(double speed){

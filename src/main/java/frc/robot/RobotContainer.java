@@ -18,7 +18,7 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.PrintCommand;
 import frc.robot.Constants.OIConstants;
 import frc.robot.subsystems.Intake;
-import frc.robot.subsystems.Arm;
+import frc.robot.subsystems.ArmElevator;
 import frc.robot.commands.TeleopSwerve;
 import frc.robot.subsystems.DashboardDisplay;
 import frc.robot.subsystems.Swerve;
@@ -50,7 +50,7 @@ public class RobotContainer {
     /* Subsystems */
     private final Swerve m_Swerve = new Swerve();
     private final Intake m_Intake = new Intake();
-    private final Arm m_Arm = new Arm();    //TODO: Remove later
+    private final ArmElevator m_ArmElevator = new ArmElevator();
     private final DashboardDisplay m_Display = new DashboardDisplay(m_Swerve);
     
     FollowPathWithEvents autoCommand = null;
@@ -74,9 +74,9 @@ public class RobotContainer {
                         () -> centerOfRotation.getAsInt()));
 
 
-        m_Arm.setDefaultCommand(
+        m_ArmElevator.setDefaultCommand(
             //Create instant command to control arm speed
-            new InstantCommand(() -> m_Arm.setArmSpeedPercent(OIConstants.armSpeed.get()), m_Arm)
+            new InstantCommand(() -> m_ArmElevator.arm.setArmSpeedPercent(OIConstants.armSpeed.get()), m_ArmElevator)
         );
         // Configure the button bindings
         configureButtonBindings();
