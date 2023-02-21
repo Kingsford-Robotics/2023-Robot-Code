@@ -161,22 +161,22 @@ public class Arm extends SubsystemBase {
         return Conversions.falconToRPM(armMotor.getSelectedSensorVelocity(), RobotConstants.ArmConstants.armGearRatio);
     }
 
-    //Gets the X and Y position of the arm in meters relative to the ground and the elevator. (0,0) is the ground directly under the elevator.
-    public double[] getArmXY(double elevatorHeight, boolean isExtended)
+    public double[] getArmXY(double elevatorHeight, double armAngle, boolean isExtended)
     {
         double[] armXY = new double[2];
-        double armAngleRadians = getAngle().getRadians();
+        double armAngleRadians = Rotation2d.fromDegrees(armAngle).getRadians();
         armXY[0] = isExtended? RobotConstants.ArmConstants.armExtendedLength * Math.cos(armAngleRadians): RobotConstants.ArmConstants.armRetractedLength * Math.cos(armAngleRadians);
         armXY[1] = isExtended? elevatorHeight - RobotConstants.ArmConstants.armExtendedLength * Math.sin(armAngleRadians): RobotConstants.ArmConstants.armRetractedLength * Math.sin(armAngleRadians);
         return armXY;
     }
+    //Gets the X and Y position of the arm in meters relative to the ground and the elevator. (0,0) is the ground directly under the elevator.
+    public double[] getArmXY(double elevatorHeight, boolean isExtended)
+    {
+        return getArmXY(elevatorHeight, getAngle().getDegrees(), isExtended);
+    }
 
     public double[] getArmXY(double elevatorHeight)
     {
-        double[] armXY = new double[2];
-        double armAngleRadians = getAngle().getRadians();
-        armXY[0] = isExtended()? RobotConstants.ArmConstants.armExtendedLength * Math.cos(armAngleRadians): RobotConstants.ArmConstants.armRetractedLength * Math.cos(armAngleRadians);
-        armXY[1] = isExtended()? elevatorHeight - RobotConstants.ArmConstants.armExtendedLength * Math.sin(armAngleRadians): RobotConstants.ArmConstants.armRetractedLength * Math.sin(armAngleRadians);
-        return armXY;
+        return getArmXY(elevatorHeight, getAngle().getDegrees(), isExtended());
     }
 }

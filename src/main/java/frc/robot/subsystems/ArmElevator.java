@@ -8,6 +8,7 @@ import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants.RobotConstants;
 
 public class ArmElevator extends SubsystemBase {
   /** Creates a new ArmElevator. */
@@ -46,15 +47,50 @@ public class ArmElevator extends SubsystemBase {
 
   public void setElevatorPercent(double percent)
   {
+    if (percent < 0 && (elevator.getBottomLimitSwitch() || elevator.getElevatorPosition() <= RobotConstants.ElevatorConstants.elevatorMinHeight))
+    {
+      percent = 0;
+    }
+
+    else if (percent > 0 && (elevator.getTopLimitSwitch() || elevator.getElevatorPosition() >= RobotConstants.ElevatorConstants.elevatorMaxHeight))
+    {
+      percent = 0;
+    }
+
+    if (isCollision(elevator.getElevatorPosition(), arm.getAngle().getDegrees(), arm.isExtended()))
+    {
+      percent = 0;
+    }
+
+    else if (isCollision(elevator.getElevatorPosition(), arm.getAngle().getDegrees() + 3, arm.isExtended()))
+    {
+      percent = 0;
+    }
+
+    else if (isCollision(elevator.getElevatorPosition(), arm.getAngle().getDegrees() - 3, arm.isExtended()))
+    {
+      percent = 0;
+    }
+
     elevator.setElevatorSpeed(percent);
   }
 
   public void toggleExtension() {
-    arm.toggleExtension();
+    if(arm.isExtended())
+    {
+      retractArm();
+    }
+
+    else{
+      extendArm();
+    }
   }
 
   public void extendArm() {
-    arm.extend();
+    if(!isCollision(elevator.getElevatorPosition(), arm.getAngle().getDegrees(), true))
+    {
+      arm.extend();
+    }
   }
 
   public void retractArm() {
@@ -71,6 +107,35 @@ public class ArmElevator extends SubsystemBase {
     arm.open();
   }
 
+  private double getArmMinY(double armX)
+  {
+    if (armX < RobotConstants.HeightZones.turntableEndX)
+    {
+      return RobotConstants.HeightZones.turntable;
+    }
+    else if (armX < RobotConstants.HeightZones.midBotEndX)
+    {
+      return RobotConstants.HeightZones.midBot;
+    }
+    else
+    {
+      return RobotConstants.HeightZones.outside;
+    }
+  }
+
+  private boolean isCollision(double elevatorHeight, double armAngle, boolean isExtended)
+  {
+    double armX = arm.getArmXY(elevator.getElevatorPosition(), armAngle, isExtended)[0];
+    double armY = arm.getArmXY(elevator.getElevatorPosition(), armAngle, isExtended)[1];
+    double minY = getArmMinY(armX);
+
+    if (armY < minY)
+    {
+      return true;
+    }
+
+    return false;
+  }
   @Override
   public void periodic() {
     armEncoderAngle.setDouble(arm.getAngle().getDegrees());
