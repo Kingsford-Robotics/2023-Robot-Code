@@ -60,11 +60,12 @@ public final class RobotConstants {
         public static final double armKF = 1.0 * 1023.0 / armMaxSpeed;    //TODO: Find actual speed at lower output percent for free motor.
 
         /*Arm Gear Ratio*/
-        public static final double armGearRatio = 9.0 * 72.0 /22.0; //Motor revolutions to output shaft revolutions.
+        public static final double armGearRatio = 90.0 * 72.0 /22.0; //Motor revolutions to output shaft revolutions.
 
         /*Arm Limits*/
-        public static final double armMaxAngle = 30;
-        public static final double armMinAngle = -135;
+        //Horizontal is 0, up is negative.
+        public static final double armMaxAngle = 135;
+        public static final double armMinAngle = -30;
 
         //Arm Lengths from pivot point to end of arm.
         public static final double armRetractedLength = Units.inchesToMeters(41.0);

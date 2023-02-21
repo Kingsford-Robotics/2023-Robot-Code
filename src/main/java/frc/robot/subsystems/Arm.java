@@ -39,6 +39,8 @@ public class Arm extends SubsystemBase {
         /*Arm Motor Setup*/
         armMotor = new TalonFX(RobotConstants.ArmConstants.armMotorID);
         armMotor.configFactoryDefault();
+        armMotor.setInverted(true);
+
         armMotor.setNeutralMode(com.ctre.phoenix.motorcontrol.NeutralMode.Brake);
         
         //Set motor PID constants
@@ -122,7 +124,9 @@ public class Arm extends SubsystemBase {
         armMotor.set(ControlMode.PercentOutput, speed);
     }
 
-    public void setArmPosition(double position){
+    //Set arm angle in degrees.
+    public void setArmAngle(double angle){
+        double position = Conversions.degreesToFalcon(angle, RobotConstants.ArmConstants.armGearRatio);
         armMotor.set(ControlMode.MotionMagic, position, DemandType.ArbitraryFeedForward, RobotConstants.ArmConstants.armMaxGravityComp * Math.cos(getAngle().getRadians()));
     }
 
