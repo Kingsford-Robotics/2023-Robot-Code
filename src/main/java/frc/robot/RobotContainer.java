@@ -11,15 +11,13 @@ import java.util.function.IntSupplier;
 import com.pathplanner.lib.PathPlanner;
 import com.pathplanner.lib.PathPlannerTrajectory;
 import com.pathplanner.lib.commands.FollowPathWithEvents;
-import com.pathplanner.lib.commands.PPSwerveControllerCommand;
 import com.pathplanner.lib.PathConstraints;
 
-import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.PrintCommand;
-import frc.robot.Constants.DrivetrainConstants;
 import frc.robot.Constants.OIConstants;
+import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Arm;
 import frc.robot.commands.TeleopSwerve;
 import frc.robot.subsystems.DashboardDisplay;
@@ -50,9 +48,10 @@ public class RobotContainer {
         }
     };
     /* Subsystems */
-    private final Swerve s_Swerve = new Swerve();
-    private final Arm m_Arm = new Arm();
-    private final DashboardDisplay m_Display = new DashboardDisplay(s_Swerve);
+    private final Swerve m_Swerve = new Swerve();
+    private final Intake m_Intake = new Intake();
+    private final Arm m_Arm = new Arm();    //TODO: Remove later
+    private final DashboardDisplay m_Display = new DashboardDisplay(m_Swerve);
     
     FollowPathWithEvents autoCommand = null;
 
@@ -64,9 +63,9 @@ public class RobotContainer {
      * The container for the robot. Contains subsystems, OI devices, and commands.
      */
     public RobotContainer() {
-        s_Swerve.setDefaultCommand(
+        m_Swerve.setDefaultCommand(
                 new TeleopSwerve(
-                        s_Swerve,
+                        m_Swerve,
                         () -> -OIConstants.translationSupplier.get(),
                         () -> -OIConstants.strafeSupplier.get(),
                         () -> -OIConstants.rotationSupplier.get(),
@@ -94,7 +93,7 @@ public class RobotContainer {
      */
     private void configureButtonBindings() {
         // Reset Gyro when button is pressed
-        OIConstants.resetGyro.onTrue(new InstantCommand(() -> s_Swerve.zeroGyro()));
+        OIConstants.resetGyro.onTrue(new InstantCommand(() -> m_Swerve.zeroGyro()));
     }
 
     private void configureAutoCommands()
@@ -105,7 +104,7 @@ public class RobotContainer {
         List<PathPlannerTrajectory> pathGroup = PathPlanner.loadPathGroup("FullAuto", new PathConstraints(3, 3));
     
         autoCommand = new FollowPathWithEvents(
-            s_Swerve.followTrajectoryCommand(pathGroup.get(0), true),
+            m_Swerve.followTrajectoryCommand(pathGroup.get(0), true),
             pathGroup.get(0).getMarkers(), eventMap
         );
     }

@@ -35,11 +35,6 @@ public class Arm extends SubsystemBase {
     private DoubleSolenoid armExtension;
     private DoubleSolenoid armGrab;
 
-    private ShuffleboardTab armTab;
-    private GenericEntry encoderAngle;
-    private GenericEntry canCoderAngle;
-    private GenericEntry motorPower;
-
     public Arm() {
         /*Arm Motor Setup*/
         armMotor = new TalonFX(RobotConstants.ArmConstants.armMotorID);
@@ -85,12 +80,6 @@ public class Arm extends SubsystemBase {
             RobotConstants.ArmConstants.armGrabSolenoidFWD, 
             RobotConstants.ArmConstants.armGrabSolenoidREV
         );
-
-        /*Shuffleboard Setup*/
-        armTab = Shuffleboard.getTab("Arm");
-        encoderAngle = armTab.add("Encoder Angle", 0).getEntry();
-        canCoderAngle = armTab.add("Cancoder Angle",0).getEntry();
-        motorPower = armTab.add("Motor Power", 0).getEntry();
 
         //Set default arm position
         armExtension.set(kReverse); //Arm retracted
@@ -150,6 +139,10 @@ public class Arm extends SubsystemBase {
 
     //Set arm angle in degrees.
     public void setArmAngle(double angle){
+        //Check if angle is in range.
+        if(angle > RobotConstants.ArmConstants.armMaxAngle || angle < RobotConstants.ArmConstants.armMinAngle){
+            return;
+        }
         double position = Conversions.degreesToFalcon(angle, RobotConstants.ArmConstants.armGearRatio);
         armMotor.set(ControlMode.MotionMagic, position, DemandType.ArbitraryFeedForward, RobotConstants.ArmConstants.armMaxGravityComp * Math.cos(getAngle().getRadians()));
     }
@@ -183,17 +176,10 @@ public class Arm extends SubsystemBase {
 
     public static boolean isCollision(double elevatorHeight)
     {
-        
         return true;
     }
 
     @Override
     public void periodic() {
-        // This method will be called once per scheduler run
-
-        //Add arm angle degrees to shuffleboard
-        encoderAngle.setDouble(getAngle().getDegrees());
-        canCoderAngle.setDouble(getCanCoder().getDegrees());
-        motorPower.setDouble(armMotor.getMotorOutputPercent());
     }
 }
