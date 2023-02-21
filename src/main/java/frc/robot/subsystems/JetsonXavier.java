@@ -4,12 +4,18 @@
 
 package frc.robot.subsystems;
 
+import java.util.ArrayList;
+
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class JetsonXavier extends SubsystemBase {
-  private class targetInfo
+  public enum targetType
   {
-    public enum targetType = {CONE, CUBE};
+    CONE,
+    CUBE
+  }
+  public class targetInfo
+  {
     public double[] position;
     public boolean trackingStatus;
     public targetType type;
@@ -24,7 +30,7 @@ public class JetsonXavier extends SubsystemBase {
   
   /** Creates a new Jetson Xavier. */
   public JetsonXavier() {
-    targets = new ArrayList<targetInfo>;
+    targets = new ArrayList<targetInfo>();
     gyroAngle = 0.0;
     robotPose = new double[3];
     isTracking = false;

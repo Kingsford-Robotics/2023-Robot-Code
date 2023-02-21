@@ -14,11 +14,14 @@ import com.ctre.phoenix.motorcontrol.can.TalonFX;
 import com.ctre.phoenix.sensors.AbsoluteSensorRange;
 import com.ctre.phoenix.sensors.CANCoder;
 import com.ctre.phoenix.sensors.CANCoderConfiguration;
+import com.ctre.phoenix.sensors.SensorInitializationStrategy;
+import com.ctre.phoenix.sensors.SensorTimeBase;
 
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 
@@ -33,7 +36,9 @@ public class Arm extends SubsystemBase {
     private DoubleSolenoid armGrab;
 
     private ShuffleboardTab armTab;
-    private GenericEntry gyroAngle;
+    private GenericEntry encoderAngle;
+    private GenericEntry canCoderAngle;
+    private GenericEntry motorPower;
 
     public Arm() {
         /*Arm Motor Setup*/
@@ -59,8 +64,13 @@ public class Arm extends SubsystemBase {
         /*Arm Encoder Setup*/
         angleEncoder = new CANCoder(RobotConstants.ArmConstants.armEncoderID);
         angleEncoder.configFactoryDefault();
+
         CANCoderConfiguration encoderConfig = new CANCoderConfiguration();
+        encoderConfig.sensorDirection = true;
+        encoderConfig.initializationStrategy = SensorInitializationStrategy.BootToAbsolutePosition;
+        encoderConfig.sensorTimeBase = SensorTimeBase.PerSecond;
         encoderConfig.absoluteSensorRange = AbsoluteSensorRange.Unsigned_0_to_360;
+        
         angleEncoder.configAllSettings(encoderConfig);
 
         /*Pneumatics Setup*/
@@ -78,12 +88,15 @@ public class Arm extends SubsystemBase {
 
         /*Shuffleboard Setup*/
         armTab = Shuffleboard.getTab("Arm");
-        gyroAngle = armTab.add("Gyro Angle", 0).getEntry();
+        encoderAngle = armTab.add("Encoder Angle", 0).getEntry();
+        canCoderAngle = armTab.add("Cancoder Angle",0).getEntry();
+        motorPower = armTab.add("Motor Power", 0).getEntry();
 
         //Set default arm position
         armExtension.set(kReverse); //Arm retracted
         armGrab.set(kForward);      //Claw open
 
+        Timer.delay(1.0);
         //Reset encoder to absolute position
         resetToAbsolute();      //TODO: Check if wait is needed. May be good from delay when initializing Swerve subsystem.
     }
@@ -121,7 +134,18 @@ public class Arm extends SubsystemBase {
     }
 
     public void setArmSpeedPercent(double speed){
+        if(getAngle().getDegrees() > RobotConstants.ArmConstants.armMaxAngle && speed > 0)
+        {
+         armMotor.set(ControlMode.PercentOutput, 0);
+        }
+
+        else if(getAngle().getDegrees() < RobotConstants.ArmConstants.armMinAngle && speed < 0){
+            armMotor.set(ControlMode.PercentOutput, 0);
+           }
+        else
+        {
         armMotor.set(ControlMode.PercentOutput, speed);
+        }
     }
 
     //Set arm angle in degrees.
@@ -143,7 +167,7 @@ public class Arm extends SubsystemBase {
         return Rotation2d.fromDegrees(Conversions.falconToDegrees(armMotor.getSelectedSensorPosition(), RobotConstants.ArmConstants.armGearRatio));
     }
 
-    public double getVelocity(){
+    public double getRPM(){
         return Conversions.falconToRPM(armMotor.getSelectedSensorVelocity(), RobotConstants.ArmConstants.armGearRatio);
     }
 
@@ -167,12 +191,9 @@ public class Arm extends SubsystemBase {
     public void periodic() {
         // This method will be called once per scheduler run
 
-        //Stop arm if outside range
-       // if(getAngle().getDegrees() > RobotConstants.ArmConstants.armMaxAngle || getAngle().getDegrees() < RobotConstants.ArmConstants.armMinAngle){
-           // armMotor.set(ControlMode.PercentOutput, 0);
-       // }
-
         //Add arm angle degrees to shuffleboard
-        gyroAngle.setDouble(getAngle().getDegrees());
+        encoderAngle.setDouble(getAngle().getDegrees());
+        canCoderAngle.setDouble(getCanCoder().getDegrees());
+        motorPower.setDouble(armMotor.getMotorOutputPercent());
     }
 }
