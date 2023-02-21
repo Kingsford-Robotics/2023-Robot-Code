@@ -30,12 +30,14 @@ public class ArmElevator extends SubsystemBase {
     armCANCoderAngle = ArmElevatorTab.add("Arm CANCoder Angle", 0).getEntry();
     armXY = ArmElevatorTab.add("Arm XY", "").getEntry();
     elevatorHeight = ArmElevatorTab.add("Elevator Height", 0).getEntry();
+
+    arm.setArmAngle(45);
   }
 
   @Override
   public void periodic() {
     armEncoderAngle.setDouble(arm.getAngle().getDegrees());
-    armCANCoderAngle.setDouble(arm.getAngle().getDegrees());
+    armCANCoderAngle.setDouble(arm.getCanCoder().getDegrees());
     elevatorHeight.setDouble(elevator.getElevatorPosition());
     armXY.setString(String.valueOf(arm.getArmXY(elevator.getElevatorPosition())[0]) + ", " + String.valueOf(arm.getArmXY(elevator.getElevatorPosition())[1]));
   }

@@ -32,7 +32,7 @@ public final class RobotConstants {
 
         /*Arm Encoder Values*/
         public static final int armEncoderID = 30;
-        public static final double armEncoderOffset = 238.0;  //TODO: Set to cancoder angle in degrees at horizontal.
+        public static final double armEncoderOffset = 232.0;  //TODO: Set to cancoder angle in degrees at horizontal.
 
         /*Arm Motion Magic Constants*/
         private static final double armMaxSpeed = 6380.0 * (2480.0 / 600.0); //Max speed in sensor units per 100ms
@@ -60,7 +60,7 @@ public final class RobotConstants {
         public static final double armKF = 1.0 * 1023.0 / armMaxSpeed;    //TODO: Find actual speed at lower output percent for free motor.
 
         /*Arm Gear Ratio*/
-        public static final double armGearRatio = 90.0 * 72.0 /22.0; //Motor revolutions to output shaft revolutions.
+        public static final double armGearRatio = 90.0 * (78.0 / 22.0); //TODO: Check angle to make sure 90 degrees is correct.
 
         /*Arm Limits*/
         //Horizontal is 0, up is negative.
@@ -81,7 +81,7 @@ public final class RobotConstants {
 
         //Elevator Motion Magic Constants
         private static final double elevatorMaxSpeed = 6380.0 * (2480.0 / 600.0); //Max speed in sensor units per 100ms
-        private static final double elevatorPercentSpeed = 0.5; //Percent of max speed to cruise at.
+        private static final double elevatorPercentSpeed = 0.4; //Percent of max speed to cruise at.
 
         public static final double elevatorCruiseVelocity = elevatorMaxSpeed * elevatorPercentSpeed; //Cruise velocity in sensor units per 100ms 
     
@@ -92,7 +92,7 @@ public final class RobotConstants {
 
         /*Elevator Gravity Compensation*/
         //TODO: Set to minimum percent output needed to hold elevator up.
-        public static final double elevatorGravityComp = 0.15;    //Percent output
+        public static final double elevatorGravityComp = 0.05;    //Percent output
 
          /*Elevator PID constants.*/
         //TODO: Tune PID values using Phoenix tuner.
