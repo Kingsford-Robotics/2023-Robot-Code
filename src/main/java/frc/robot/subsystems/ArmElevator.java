@@ -53,7 +53,7 @@ public class ArmElevator extends SubsystemBase {
 
   public void setElevatorPercent(double percent)
   {
-    /*if (percent < 0 && (elevator.getBottomLimitSwitch() || elevator.getElevatorPosition() <= RobotConstants.ElevatorConstants.elevatorMinHeight))
+    if (percent < 0 && (elevator.getBottomLimitSwitch() || elevator.getElevatorPosition() <= RobotConstants.ElevatorConstants.elevatorMinHeight))
     {
       percent = 0;
     }
@@ -76,7 +76,7 @@ public class ArmElevator extends SubsystemBase {
     else if (isCollision(elevator.getElevatorPosition(), arm.getAngle().getDegrees() - 3, arm.isExtended()))
     {
       percent = 0;
-    }*/
+    }
 
     elevator.setElevatorSpeed(percent);
   }
