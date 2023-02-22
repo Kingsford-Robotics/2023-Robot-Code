@@ -15,11 +15,11 @@ public final class RobotConstants {
     public static final class HeightZones
     {
         public static final double outside = Units.inchesToMeters(2.0);
-        public static final double midBot = Units.inchesToMeters(14.0);
-        public static final double turntable = Units.inchesToMeters(26.0);
+        public static final double midBot = Units.inchesToMeters(12.0);
+        public static final double turntable = Units.inchesToMeters(9.0);
 
-        public static final double turntableEndX = Units.inchesToMeters(0.0);
-        public static final double midBotEndX = Units.inchesToMeters(0.0);
+        public static final double turntableEndX = Units.inchesToMeters(-6.0);
+        public static final double midBotEndX = Units.inchesToMeters(11.0);
     }
     public static final class ArmConstants {
         public static final int armMotorID = 12;
@@ -109,11 +109,9 @@ public final class RobotConstants {
         public static final double elevatorGearRatio = 9.0 * 72.0 /22.0; //Motor revolutions to output shaft revolutions.
 
         //Total travel / number revolutions. 
-        public static final double elevatorTravelEncoderTick = 16.5 / (288761.0-13301.0);
-
-        /*Elevator Limits*/
-        public static final double elevatorMaxHeight = Units.inchesToMeters(50.0);
-        public static final double elevatorMinHeight = 1.0;
+        public static final double elevatorTravelEncoderTick = Units.inchesToMeters(16.5 / (288761.0-13301.0));
+        public static final double elevatorMaxTravel = Units.inchesToMeters(16.5);
+        public static final double elevatorPivotStartHeight = Units.inchesToMeters(52.5);
     }
 
     public final class Intake{

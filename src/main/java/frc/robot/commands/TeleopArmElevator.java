@@ -6,9 +6,7 @@ package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Constants.OIConstants;
-import frc.robot.subsystems.Arm;
 import frc.robot.subsystems.ArmElevator;
-import frc.robot.subsystems.Elevator;
 
 public class TeleopArmElevator extends CommandBase {
   /** Creates a new TeleopArmElevator. */

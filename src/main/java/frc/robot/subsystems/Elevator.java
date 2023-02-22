@@ -10,7 +10,6 @@ import com.ctre.phoenix.motorcontrol.can.TalonFX;
 
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.lib.math.Conversions;
 import frc.robot.Constants.RobotConstants;
 
 public class Elevator extends SubsystemBase {
@@ -55,7 +54,7 @@ public class Elevator extends SubsystemBase {
     elevatorMotor.set(ControlMode.PercentOutput, speed);
   }
 
-  //Set elevator height in meters from lowest position.
+  //Set elevator height in meters from relative to lowest position.
   public void setElevatorHeight(double height){
     double encoderPosition = height * RobotConstants.ElevatorConstants.elevatorTravelEncoderTick;
     elevatorMotor.set(ControlMode.MotionMagic, encoderPosition, DemandType.ArbitraryFeedForward, RobotConstants.ElevatorConstants.elevatorGravityComp);
@@ -69,10 +68,10 @@ public class Elevator extends SubsystemBase {
     return bottomLimitSwitch.get();
   }
 
-  //Returns elevator position in meters from lowest position.
+  //Returns pivot point height relative to the ground.
   public double getElevatorPosition(){
-    return elevatorMotor.getSelectedSensorPosition() * RobotConstants.ElevatorConstants.elevatorTravelEncoderTick;
-  }
+    return elevatorMotor.getSelectedSensorPosition() * RobotConstants.ElevatorConstants.elevatorTravelEncoderTick + RobotConstants.ElevatorConstants.elevatorPivotStartHeight;
+  } 
 
   public double getElevatorEncoder()
   {
@@ -81,17 +80,14 @@ public class Elevator extends SubsystemBase {
 
   @Override
   public void periodic() {
-    // This method will be called once per scheduler run
-
-    //Stop motor if moving up and top limit switch pressed
-    if(elevatorMotor.getMotorOutputPercent() > 0 && getTopLimitSwitch()){
-      elevatorMotor.set(ControlMode.PercentOutput, 0);
-      
+    if(getTopLimitSwitch())
+    {
+      calibrateElevator(RobotConstants.ElevatorConstants.elevatorPivotStartHeight + RobotConstants.ElevatorConstants.elevatorMaxTravel);
     }
 
-    //Stop motor if moving down and bottom limit switch pressed
-    if(elevatorMotor.getMotorOutputPercent() < 0 && getBottomLimitSwitch()){
-      elevatorMotor.set(ControlMode.PercentOutput, 0);
+    if(getBottomLimitSwitch())
+    {
+      calibrateElevator(RobotConstants.ElevatorConstants.elevatorPivotStartHeight);
     }
   }
 }

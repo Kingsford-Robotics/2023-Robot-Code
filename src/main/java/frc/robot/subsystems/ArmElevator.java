@@ -4,6 +4,7 @@
 
 package frc.robot.subsystems;
 
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
@@ -27,7 +28,7 @@ public class ArmElevator extends SubsystemBase {
 
   public ArmElevator() {
     arm = new Arm();
-    elevator = new Elevator(0.0);   //TODO: Set initial position
+    elevator = new Elevator(RobotConstants.ElevatorConstants.elevatorPivotStartHeight);   //TODO: Set initial position
     ArmElevatorTab = Shuffleboard.getTab("Arm_Elevator");
 
     armEncoderAngle = ArmElevatorTab.add("Arm Encoder Angle", 0).getEntry();
@@ -53,12 +54,12 @@ public class ArmElevator extends SubsystemBase {
 
   public void setElevatorPercent(double percent)
   {
-    if (percent < 0 && (elevator.getBottomLimitSwitch() || elevator.getElevatorPosition() <= RobotConstants.ElevatorConstants.elevatorMinHeight))
+    if (percent < 0 && (elevator.getBottomLimitSwitch() || elevator.getElevatorPosition() <= RobotConstants.ElevatorConstants.elevatorPivotStartHeight))
     {
       percent = 0;
     }
 
-    else if (percent > 0 && (elevator.getTopLimitSwitch() || elevator.getElevatorPosition() >= RobotConstants.ElevatorConstants.elevatorMaxHeight))
+    else if (percent > 0 && (elevator.getTopLimitSwitch() || elevator.getElevatorPosition() >= RobotConstants.ElevatorConstants.elevatorPivotStartHeight + RobotConstants.ElevatorConstants.elevatorMaxTravel))
     {
       percent = 0;
     }
@@ -139,15 +140,15 @@ public class ArmElevator extends SubsystemBase {
     {
       return true;
     }
-
     return false;
   }
+
   @Override
   public void periodic() {
     armEncoderAngle.setDouble(arm.getAngle().getDegrees());
     armCANCoderAngle.setDouble(arm.getCanCoder().getDegrees());
-    elevatorHeight.setDouble(elevator.getElevatorPosition());
-    armXY.setString(String.valueOf(arm.getArmXY(elevator.getElevatorPosition())[0]) + ", " + String.valueOf(arm.getArmXY(elevator.getElevatorPosition())[1]));
+    elevatorHeight.setDouble(Units.metersToInches(elevator.getElevatorPosition()));
+    armXY.setString(String.valueOf(Units.metersToInches(arm.getArmXY(elevator.getElevatorPosition())[0])) + ", " + String.valueOf(Units.metersToInches(arm.getArmXY(elevator.getElevatorPosition())[1])));
     bottomLimitSwitch.setBoolean(elevator.getBottomLimitSwitch());
     topLimitSwitch.setBoolean(elevator.getTopLimitSwitch());
     elevatorEncoder.setDouble(elevator.getElevatorEncoder());
