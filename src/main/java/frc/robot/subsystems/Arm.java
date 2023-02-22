@@ -36,7 +36,7 @@ public class Arm extends SubsystemBase {
         /*Arm Motor Setup*/
         armMotor = new TalonFX(RobotConstants.ArmConstants.armMotorID);
         armMotor.configFactoryDefault();
-        armMotor.setInverted(true);
+        armMotor.setInverted(false);
 
         armMotor.setNeutralMode(com.ctre.phoenix.motorcontrol.NeutralMode.Brake);
         
@@ -82,7 +82,7 @@ public class Arm extends SubsystemBase {
         armExtension.set(kReverse); //Arm retracted
         armGrab.set(kForward);      //Claw open
 
-        Timer.delay(0.3);   //Check to see if this is needed. May be good from delay when initializing Swerve subsystem.
+        Timer.delay(1.0);   //Check to see if this is needed. May be good from delay when initializing Swerve subsystem.
         //Reset encoder to absolute position
         resetToAbsolute();
     }
@@ -120,7 +120,7 @@ public class Arm extends SubsystemBase {
     }
 
     public void setArmSpeedPercent(double speed){
-        if(getAngle().getDegrees() > RobotConstants.ArmConstants.armMaxAngle && speed > 0)
+        /*if(getAngle().getDegrees() > RobotConstants.ArmConstants.armMaxAngle && speed > 0)
         {
          armMotor.set(ControlMode.PercentOutput, 0);
         }
@@ -131,7 +131,8 @@ public class Arm extends SubsystemBase {
         else
         {
         armMotor.set(ControlMode.PercentOutput, speed);
-        }
+        }*/
+        armMotor.set(ControlMode.PercentOutput, speed);
     }
 
     //Set arm angle in degrees.
