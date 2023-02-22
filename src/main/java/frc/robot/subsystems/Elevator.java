@@ -10,6 +10,7 @@ import com.ctre.phoenix.motorcontrol.can.TalonFX;
 
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.lib.math.Conversions;
 import frc.robot.Constants.RobotConstants;
 
 public class Elevator extends SubsystemBase {
@@ -20,7 +21,7 @@ public class Elevator extends SubsystemBase {
   private DigitalInput topLimitSwitch;
   private DigitalInput bottomLimitSwitch;
   
-  public Elevator() {
+  public Elevator(double initialPosition) {
     elevatorMotor = new TalonFX(RobotConstants.ElevatorConstants.elevatorMotorID);
     elevatorMotor.configFactoryDefault();
     elevatorMotor.setNeutralMode(com.ctre.phoenix.motorcontrol.NeutralMode.Brake);
@@ -40,6 +41,14 @@ public class Elevator extends SubsystemBase {
 
     topLimitSwitch = new DigitalInput(RobotConstants.ElevatorConstants.elevatorTopLimitSwitchID);
     bottomLimitSwitch = new DigitalInput(RobotConstants.ElevatorConstants.elevatorBottomLimitSwitchID);
+
+    calibrateElevator(initialPosition);
+  }
+
+  public void calibrateElevator(double currentHeight)
+  {
+    double encoderPosition = currentHeight / RobotConstants.ElevatorConstants.elevatorTravelPerRev * 2048.0;
+    elevatorMotor.setSelectedSensorPosition(encoderPosition);
   }
 
   public void setElevatorSpeed(double speed){

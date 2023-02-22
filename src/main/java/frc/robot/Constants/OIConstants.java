@@ -44,4 +44,5 @@ public class OIConstants {
     public static final XboxController controller = new XboxController(2);
 
     public static final Supplier<Double> armSpeed = () ->controller.getRawAxis(XboxController.Axis.kLeftY.value);
+    public static final Supplier<Double> elevatorSpeed = () -> controller.getRawAxis(XboxController.Axis.kRightY.value);
 }

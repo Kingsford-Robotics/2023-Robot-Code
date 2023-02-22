@@ -20,17 +20,21 @@ public class ArmElevator extends SubsystemBase {
   private GenericEntry armCANCoderAngle;
   private GenericEntry armXY;
   private GenericEntry elevatorHeight;
+  private GenericEntry bottomLimitSwitch;
+  private GenericEntry topLimitSwitch;
 
 
   public ArmElevator() {
     arm = new Arm();
-    elevator = new Elevator();
+    elevator = new Elevator(0.0);   //TODO: Set initial position
     ArmElevatorTab = Shuffleboard.getTab("Arm_Elevator");
 
     armEncoderAngle = ArmElevatorTab.add("Arm Encoder Angle", 0).getEntry();
     armCANCoderAngle = ArmElevatorTab.add("Arm CANCoder Angle", 0).getEntry();
     armXY = ArmElevatorTab.add("Arm XY", "").getEntry();
     elevatorHeight = ArmElevatorTab.add("Elevator Height", 0).getEntry();
+    bottomLimitSwitch = ArmElevatorTab.add("Bottom Limit Switch", false).getEntry();
+    topLimitSwitch = ArmElevatorTab.add("Top Limit Switch", false).getEntry();
   }
 
   public void setArmAngle(double angle) {
@@ -142,5 +146,7 @@ public class ArmElevator extends SubsystemBase {
     armCANCoderAngle.setDouble(arm.getCanCoder().getDegrees());
     elevatorHeight.setDouble(elevator.getElevatorPosition());
     armXY.setString(String.valueOf(arm.getArmXY(elevator.getElevatorPosition())[0]) + ", " + String.valueOf(arm.getArmXY(elevator.getElevatorPosition())[1]));
+    bottomLimitSwitch.setBoolean(elevator.getBottomLimitSwitch());
+    topLimitSwitch.setBoolean(elevator.getTopLimitSwitch());
   }
 }
