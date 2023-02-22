@@ -25,7 +25,7 @@ public class Elevator extends SubsystemBase {
     elevatorMotor = new TalonFX(RobotConstants.ElevatorConstants.elevatorMotorID);
     elevatorMotor.configFactoryDefault();
     elevatorMotor.setNeutralMode(com.ctre.phoenix.motorcontrol.NeutralMode.Brake);
-
+    elevatorMotor.setInverted(true);
     //Set motor PID constants
     elevatorMotor.config_kP(0, RobotConstants.ElevatorConstants.elevatorKp);
     elevatorMotor.config_kI(0, RobotConstants.ElevatorConstants.elevatorKi);
@@ -47,7 +47,7 @@ public class Elevator extends SubsystemBase {
 
   public void calibrateElevator(double currentHeight)
   {
-    double encoderPosition = currentHeight / RobotConstants.ElevatorConstants.elevatorTravelPerRev * 2048.0;
+    double encoderPosition = currentHeight * RobotConstants.ElevatorConstants.elevatorTravelEncoderTick;
     elevatorMotor.setSelectedSensorPosition(encoderPosition);
   }
 
@@ -57,7 +57,7 @@ public class Elevator extends SubsystemBase {
 
   //Set elevator height in meters from lowest position.
   public void setElevatorHeight(double height){
-    double encoderPosition = height / RobotConstants.ElevatorConstants.elevatorTravelPerRev * 2048.0;
+    double encoderPosition = height * RobotConstants.ElevatorConstants.elevatorTravelEncoderTick;
     elevatorMotor.set(ControlMode.MotionMagic, encoderPosition, DemandType.ArbitraryFeedForward, RobotConstants.ElevatorConstants.elevatorGravityComp);
   }
 
@@ -71,7 +71,12 @@ public class Elevator extends SubsystemBase {
 
   //Returns elevator position in meters from lowest position.
   public double getElevatorPosition(){
-    return elevatorMotor.getSelectedSensorPosition() / 2048.0 * RobotConstants.ElevatorConstants.elevatorTravelPerRev;
+    return elevatorMotor.getSelectedSensorPosition() * RobotConstants.ElevatorConstants.elevatorTravelEncoderTick;
+  }
+
+  public double getElevatorEncoder()
+  {
+    return elevatorMotor.getSelectedSensorPosition();
   }
 
   @Override

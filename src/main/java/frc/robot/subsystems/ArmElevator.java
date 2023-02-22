@@ -22,6 +22,7 @@ public class ArmElevator extends SubsystemBase {
   private GenericEntry elevatorHeight;
   private GenericEntry bottomLimitSwitch;
   private GenericEntry topLimitSwitch;
+  private GenericEntry elevatorEncoder;
 
 
   public ArmElevator() {
@@ -35,6 +36,7 @@ public class ArmElevator extends SubsystemBase {
     elevatorHeight = ArmElevatorTab.add("Elevator Height", 0).getEntry();
     bottomLimitSwitch = ArmElevatorTab.add("Bottom Limit Switch", false).getEntry();
     topLimitSwitch = ArmElevatorTab.add("Top Limit Switch", false).getEntry();
+    elevatorEncoder = ArmElevatorTab.add("Elevator Encoder", 0.0).getEntry();
   }
 
   public void setArmAngle(double angle) {
@@ -51,7 +53,7 @@ public class ArmElevator extends SubsystemBase {
 
   public void setElevatorPercent(double percent)
   {
-    if (percent < 0 && (elevator.getBottomLimitSwitch() || elevator.getElevatorPosition() <= RobotConstants.ElevatorConstants.elevatorMinHeight))
+    /*if (percent < 0 && (elevator.getBottomLimitSwitch() || elevator.getElevatorPosition() <= RobotConstants.ElevatorConstants.elevatorMinHeight))
     {
       percent = 0;
     }
@@ -74,7 +76,7 @@ public class ArmElevator extends SubsystemBase {
     else if (isCollision(elevator.getElevatorPosition(), arm.getAngle().getDegrees() - 3, arm.isExtended()))
     {
       percent = 0;
-    }
+    }*/
 
     elevator.setElevatorSpeed(percent);
   }
@@ -148,5 +150,6 @@ public class ArmElevator extends SubsystemBase {
     armXY.setString(String.valueOf(arm.getArmXY(elevator.getElevatorPosition())[0]) + ", " + String.valueOf(arm.getArmXY(elevator.getElevatorPosition())[1]));
     bottomLimitSwitch.setBoolean(elevator.getBottomLimitSwitch());
     topLimitSwitch.setBoolean(elevator.getTopLimitSwitch());
+    elevatorEncoder.setDouble(elevator.getElevatorEncoder());
   }
 }

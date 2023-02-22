@@ -28,7 +28,7 @@ public class TeleopArmElevator extends CommandBase {
   public void execute() {
     //Set arm and elevator speed to joystick values from OIConstants suppliers
     armElevator.setArmPercent(OIConstants.armSpeed.get());
-    armElevator.setElevatorPercent(OIConstants.elevatorSpeed.get());
+    armElevator.setElevatorPercent(-OIConstants.elevatorSpeed.get());
   }
 
   // Called once the command ends or is interrupted.
