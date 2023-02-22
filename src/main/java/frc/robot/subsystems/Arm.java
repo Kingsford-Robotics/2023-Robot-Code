@@ -6,6 +6,7 @@ package frc.robot.subsystems;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.lib.math.Conversions;
+import frc.robot.Robot;
 import frc.robot.Constants.RobotConstants;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
@@ -36,7 +37,7 @@ public class Arm extends SubsystemBase {
         /*Arm Motor Setup*/
         armMotor = new TalonFX(RobotConstants.ArmConstants.armMotorID);
         armMotor.configFactoryDefault();
-        armMotor.setInverted(false);
+        armMotor.setInverted(true);
 
         armMotor.setNeutralMode(com.ctre.phoenix.motorcontrol.NeutralMode.Brake);
         
@@ -146,8 +147,19 @@ public class Arm extends SubsystemBase {
     }
 
     public void resetToAbsolute(){
-        double absolutePosition = Conversions.degreesToFalcon(getCanCoder().getDegrees() - RobotConstants.ArmConstants.armEncoderOffset, RobotConstants.ArmConstants.armGearRatio);
-        armMotor.setSelectedSensorPosition(absolutePosition);
+        double angle;
+        if(getCanCoder().getDegrees() - RobotConstants.ArmConstants.armEncoderOffset <= -180)
+        {
+            angle = 360 + getCanCoder().getDegrees() - RobotConstants.ArmConstants.armEncoderOffset;
+        }
+
+        else
+        {
+            angle = getCanCoder().getDegrees() - RobotConstants.ArmConstants.armEncoderOffset;
+        }
+
+        double encoderTicks = Conversions.degreesToFalcon(angle, RobotConstants.ArmConstants.armGearRatio);
+        armMotor.setSelectedSensorPosition((int)encoderTicks);
     }
 
     public Rotation2d getCanCoder(){

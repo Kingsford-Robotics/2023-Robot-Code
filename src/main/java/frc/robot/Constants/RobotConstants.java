@@ -33,7 +33,7 @@ public final class RobotConstants {
 
         /*Arm Encoder Values*/
         public static final int armEncoderID = 30;
-        public static final double armEncoderOffset = 353.0;  //TODO: Set to cancoder angle in degrees at horizontal.
+        public static final double armEncoderOffset = 350.0;  //TODO: Set to cancoder angle in degrees at horizontal.
 
         /*Arm Motion Magic Constants*/
         private static final double armMaxSpeed = 6380.0 * (2480.0 / 600.0); //Max speed in sensor units per 100ms
@@ -61,7 +61,7 @@ public final class RobotConstants {
         public static final double armKF = 1.0 * 1023.0 / armMaxSpeed;    //TODO: Find actual speed at lower output percent for free motor.
 
         /*Arm Gear Ratio*/
-        public static final double armGearRatio = 90.0 * (78.0 / 22.0); //TODO: Check angle to make sure 90 degrees is correct.
+        public static final double armGearRatio = 90.0 * (90 / 22.0); //TODO: Check angle to make sure 90 degrees is correct.
 
         /*Arm Limits*/
         //Horizontal is 0, up is negative.
