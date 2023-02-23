@@ -4,10 +4,8 @@
 
 package frc.robot.subsystems;
 
-import edu.wpi.first.wpilibj2.command.PrintCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.lib.math.Conversions;
-import frc.robot.Robot;
 import frc.robot.Constants.RobotConstants;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
@@ -121,13 +119,30 @@ public class Arm extends SubsystemBase {
     }
 
     public void setArmSpeedPercent(double speed){
+        //Stop motor if beyond limit and moving into the restricted area.
+        if(armMotor.getSelectedSensorPosition() >= RobotConstants.ArmConstants.armMaxAngle && speed > 0){
+            speed = 0;
+        }
+
+        else if(armMotor.getSelectedSensorPosition() <= RobotConstants.ArmConstants.armMinAngle && speed < 0){
+            speed = 0;
+        }
+
         armMotor.set(ControlMode.PercentOutput, speed);
     }
 
     //Set arm angle in degrees.
     public void setArmAngle(double angle){
+        //Check if angle is within range.
+        if(angle > RobotConstants.ArmConstants.armMaxAngle){
+            angle = RobotConstants.ArmConstants.armMaxAngle;
+        }
+
+        else if(angle < RobotConstants.ArmConstants.armMinAngle){
+            angle = RobotConstants.ArmConstants.armMinAngle;
+        }
+
         double position = Conversions.degreesToFalcon(angle, RobotConstants.ArmConstants.armGearRatio);
-        System.out.println("Current Angle: " + armMotor.getSelectedSensorPosition() + "\nSet arm to angle: " + position);
         armMotor.set(ControlMode.MotionMagic, position);
     }
 

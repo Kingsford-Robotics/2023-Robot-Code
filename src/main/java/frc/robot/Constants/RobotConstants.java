@@ -11,18 +11,6 @@ public final class RobotConstants {
     /*Sensors*/
     public static final int pigeonID = 1;
 
-/*
-    public static final class HeightZones
-    {
-        public static final double outside = Units.inchesToMeters(2.0);
-        public static final double midBot = Units.inchesToMeters(12.0);
-        public static final double turntable = Units.inchesToMeters(9.0);
-
-        public static final double turntableEndX = Units.inchesToMeters(-6.0);
-        public static final double midBotEndX = Units.inchesToMeters(11.0);
-    }
-    */
-
     public static final class ArmConstants {
         public static final int armMotorID = 12;
         
@@ -113,11 +101,13 @@ public final class RobotConstants {
         //Total travel / number revolutions. 
         public static final double elevatorTravelEncoderTick = Units.inchesToMeters(16.5 / (288761.0 - 13301.0));
         public static final double elevatorMaxTravel = Units.inchesToMeters(16.5);
-        public static final double elevatorPivotStartHeight = Units.inchesToMeters(52.5);
+        public static final double elevatorPivotStartHeight = Units.inchesToMeters(41.5);
     }
 
     public final class Intake{
         public static final int intakeMotorID = 0;
+        public static final int intakeSolenoidFWD = 5;
+        public static final int intakeSolenoidREV = 6;
     }
 
     public final class Turntable{
