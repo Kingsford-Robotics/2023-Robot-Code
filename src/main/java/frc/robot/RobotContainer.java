@@ -19,7 +19,6 @@ import edu.wpi.first.wpilibj2.command.PrintCommand;
 import frc.robot.Constants.OIConstants;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.ArmElevator;
-import frc.robot.commands.TeleopArmElevator;
 import frc.robot.commands.TeleopSwerve;
 import frc.robot.subsystems.DashboardDisplay;
 import frc.robot.subsystems.Swerve;
@@ -76,8 +75,6 @@ public class RobotContainer {
         // Configure the button bindings
         configureButtonBindings();
         configureAutoCommands();
-
-        m_ArmElevator.setDefaultCommand(new TeleopArmElevator(m_ArmElevator));
     }
 
     /**

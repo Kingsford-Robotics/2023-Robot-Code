@@ -18,22 +18,36 @@ public class ArmElevator extends SubsystemBase {
   //Shuffleboard Data
   private ShuffleboardTab ArmElevatorTab;
 
+  //Arm Data
   private GenericEntry armEncoderAngle;
+  private GenericEntry armCancoderAngle;
+  private GenericEntry isExtended;
+  private GenericEntry isOpen;
+
+  //Elevator Data
+  private GenericEntry elevatorHeight;
   private GenericEntry bottomLimitSwitch;
   private GenericEntry topLimitSwitch;
 
-  private GenericEntry elevatorHeight;
 
   public ArmElevator() {
+    /*Initialize Subsystems*/
     arm = new Arm();
-    elevator = new Elevator(RobotConstants.ElevatorConstants.elevatorPivotStartHeight);   //TODO: Set initial position
+    elevator = new Elevator(RobotConstants.ElevatorConstants.elevatorPivotStartHeight);
 
-    ArmElevatorTab = Shuffleboard.getTab("Arm_Elevator");
-    //Setup Shuffleboard
+    /*Setup Shuffleboard*/
+    ArmElevatorTab = Shuffleboard.getTab("Arm and Elevator");
+    
+    //Arm Data
     armEncoderAngle = ArmElevatorTab.add("Arm Encoder Angle", 0).getEntry();
+    armCancoderAngle = ArmElevatorTab.add("Arm CANCoder Angle", 0).getEntry();
+    isExtended = ArmElevatorTab.add("Arm Extended", false).getEntry();
+    isOpen = ArmElevatorTab.add("Arm Open", true).getEntry();
+
+    //Elevator Data
+    elevatorHeight = ArmElevatorTab.add("Elevator Height", 0).getEntry();
     bottomLimitSwitch = ArmElevatorTab.add("Bottom Limit Switch", false).getEntry();
     topLimitSwitch = ArmElevatorTab.add("Top Limit Switch", false).getEntry();
-    elevatorHeight = ArmElevatorTab.add("Elevator Height", 0).getEntry();
   }
 
   public void setArmAngle(double angle) {
@@ -84,10 +98,18 @@ public class ArmElevator extends SubsystemBase {
 
   @Override
   public void periodic() {
-    //Setup Shuffleboard
+    
+    /*Output Shuffleboard Data*/
+
+    //Arm Data
     armEncoderAngle.setDouble(arm.getAngle().getDegrees());
+    armCancoderAngle.setDouble(arm.getAngle().getDegrees());
+    isExtended.setBoolean(arm.isExtended());
+    isOpen.setBoolean(arm.isOpen());
+    
+    //Elevator Data
+    elevatorHeight.setDouble(elevator.getElevatorPosition());
     bottomLimitSwitch.setBoolean(elevator.getBottomLimitSwitch());
     topLimitSwitch.setBoolean(elevator.getTopLimitSwitch());
-    elevatorHeight.setDouble(elevator.getElevatorPosition());
   }
 }
