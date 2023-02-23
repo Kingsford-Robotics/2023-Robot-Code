@@ -28,14 +28,14 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 public class Swerve extends SubsystemBase {
     public SwerveDrivePoseEstimator swerveOdometry;
     public SwerveModule[] mSwerveMods;
-    //public PigeonIMU gyro;
+    public PigeonIMU gyro;
 
     private Translation2d centerOfRotation = new Translation2d(0, 0);
 
     public Swerve() {
-        //gyro = new PigeonIMU(RobotConstants.pigeonID);
-        //gyro.configFactoryDefault();
-        //zeroGyro();
+        gyro = new PigeonIMU(RobotConstants.pigeonID);
+        gyro.configFactoryDefault();
+        zeroGyro();
 
         mSwerveMods = new SwerveModule[] {
             new SwerveModule(0, DrivetrainConstants.Mod0.constants),
@@ -117,12 +117,11 @@ public class Swerve extends SubsystemBase {
     }
 
     public void zeroGyro(){
-        //gyro.setYaw(0);
+        gyro.setYaw(0);
     }
 
     public Rotation2d getYaw() {
-       //return (DrivetrainConstants.invertGyro) ? Rotation2d.fromDegrees(360 - gyro.getYaw()) : Rotation2d.fromDegrees(gyro.getYaw());
-       return new Rotation2d();
+       return (DrivetrainConstants.invertGyro) ? Rotation2d.fromDegrees(360 - gyro.getYaw()) : Rotation2d.fromDegrees(gyro.getYaw());
     }
 
     public void resetModulesToAbsolute(){
