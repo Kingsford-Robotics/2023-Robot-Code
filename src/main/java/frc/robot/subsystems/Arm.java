@@ -9,6 +9,7 @@ import frc.lib.math.Conversions;
 import frc.robot.Constants.RobotConstants;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.ctre.phoenix.motorcontrol.DemandType;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
 import com.ctre.phoenix.sensors.AbsoluteSensorRange;
 import com.ctre.phoenix.sensors.CANCoder;
@@ -143,7 +144,7 @@ public class Arm extends SubsystemBase {
         }
 
         double position = Conversions.degreesToFalcon(angle, RobotConstants.ArmConstants.armGearRatio);
-        armMotor.set(ControlMode.MotionMagic, position);
+        armMotor.set(ControlMode.MotionMagic, position, DemandType.ArbitraryFeedForward, Math.cos(getAngle().getRadians()) * RobotConstants.ArmConstants.armMaxGravityComp);
     }
 
     public void resetToAbsolute(){
