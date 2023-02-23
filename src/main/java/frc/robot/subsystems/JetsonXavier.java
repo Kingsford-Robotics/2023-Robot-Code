@@ -68,7 +68,6 @@ public class JetsonXavier extends SubsystemBase {
     turnOffJetson = visionTable.getBooleanTopic("turnOffJetson").publish(PubSubOption.keepDuplicates(true));
   }
 
-  //TODO: AI Generated. Check logic.
   public void updateTargets()
   {
     targets.clear();
@@ -77,12 +76,15 @@ public class JetsonXavier extends SubsystemBase {
     boolean[] targetType = targetTypeSubscriber.get();
     double[] confidence = confidenceSubscriber.get();
 
-    for(int i = 0; i < positions.length; i++)
+    for(int i = 0; i < targetType.length; i++)
     {
       targetInfo target = new targetInfo();
-      target.position = new double[2];
-      target.position[0] = positions[i];
-      target.position[1] = positions[i+1];
+
+      target.position = new double[3];
+      target.position[0] = positions[i * 3 + 0];
+      target.position[1] = positions[i * 3 + 1];
+      target.position[2] = positions[i * 3 + 2];
+
       target.trackingStatus = trackingStatus[i];
       target.type = targetType[i] ? JetsonXavier.targetType.CONE : JetsonXavier.targetType.CUBE;
       target.confidence = confidence[i];
@@ -90,8 +92,26 @@ public class JetsonXavier extends SubsystemBase {
     }
   }
 
+  public ArrayList<targetInfo> getTargets()
+  {
+    return targets;
+  }
+
+  public double[] getRobotPose()
+  {
+    return robotPose;
+  }
+
+  public boolean getIsTracking()
+  {
+    return isTracking;
+  }
+  
   @Override
   public void periodic() {
-
+    // This method will be called once per scheduler run
+    updateTargets();
+    robotPose = robotPoseSubscriber.get();
+    isTracking = isTrackingSubscriber.get();
   }
 }
