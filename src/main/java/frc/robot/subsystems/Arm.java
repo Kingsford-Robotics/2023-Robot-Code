@@ -4,13 +4,13 @@
 
 package frc.robot.subsystems;
 
+import edu.wpi.first.wpilibj2.command.PrintCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.lib.math.Conversions;
 import frc.robot.Robot;
 import frc.robot.Constants.RobotConstants;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
-import com.ctre.phoenix.motorcontrol.DemandType;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
 import com.ctre.phoenix.sensors.AbsoluteSensorRange;
 import com.ctre.phoenix.sensors.CANCoder;
@@ -83,7 +83,7 @@ public class Arm extends SubsystemBase {
         armExtension.set(kReverse); //Arm retracted
         armGrab.set(kForward);      //Claw open
 
-        Timer.delay(1.0);   //Check to see if this is needed. May be good from delay when initializing Swerve subsystem.
+        Timer.delay(0.5);   //Check to see if this is needed. May be good from delay when initializing Swerve subsystem.
         //Reset encoder to absolute position
         resetToAbsolute();
     }
@@ -121,29 +121,14 @@ public class Arm extends SubsystemBase {
     }
 
     public void setArmSpeedPercent(double speed){
-        /*if(getAngle().getDegrees() > RobotConstants.ArmConstants.armMaxAngle && speed > 0)
-        {
-         armMotor.set(ControlMode.PercentOutput, 0);
-        }
-
-        else if(getAngle().getDegrees() < RobotConstants.ArmConstants.armMinAngle && speed < 0){
-            armMotor.set(ControlMode.PercentOutput, 0);
-           }
-        else
-        {
-        armMotor.set(ControlMode.PercentOutput, speed);
-        }*/
         armMotor.set(ControlMode.PercentOutput, speed);
     }
 
     //Set arm angle in degrees.
     public void setArmAngle(double angle){
-        //Check if angle is in range.
-        if(angle > RobotConstants.ArmConstants.armMaxAngle || angle < RobotConstants.ArmConstants.armMinAngle){
-            return;
-        }
         double position = Conversions.degreesToFalcon(angle, RobotConstants.ArmConstants.armGearRatio);
-        armMotor.set(ControlMode.MotionMagic, position, DemandType.ArbitraryFeedForward, RobotConstants.ArmConstants.armMaxGravityComp * Math.cos(getAngle().getRadians()));
+        System.out.println("Current Angle: " + armMotor.getSelectedSensorPosition() + "\nSet arm to angle: " + position);
+        armMotor.set(ControlMode.MotionMagic, position);
     }
 
     public void resetToAbsolute(){
@@ -172,24 +157,5 @@ public class Arm extends SubsystemBase {
 
     public double getRPM(){
         return Conversions.falconToRPM(armMotor.getSelectedSensorVelocity(), RobotConstants.ArmConstants.armGearRatio);
-    }
-
-    public double[] getArmXY(double elevatorHeight, double armAngle, boolean isExtended)
-    {
-        double[] armXY = new double[2];
-        double armAngleRadians = Rotation2d.fromDegrees(armAngle).getRadians();
-        armXY[0] = isExtended? RobotConstants.ArmConstants.armExtendedLength * Math.cos(armAngleRadians): RobotConstants.ArmConstants.armRetractedLength * Math.cos(armAngleRadians);
-        armXY[1] = isExtended? elevatorHeight - RobotConstants.ArmConstants.armExtendedLength * Math.sin(armAngleRadians): RobotConstants.ArmConstants.armRetractedLength * Math.sin(armAngleRadians);
-        return armXY;
-    }
-    //Gets the X and Y position of the arm in meters relative to the ground and the elevator. (0,0) is the ground directly under the elevator.
-    public double[] getArmXY(double elevatorHeight, boolean isExtended)
-    {
-        return getArmXY(elevatorHeight, getAngle().getDegrees(), isExtended);
-    }
-
-    public double[] getArmXY(double elevatorHeight)
-    {
-        return getArmXY(elevatorHeight, getAngle().getDegrees(), isExtended());
     }
 }

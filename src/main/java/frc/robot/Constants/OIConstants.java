@@ -45,4 +45,10 @@ public class OIConstants {
 
     public static final Supplier<Double> armSpeed = () ->controller.getRawAxis(XboxController.Axis.kLeftY.value);
     public static final Supplier<Double> elevatorSpeed = () -> controller.getRawAxis(XboxController.Axis.kRightY.value);
+
+    //Create controller button to set arm angle to 0 when pressed
+    public static final JoystickButton armAngle0 = new JoystickButton(controller, XboxController.Button.kA.value);
+
+    //Create controller button to set elevator height to 15 when pressed
+    public static final JoystickButton elevatorHeight15 = new JoystickButton(controller, XboxController.Button.kB.value);
 }

@@ -9,6 +9,7 @@ import com.ctre.phoenix.motorcontrol.DemandType;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
 
 import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj2.command.PrintCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.RobotConstants;
 
@@ -51,13 +52,24 @@ public class Elevator extends SubsystemBase {
   }
 
   public void setElevatorSpeed(double speed){
+    //Set speed to 0 if touching limit switch and moving towards it.
+    if(getTopLimitSwitch() && speed > 0)
+    {
+      speed = 0;
+    }
+    else if(getBottomLimitSwitch() && speed < 0)
+    {
+      speed = 0;
+    }
+
     elevatorMotor.set(ControlMode.PercentOutput, speed);
   }
 
-  //Set elevator height in meters from relative to lowest position.
+  //Set elevator height in meters relative to lowest position.
   public void setElevatorHeight(double height){
-    double encoderPosition = height * RobotConstants.ElevatorConstants.elevatorTravelEncoderTick;
-    elevatorMotor.set(ControlMode.MotionMagic, encoderPosition, DemandType.ArbitraryFeedForward, RobotConstants.ElevatorConstants.elevatorGravityComp);
+    double encoderPosition = height / RobotConstants.ElevatorConstants.elevatorTravelEncoderTick;
+    System.out.println("Set elevator to height:" + encoderPosition);
+    elevatorMotor.set(ControlMode.MotionMagic, encoderPosition);
   }
 
   public boolean getTopLimitSwitch(){
@@ -68,9 +80,9 @@ public class Elevator extends SubsystemBase {
     return bottomLimitSwitch.get();
   }
 
-  //Returns pivot point height relative to the ground.
+  //Returns elevator height in meters relative to lowest position.
   public double getElevatorPosition(){
-    return elevatorMotor.getSelectedSensorPosition() * RobotConstants.ElevatorConstants.elevatorTravelEncoderTick + RobotConstants.ElevatorConstants.elevatorPivotStartHeight;
+    return elevatorMotor.getSelectedSensorPosition() * RobotConstants.ElevatorConstants.elevatorTravelEncoderTick;
   } 
 
   public double getElevatorEncoder()

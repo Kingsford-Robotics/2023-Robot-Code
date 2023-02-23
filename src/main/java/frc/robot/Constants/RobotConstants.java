@@ -11,7 +11,7 @@ public final class RobotConstants {
     /*Sensors*/
     public static final int pigeonID = 1;
 
-
+/*
     public static final class HeightZones
     {
         public static final double outside = Units.inchesToMeters(2.0);
@@ -21,6 +21,8 @@ public final class RobotConstants {
         public static final double turntableEndX = Units.inchesToMeters(-6.0);
         public static final double midBotEndX = Units.inchesToMeters(11.0);
     }
+    */
+
     public static final class ArmConstants {
         public static final int armMotorID = 12;
         
@@ -33,7 +35,7 @@ public final class RobotConstants {
 
         /*Arm Encoder Values*/
         public static final int armEncoderID = 30;
-        public static final double armEncoderOffset = 350.0;  //TODO: Set to cancoder angle in degrees at horizontal.
+        public static final double armEncoderOffset = 350.0;
 
         /*Arm Motion Magic Constants*/
         private static final double armMaxSpeed = 6380.0 * (2480.0 / 600.0); //Max speed in sensor units per 100ms
@@ -46,9 +48,9 @@ public final class RobotConstants {
 
         public static final int armSCurveStrength = 3;
 
+        //TODO: Set to minimum value that allows arm to move at horizontal.
         /*Arm Gravity Compensation*/
-        //TODO: Set to minimum percent output needed to hold arm up at horizontal.
-        public static final double armMaxGravityComp = 0.15;    //Percent output
+        public static final double armMaxGravityComp = 0.05;    //Percent output
 
         /*Arm PID Constants*/
         //TODO: Tune PID values using Phoenix tuner.
@@ -61,7 +63,7 @@ public final class RobotConstants {
         public static final double armKF = 1.0 * 1023.0 / armMaxSpeed;    //TODO: Find actual speed at lower output percent for free motor.
 
         /*Arm Gear Ratio*/
-        public static final double armGearRatio = 90.0 * (90 / 22.0); //TODO: Check angle to make sure 90 degrees is correct.
+        public static final double armGearRatio = 90.0 * (72 / 22.0); //TODO: Check angle to make sure 90 degrees is correct.
 
         /*Arm Limits*/
         //Horizontal is 0, up is negative.
@@ -82,7 +84,7 @@ public final class RobotConstants {
 
         //Elevator Motion Magic Constants
         private static final double elevatorMaxSpeed = 6380.0 * (2480.0 / 600.0); //Max speed in sensor units per 100ms
-        private static final double elevatorPercentSpeed = 0.4; //Percent of max speed to cruise at.
+        private static final double elevatorPercentSpeed = 0.5; //Percent of max speed to cruise at.
 
         public static final double elevatorCruiseVelocity = elevatorMaxSpeed * elevatorPercentSpeed; //Cruise velocity in sensor units per 100ms 
     
@@ -109,7 +111,7 @@ public final class RobotConstants {
         public static final double elevatorGearRatio = 9.0 * 72.0 /22.0; //Motor revolutions to output shaft revolutions.
 
         //Total travel / number revolutions. 
-        public static final double elevatorTravelEncoderTick = Units.inchesToMeters(16.5 / (288761.0-13301.0));
+        public static final double elevatorTravelEncoderTick = Units.inchesToMeters(16.5 / (288761.0 - 13301.0));
         public static final double elevatorMaxTravel = Units.inchesToMeters(16.5);
         public static final double elevatorPivotStartHeight = Units.inchesToMeters(52.5);
     }

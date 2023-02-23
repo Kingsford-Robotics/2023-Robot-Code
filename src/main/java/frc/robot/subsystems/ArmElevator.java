@@ -4,7 +4,6 @@
 
 package frc.robot.subsystems;
 
-import edu.wpi.first.math.util.Units;
 import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
@@ -16,28 +15,25 @@ public class ArmElevator extends SubsystemBase {
   private Arm arm;
   private Elevator elevator;
 
+  //Shuffleboard Data
   private ShuffleboardTab ArmElevatorTab;
+
   private GenericEntry armEncoderAngle;
-  private GenericEntry armCANCoderAngle;
-  private GenericEntry armXY;
-  private GenericEntry elevatorHeight;
   private GenericEntry bottomLimitSwitch;
   private GenericEntry topLimitSwitch;
-  private GenericEntry elevatorEncoder;
 
+  private GenericEntry elevatorHeight;
 
   public ArmElevator() {
     arm = new Arm();
     elevator = new Elevator(RobotConstants.ElevatorConstants.elevatorPivotStartHeight);   //TODO: Set initial position
-    ArmElevatorTab = Shuffleboard.getTab("Arm_Elevator");
 
+    ArmElevatorTab = Shuffleboard.getTab("Arm_Elevator");
+    //Setup Shuffleboard
     armEncoderAngle = ArmElevatorTab.add("Arm Encoder Angle", 0).getEntry();
-    armCANCoderAngle = ArmElevatorTab.add("Arm CANCoder Angle", 0).getEntry();
-    armXY = ArmElevatorTab.add("Arm XY", "").getEntry();
-    elevatorHeight = ArmElevatorTab.add("Elevator Height", 0).getEntry();
     bottomLimitSwitch = ArmElevatorTab.add("Bottom Limit Switch", false).getEntry();
     topLimitSwitch = ArmElevatorTab.add("Top Limit Switch", false).getEntry();
-    elevatorEncoder = ArmElevatorTab.add("Elevator Encoder", 0.0).getEntry();
+    elevatorHeight = ArmElevatorTab.add("Elevator Height", 0).getEntry();
   }
 
   public void setArmAngle(double angle) {
@@ -54,31 +50,6 @@ public class ArmElevator extends SubsystemBase {
 
   public void setElevatorPercent(double percent)
   {
-    if (percent < 0 && (elevator.getBottomLimitSwitch() || elevator.getElevatorPosition() <= RobotConstants.ElevatorConstants.elevatorPivotStartHeight))
-    {
-      percent = 0;
-    }
-
-    else if (percent > 0 && (elevator.getTopLimitSwitch() || elevator.getElevatorPosition() >= RobotConstants.ElevatorConstants.elevatorPivotStartHeight + RobotConstants.ElevatorConstants.elevatorMaxTravel))
-    {
-      percent = 0;
-    }
-
-    if (isCollision(elevator.getElevatorPosition(), arm.getAngle().getDegrees(), arm.isExtended()))
-    {
-      percent = 0;
-    }
-
-    else if (isCollision(elevator.getElevatorPosition(), arm.getAngle().getDegrees() + 3, arm.isExtended()))
-    {
-      percent = 0;
-    }
-
-    else if (isCollision(elevator.getElevatorPosition(), arm.getAngle().getDegrees() - 3, arm.isExtended()))
-    {
-      percent = 0;
-    }
-
     elevator.setElevatorSpeed(percent);
   }
 
@@ -94,10 +65,7 @@ public class ArmElevator extends SubsystemBase {
   }
 
   public void extendArm() {
-    if(!isCollision(elevator.getElevatorPosition(), arm.getAngle().getDegrees(), true))
-    {
-      arm.extend();
-    }
+    arm.extend();
   }
 
   public void retractArm() {
@@ -114,43 +82,12 @@ public class ArmElevator extends SubsystemBase {
     arm.open();
   }
 
-  private double getArmMinY(double armX)
-  {
-    if (armX < RobotConstants.HeightZones.turntableEndX)
-    {
-      return RobotConstants.HeightZones.turntable;
-    }
-    else if (armX < RobotConstants.HeightZones.midBotEndX)
-    {
-      return RobotConstants.HeightZones.midBot;
-    }
-    else
-    {
-      return RobotConstants.HeightZones.outside;
-    }
-  }
-
-  private boolean isCollision(double elevatorHeight, double armAngle, boolean isExtended)
-  {
-    double armX = arm.getArmXY(elevator.getElevatorPosition(), armAngle, isExtended)[0];
-    double armY = arm.getArmXY(elevator.getElevatorPosition(), armAngle, isExtended)[1];
-    double minY = getArmMinY(armX);
-
-    if (armY < minY)
-    {
-      return true;
-    }
-    return false;
-  }
-
   @Override
   public void periodic() {
+    //Setup Shuffleboard
     armEncoderAngle.setDouble(arm.getAngle().getDegrees());
-    armCANCoderAngle.setDouble(arm.getCanCoder().getDegrees());
-    elevatorHeight.setDouble(Units.metersToInches(elevator.getElevatorPosition()));
-    armXY.setString(String.valueOf(Units.metersToInches(arm.getArmXY(elevator.getElevatorPosition())[0])) + ", " + String.valueOf(Units.metersToInches(arm.getArmXY(elevator.getElevatorPosition())[1])));
     bottomLimitSwitch.setBoolean(elevator.getBottomLimitSwitch());
     topLimitSwitch.setBoolean(elevator.getTopLimitSwitch());
-    elevatorEncoder.setDouble(elevator.getElevatorEncoder());
+    elevatorHeight.setDouble(elevator.getElevatorPosition());
   }
 }

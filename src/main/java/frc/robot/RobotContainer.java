@@ -77,11 +77,7 @@ public class RobotContainer {
         configureButtonBindings();
         configureAutoCommands();
 
-        m_ArmElevator.setDefaultCommand(
-            new TeleopArmElevator(
-                m_ArmElevator
-            )
-        );
+        m_ArmElevator.setDefaultCommand(new TeleopArmElevator(m_ArmElevator));
     }
 
     /**
@@ -95,6 +91,12 @@ public class RobotContainer {
     private void configureButtonBindings() {
         // Reset Gyro when button is pressed
         OIConstants.resetGyro.onTrue(new InstantCommand(() -> m_Swerve.zeroGyro()));
+
+        //Set arm to angle when button is pressed
+        OIConstants.armAngle0.onTrue(new InstantCommand(() -> m_ArmElevator.setArmAngle(0)));
+
+        //Set elevator height when button is pressed
+        OIConstants.elevatorHeight15.onTrue(new InstantCommand(() -> m_ArmElevator.setElevatorHeight(10)));
     }
 
     private void configureAutoCommands()
