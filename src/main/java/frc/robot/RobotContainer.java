@@ -20,6 +20,7 @@ import frc.robot.Constants.OIConstants;
 import frc.robot.subsystems.ArmElevator;
 import frc.robot.commands.TeleopSwerve;
 import frc.robot.subsystems.DashboardDisplay;
+import frc.robot.subsystems.Pneumatics;
 import frc.robot.subsystems.Swerve;
 
 /**
@@ -50,6 +51,7 @@ public class RobotContainer {
     private final Swerve m_Swerve = new Swerve();
     private final ArmElevator m_ArmElevator = new ArmElevator();
     private final DashboardDisplay m_Display = new DashboardDisplay(m_Swerve);
+    private final Pneumatics m_Pneumatics = new Pneumatics();
     
     FollowPathWithEvents autoCommand = null;
 
