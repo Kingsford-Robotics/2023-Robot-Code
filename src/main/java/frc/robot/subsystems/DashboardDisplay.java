@@ -5,6 +5,9 @@
 package frc.robot.subsystems;
 
 
+import edu.wpi.first.cameraserver.CameraServer;
+import edu.wpi.first.cscore.UsbCamera;
+import edu.wpi.first.cscore.VideoMode.PixelFormat;
 import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
@@ -12,20 +15,39 @@ import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class DashboardDisplay extends SubsystemBase {
-  /*Subsystems for Data and Commands*/
+  /*Subsystem References for Data and Commands*/
   private Swerve m_Swerve;
 
-  private ShuffleboardTab competitionTab = Shuffleboard.getTab("Competition");
-  //private ShuffleboardTab debugTab = Shuffleboard.getTab("Debug");
-  //private ShuffleboardTab testTab = Shuffleboard.getTab("Test");
+  /*Camera Streams*/
+  private UsbCamera leftCamera;
+  private UsbCamera rightCamera;
 
-  private GenericEntry gyroAngle = competitionTab.add("Gyro", 0).getEntry();
+  /*Shuffleboard Tab*/
+  private ShuffleboardTab competitionTab;
 
+  /*Shuffleboard Data*/
+
+  //Drivetrain Data
+  private GenericEntry gyroAngle;
   private Field2d field = new Field2d();
+
 
   public DashboardDisplay(Swerve m_Swerve) {
     /*Subsystem Instantiation */
     this.m_Swerve = m_Swerve;
+    competitionTab = Shuffleboard.getTab("Competition");
+
+    leftCamera = CameraServer.startAutomaticCapture(0);
+    rightCamera = CameraServer.startAutomaticCapture(1);
+
+    leftCamera.setVideoMode(PixelFormat.kMJPEG, 480, 320, 10);
+    rightCamera.setVideoMode(PixelFormat.kMJPEG, 480, 320, 10);
+
+    competitionTab.add("Left Camera", leftCamera);
+    competitionTab.add("Right Camera", rightCamera);
+
+    /*Shuffleboard Data Instantiation*/
+    gyroAngle = competitionTab.add("Gyro Angle", 0).getEntry();
     competitionTab.add(field);
   }
 
