@@ -13,11 +13,44 @@ import frc.robot.subsystems.ArmElevator;
 
 public class ArmElevatorPositions extends CommandBase {
   
-  //Create positions enum for cone and cube positions. TOP, MIDDLE, FLOOR
+  private static final double clearanceHeight = 5.0;
 
-  public enum Positions{CONE_TOP, CONE_MIDDLE, CONE_FLOOR, CUBE_TOP, CUBE_MIDDLE, CUBE_FLOOR};
+  public enum Positions{
+    CONE_TOP, 
+    CONE_MIDDLE, 
+    CONE_FLOOR, 
+    CUBE_TOP, 
+    CUBE_MIDDLE, 
+    CUBE_FLOOR, 
+    HOME, 
+    STARTING,
+    GROUND_PICKUP,
+    TURNTABLE_PICKUP,
+  };
   
   private ArmElevator m_ArmElevator;
+
+  private final SequentialCommandGroup elevatorClearance = new SequentialCommandGroup(
+    new InstantCommand(() -> m_ArmElevator.setElevatorHeight(clearanceHeight)),
+    new WaitUntilCommand(() -> m_ArmElevator.isElevatorToPosition())
+  );
+
+  private final SequentialCommandGroup waitToPosition = new SequentialCommandGroup(
+    new WaitUntilCommand(() -> m_ArmElevator.isArmToPosition()),
+    new WaitUntilCommand(() -> m_ArmElevator.isElevatorToPosition())
+  );
+
+  private final SequentialCommandGroup setArmElevatorPosition(double armAngle, double elevatorHeight)
+  {
+    return new SequentialCommandGroup(
+      new ParallelCommandGroup(
+        new InstantCommand(() -> m_ArmElevator.setArmAngle(armAngle)),
+        new InstantCommand(() -> m_ArmElevator.setElevatorHeight(elevatorHeight))
+      ),
+      waitToPosition
+    );
+  }
+  
   
   public ArmElevatorPositions(ArmElevator armElevator)
   {
@@ -30,51 +63,76 @@ public class ArmElevatorPositions extends CommandBase {
     {
       case CONE_TOP:
         return new SequentialCommandGroup(
-          new ParallelCommandGroup(
-            new InstantCommand(() -> m_ArmElevator.setElevatorHeight(3))
-          ),
+          elevatorClearance,
 
-          new WaitUntilCommand(() -> m_ArmElevator.isElevatorToPosition()),
-
-          new ParallelCommandGroup(
-            new InstantCommand(() -> m_ArmElevator.setArmAngle(0)),
-            new InstantCommand(() -> m_ArmElevator.setElevatorHeight(5))
-          ),
-
-          new WaitUntilCommand(() -> m_ArmElevator.isArmToPosition()),
-          new WaitUntilCommand(() -> m_ArmElevator.isElevatorToPosition())
+          setArmElevatorPosition(0, 0)
         );
 
       case CONE_MIDDLE:
         return new SequentialCommandGroup(
-          new InstantCommand(() -> m_ArmElevator.setArmAngle(0)),
-          new InstantCommand(() -> m_ArmElevator.setElevatorHeight(0))
+          elevatorClearance,
+
+          setArmElevatorPosition(0, 0)
         );
 
       case CONE_FLOOR:
         return new SequentialCommandGroup(
-          new InstantCommand(() -> m_ArmElevator.setArmAngle(0)),
-          new InstantCommand(() -> m_ArmElevator.setElevatorHeight(0))
-        );
+          elevatorClearance,
 
+          setArmElevatorPosition(0, 0)
+        );
+      
       case CUBE_TOP:
         return new SequentialCommandGroup(
-          new InstantCommand(() -> m_ArmElevator.setArmAngle(0)),
-          new InstantCommand(() -> m_ArmElevator.setElevatorHeight(0))
+          elevatorClearance,
+
+          setArmElevatorPosition(0, 0)
         );
 
       case CUBE_MIDDLE:
         return new SequentialCommandGroup(
-          new InstantCommand(() -> m_ArmElevator.setArmAngle(0)),
-          new InstantCommand(() -> m_ArmElevator.setElevatorHeight(0))
+          elevatorClearance,
+
+          setArmElevatorPosition(0, 0)
         );
 
       case CUBE_FLOOR:
         return new SequentialCommandGroup(
-          new InstantCommand(() -> m_ArmElevator.setArmAngle(0)),
-          new InstantCommand(() -> m_ArmElevator.setElevatorHeight(0))
+          elevatorClearance,
+
+          setArmElevatorPosition(0, 0)
         );
+      
+      case HOME:
+        return new SequentialCommandGroup(
+          elevatorClearance,
+
+          setArmElevatorPosition(0, 0)
+        );
+
+      case STARTING:
+        return new SequentialCommandGroup(
+          elevatorClearance,
+
+          setArmElevatorPosition(0, 0)
+        );
+
+      case GROUND_PICKUP:
+        return new SequentialCommandGroup(
+          elevatorClearance,
+
+          setArmElevatorPosition(0, 0)
+        );
+
+      case TURNTABLE_PICKUP:
+        return new SequentialCommandGroup(
+          elevatorClearance,
+
+          setArmElevatorPosition(0, 0)
+        );
+
+      default:
+        return new SequentialCommandGroup();
     }
-    return null;
   }
 }
