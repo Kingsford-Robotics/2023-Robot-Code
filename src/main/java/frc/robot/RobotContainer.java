@@ -17,8 +17,13 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.PrintCommand;
 import frc.robot.Constants.OIConstants;
+import frc.robot.Constants.RobotConstants.Intake;
+import frc.robot.Constants.RobotConstants.Turntable;
 import frc.robot.subsystems.Arm;
 import frc.robot.subsystems.Elevator;
+import frc.robot.subsystems.JetsonXavier;
+import frc.robot.subsystems.Limelight;
+import frc.robot.subsystems.Power;
 import frc.robot.commands.ArmElevatorPositions;
 import frc.robot.commands.TeleopSwerve;
 import frc.robot.subsystems.DashboardDisplay;
@@ -27,18 +32,28 @@ import frc.robot.subsystems.Swerve;
 public class RobotContainer {
     /* Subsystems */
     private final Swerve m_Swerve = new Swerve();
+
     private final Arm m_Arm = new Arm();
     private final Elevator m_Elevator = new Elevator(0);
+
+    private final Turntable m_Turntable = new Turntable();
+    private final Intake m_Intake = new Intake();
+
+    private final JetsonXavier m_JetsonXavier = new JetsonXavier();
+    private final Limelight m_Limelight = new Limelight();
+    
     private final DashboardDisplay m_Display = new DashboardDisplay(m_Swerve);
 
+    private final Power m_Power = new Power();
+
     private final PneumaticsControlModule pcm = new PneumaticsControlModule(1);
-    
-    FollowPathWithEvents autoCommand = null;
 
     /* Commands */
     private final ArmElevatorPositions m_ArmElevatorPositions = new ArmElevatorPositions(m_Arm, m_Elevator);
     
-    HashMap<String, Command> eventMap = new HashMap<>();
+    /*Pathplanner Setup*/
+    private FollowPathWithEvents autoCommand = null;
+    private final HashMap<String, Command> eventMap = new HashMap<>();
     
     /**
      * The container for the robot. Contains subsystems, OI devices, and commands.

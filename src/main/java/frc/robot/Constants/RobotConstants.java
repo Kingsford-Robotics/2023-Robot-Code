@@ -104,7 +104,7 @@ public final class RobotConstants {
         public static final double elevatorPivotStartHeight = Units.inchesToMeters(41.5);
     }
 
-    public final class Intake{
+    public static final class Intake{
         public static final int intakeMotorID = 0;
         public static final int intakeSolenoidFWD = 5;
         public static final int intakeSolenoidREV = 6;
@@ -113,7 +113,7 @@ public final class RobotConstants {
         public static final double outtakeSpeed = -0.5;
     }
 
-    public final class Turntable{
+    public static final class Turntable{
         public static final int turntableMotorID = 0;
     }
 }

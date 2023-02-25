@@ -66,19 +66,19 @@ public class ArmElevatorPositions extends CommandBase {
       case CONE_TOP:
         return new SequentialCommandGroup(
           elevatorClearance,
-          setArmElevatorPosition(0, 0)
+          setArmElevatorPosition(0.0, 10.0)
         );
 
       case CONE_MIDDLE:
         return new SequentialCommandGroup(
           elevatorClearance,
-          setArmElevatorPosition(0, 0)
+          setArmElevatorPosition(0.0, 5.0)
         );
 
       case CONE_FLOOR:
         return new SequentialCommandGroup(
           elevatorClearance,
-          setArmElevatorPosition(0, 0)
+          setArmElevatorPosition(45, 2.5)
         );
       
       case CUBE_TOP:
