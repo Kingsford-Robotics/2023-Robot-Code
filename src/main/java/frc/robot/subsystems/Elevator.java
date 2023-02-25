@@ -72,7 +72,7 @@ public class Elevator extends SubsystemBase {
   }
 
   public boolean isElevatorToPosition() {
-    if(Math.abs(elevatorMotor.getSelectedSensorPosition() - elevatorMotor.getClosedLoopTarget()) < 1.0 / RobotConstants.ElevatorConstants.elevatorTravelEncoderTick)
+    if(elevatorMotor.getClosedLoopError() < 1.0 / RobotConstants.ElevatorConstants.elevatorTravelEncoderTick)
     {
       return true;
     }
@@ -103,13 +103,18 @@ public class Elevator extends SubsystemBase {
     if(getTopLimitSwitch())
     {
       calibrateElevator(RobotConstants.ElevatorConstants.elevatorPivotStartHeight + RobotConstants.ElevatorConstants.elevatorMaxTravel);
+      elevatorMotor.set(ControlMode.PercentOutput, 0);
     }
 
     if(getBottomLimitSwitch())
     {
       calibrateElevator(RobotConstants.ElevatorConstants.elevatorPivotStartHeight);
+      elevatorMotor.set(ControlMode.PercentOutput, 0);
     }
 
-    setElevatorSpeed(OIConstants.elevatorSpeed.get());
+    if(isElevatorToPosition())
+    {
+      //setElevatorSpeed(OIConstants.elevatorSpeed.get());
+    }
   }
 }

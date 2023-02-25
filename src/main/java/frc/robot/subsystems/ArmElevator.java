@@ -110,8 +110,8 @@ public class ArmElevator extends SubsystemBase {
     //Arm Data
     armEncoderAngle.setDouble(arm.getAngle().getDegrees());
     armCancoderAngle.setDouble(arm.getAngle().getDegrees());
-    isExtended.setBoolean(arm.isExtended());
-    isOpen.setBoolean(arm.isOpen());
+    //isExtended.setBoolean(arm.isExtended());
+    //isOpen.setBoolean(arm.isOpen());
     
     //Elevator Data
     elevatorHeight.setDouble(elevator.getElevatorPosition());

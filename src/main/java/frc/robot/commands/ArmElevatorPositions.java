@@ -31,14 +31,14 @@ public class ArmElevatorPositions extends CommandBase {
       case CONE_TOP:
         return new SequentialCommandGroup(
           new ParallelCommandGroup(
-            new InstantCommand(() -> m_ArmElevator.setElevatorHeight(10))
+            new InstantCommand(() -> m_ArmElevator.setElevatorHeight(3))
           ),
 
           new WaitUntilCommand(() -> m_ArmElevator.isElevatorToPosition()),
 
           new ParallelCommandGroup(
             new InstantCommand(() -> m_ArmElevator.setArmAngle(0)),
-            new InstantCommand(() -> m_ArmElevator.setElevatorHeight(15))
+            new InstantCommand(() -> m_ArmElevator.setElevatorHeight(5))
           ),
 
           new WaitUntilCommand(() -> m_ArmElevator.isArmToPosition()),

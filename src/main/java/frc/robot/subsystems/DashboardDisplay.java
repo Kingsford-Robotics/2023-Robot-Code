@@ -37,14 +37,14 @@ public class DashboardDisplay extends SubsystemBase {
     this.m_Swerve = m_Swerve;
     competitionTab = Shuffleboard.getTab("Competition");
 
-    leftCamera = CameraServer.startAutomaticCapture(0);
-    rightCamera = CameraServer.startAutomaticCapture(1);
+    //leftCamera = CameraServer.startAutomaticCapture(0);
+    //rightCamera = CameraServer.startAutomaticCapture(1);
 
-    leftCamera.setVideoMode(PixelFormat.kMJPEG, 480, 320, 10);
-    rightCamera.setVideoMode(PixelFormat.kMJPEG, 480, 320, 10);
+    //leftCamera.setVideoMode(PixelFormat.kMJPEG, 480, 320, 10);
+    //rightCamera.setVideoMode(PixelFormat.kMJPEG, 480, 320, 10);
 
-    competitionTab.add("Left Camera", leftCamera);
-    competitionTab.add("Right Camera", rightCamera);
+    //competitionTab.add("Left Camera", leftCamera);
+    //competitionTab.add("Right Camera", rightCamera);
 
     /*Shuffleboard Data Instantiation*/
     gyroAngle = competitionTab.add("Gyro Angle", 0).getEntry();

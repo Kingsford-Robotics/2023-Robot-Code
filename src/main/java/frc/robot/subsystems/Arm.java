@@ -6,6 +6,7 @@ package frc.robot.subsystems;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.lib.math.Conversions;
+import frc.robot.Constants.OIConstants;
 import frc.robot.Constants.RobotConstants;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
@@ -149,14 +150,12 @@ public class Arm extends SubsystemBase {
 
     public boolean isArmToPosition()
     {
-        if(Math.abs(armMotor.getSelectedSensorPosition() - armMotor.getClosedLoopTarget()) < Conversions.degreesToFalcon(2, RobotConstants.ArmConstants.armGearRatio))
-        {
-            return true;
-        }
-        else
-        {
-            return false;
-        }
+       if(armMotor.getClosedLoopError() < Conversions.degreesToFalcon(2, RobotConstants.ElevatorConstants.elevatorTravelEncoderTick))
+       {
+        return true;
+       }
+
+       return false;
     }
     public void resetToAbsolute(){
         double angle;
@@ -184,5 +183,13 @@ public class Arm extends SubsystemBase {
 
     public double getRPM(){
         return Conversions.falconToRPM(armMotor.getSelectedSensorVelocity(), RobotConstants.ArmConstants.armGearRatio);
+    }
+
+    @Override
+    public void periodic() {
+        if(isArmToPosition())
+        {
+            //armMotor.set(ControlMode.PercentOutput, OIConstants.armSpeed.get());
+        };
     }
 }

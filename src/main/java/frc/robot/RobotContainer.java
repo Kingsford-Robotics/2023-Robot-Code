@@ -95,7 +95,7 @@ public class RobotContainer {
         OIConstants.armAngle0.onTrue(new InstantCommand(() -> m_ArmElevator.setArmAngle(0)));
 
         //Set elevator height when button is pressed
-        OIConstants.elevatorHeight15.onTrue(new InstantCommand(() -> m_ArmElevator.setElevatorHeight(10)));
+        OIConstants.elevatorHeight15.onTrue(new InstantCommand(() -> m_ArmElevator.setElevatorHeight(5)));
 
         OIConstants.testElevatorArmCommand.onTrue(m_ArmElevatorPositions.getArmElevatorCommand(ArmElevatorPositions.Positions.CONE_TOP));
     }
