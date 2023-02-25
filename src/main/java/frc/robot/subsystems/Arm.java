@@ -147,6 +147,7 @@ public class Arm extends SubsystemBase {
         armMotor.set(ControlMode.MotionMagic, position, DemandType.ArbitraryFeedForward, Math.cos(getAngle().getRadians()) * RobotConstants.ArmConstants.armMaxGravityComp);
     }
 
+    //TODO: Check if function works.
     public boolean isArmToPosition()
     {
        if(armMotor.getClosedLoopError() < Conversions.degreesToFalcon(2, RobotConstants.ElevatorConstants.elevatorTravelEncoderTick))
@@ -156,6 +157,7 @@ public class Arm extends SubsystemBase {
 
        return false;
     }
+
     public void resetToAbsolute(){
         double angle;
         if(getCanCoder().getDegrees() - RobotConstants.ArmConstants.armEncoderOffset <= -180)
@@ -182,13 +184,5 @@ public class Arm extends SubsystemBase {
 
     public double getRPM(){
         return Conversions.falconToRPM(armMotor.getSelectedSensorVelocity(), RobotConstants.ArmConstants.armGearRatio);
-    }
-
-    @Override
-    public void periodic() {
-        if(isArmToPosition())
-        {
-            //armMotor.set(ControlMode.PercentOutput, OIConstants.armSpeed.get());
-        };
     }
 }

@@ -100,19 +100,22 @@ public class Elevator extends SubsystemBase {
   public void periodic() {
     if(getTopLimitSwitch())
     {
-      calibrateElevator(RobotConstants.ElevatorConstants.elevatorPivotStartHeight + RobotConstants.ElevatorConstants.elevatorMaxTravel);
-      elevatorMotor.set(ControlMode.PercentOutput, 0);
+      calibrateElevator(RobotConstants.ElevatorConstants.elevatorMaxTravel);
+
+      if(elevatorMotor.getMotorOutputPercent() > 0)
+      {
+        elevatorMotor.set(ControlMode.PercentOutput, 0);
+      }
     }
 
     if(getBottomLimitSwitch())
     {
-      calibrateElevator(RobotConstants.ElevatorConstants.elevatorPivotStartHeight);
-      elevatorMotor.set(ControlMode.PercentOutput, 0);
-    }
+      calibrateElevator(0.0);
 
-    if(isElevatorToPosition())
-    {
-      //setElevatorSpeed(OIConstants.elevatorSpeed.get());
+      if(elevatorMotor.getMotorOutputPercent() < 0)
+      {
+        elevatorMotor.set(ControlMode.PercentOutput, 0);
+      }
     }
   }
 }
