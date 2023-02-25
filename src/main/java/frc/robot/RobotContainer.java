@@ -99,11 +99,14 @@ public class RobotContainer {
 
         OIConstants.openClaw.onTrue(new InstantCommand(() -> m_Arm.open()));
         OIConstants.closeClaw.onTrue(new InstantCommand(() -> m_Arm.close()));
-        
+
         OIConstants.alignPlace.whileTrue(null);
         OIConstants.groundPickup.whileTrue(null);
         OIConstants.turntablePickup.onTrue(null);
         OIConstants.armHome.onTrue(null);
+
+        OIConstants.reverseIntake.onTrue(new InstantCommand(() -> m_Intake.reverse()));
+        
         OIConstants.increaseLevel.onTrue(null);
         OIConstants.decreaseLevel.onTrue(null);
 

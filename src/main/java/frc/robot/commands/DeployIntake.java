@@ -8,7 +8,7 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.Intake;
 
 public class DeployIntake extends CommandBase {
-  /** Creates a new DeployIntake. */
+  
   private Intake m_Intake = new Intake();
 
   public DeployIntake(Intake m_Intake) {
@@ -21,10 +21,11 @@ public class DeployIntake extends CommandBase {
   @Override
   public void initialize() {
     m_Intake.deployIntake();
+    m_Intake.intakeIn();
   }
 
   // Called every time the scheduler runs while the command is scheduled.
-  
+
   @Override
   public void execute() {
     //TODO: Add left-right alignment code using Jetson Xavier data.
@@ -34,6 +35,7 @@ public class DeployIntake extends CommandBase {
   @Override
   public void end(boolean interrupted) {
     m_Intake.retractIntake();
+    m_Intake.stopIntake();
   }
 
   // Returns true when the command should end.
