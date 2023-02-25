@@ -15,6 +15,7 @@ import com.pathplanner.lib.PathConstraints;
 import edu.wpi.first.wpilibj.PneumaticsControlModule;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.PrintCommand;
 import frc.robot.Constants.OIConstants;
 import frc.robot.subsystems.Intake;
@@ -29,6 +30,7 @@ import frc.robot.commands.DeployIntake;
 import frc.robot.commands.ReverseIntake;
 import frc.robot.commands.StopArmElevator;
 import frc.robot.commands.TeleopSwerve;
+import frc.robot.commands.AlignmentCommands.PlaceAlign;
 import frc.robot.subsystems.DashboardDisplay;
 import frc.robot.subsystems.Swerve;
 
@@ -56,10 +58,15 @@ public class RobotContainer {
     private final DeployIntake m_DeployIntake = new DeployIntake(m_Intake);
     private final ReverseIntake m_ReverseIntake = new ReverseIntake(m_Intake);
     private final StopArmElevator m_StopArmElevator = new StopArmElevator(m_Arm, m_Elevator);
+
+    private final PlaceAlign m_PlacewAlign = new PlaceAlign(m_Swerve, m_Limelight, m_JetsonXavier);
     
     /*Pathplanner Setup*/
     private FollowPathWithEvents autoCommand = null;
     private final HashMap<String, Command> eventMap = new HashMap<>();
+
+    private int level = 2;    //Levels 0 - 2 represent FLOOR, MIDDLE, and TOP
+    private boolean isCone = true;
     
     /**
      * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -104,7 +111,15 @@ public class RobotContainer {
         OIConstants.openClaw.onTrue(new InstantCommand(() -> m_Arm.open()));
         OIConstants.closeClaw.onTrue(new InstantCommand(() -> m_Arm.close()));
 
-        OIConstants.alignPlace.whileTrue(null);
+        OIConstants.alignPlace.whileTrue(
+            new ParallelCommandGroup(
+                m_PlacewAlign,    
+                m_ArmElevatorPositions.getArmElevatorCommand(ArmElevatorPositions.Positions.CONE_TOP)  //TODO: Change to dynamic position based on selected level.
+            )
+        );
+
+        OIConstants.alignPlace.onFalse(m_StopArmElevator);
+
         OIConstants.groundPickup.whileTrue(null);
 
         OIConstants.turntablePickup.onTrue(m_ArmElevatorPositions.getArmElevatorCommand(ArmElevatorPositions.Positions.TURNTABLE_PICKUP));
@@ -115,11 +130,11 @@ public class RobotContainer {
 
         OIConstants.reverseIntake.onTrue(m_ReverseIntake);
 
-        OIConstants.increaseLevel.onTrue(null);
-        OIConstants.decreaseLevel.onTrue(null);
+        OIConstants.increaseLevel.onTrue(new InstantCommand(() -> level = Math.min(level++, 2)));
+        OIConstants.decreaseLevel.onTrue(new InstantCommand(() -> level = Math.max(level--, 0)));
 
         OIConstants.toggleAutoAlign.onTrue(null);
-        OIConstants.toggleConeCube.onTrue(null);
+        OIConstants.toggleConeCube.onTrue(new InstantCommand(() -> isCone = !isCone));
     }
 
     private void configureAutoCommands()

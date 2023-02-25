@@ -5,11 +5,22 @@
 package frc.robot.commands.AlignmentCommands;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import frc.robot.subsystems.JetsonXavier;
+import frc.robot.subsystems.Limelight;
+import frc.robot.subsystems.Swerve;
 
 public class PlaceAlign extends CommandBase {
-  /** Creates a new PlaceAlign. */
-  public PlaceAlign() {
-    // Use addRequirements() here to declare subsystem dependencies.
+  
+  private Swerve m_Swerve;
+  private Limelight m_Limelight;
+  private JetsonXavier m_JetsonXavier;
+  
+  public PlaceAlign(Swerve m_Swerve, Limelight m_Limelight, JetsonXavier m_JetsonXavier) {
+    this.m_Swerve = m_Swerve;
+    this.m_Limelight = m_Limelight;
+    this.m_JetsonXavier = m_JetsonXavier;
+
+    addRequirements(m_Swerve, m_Limelight, m_JetsonXavier);
   }
 
   // Called when the command is initially scheduled.
