@@ -31,6 +31,7 @@ import frc.robot.commands.ReverseIntake;
 import frc.robot.commands.StopArmElevator;
 import frc.robot.commands.TeleopSwerve;
 import frc.robot.commands.AlignmentCommands.ArmPickupAlign;
+import frc.robot.commands.AlignmentCommands.IntakeAlign;
 import frc.robot.commands.AlignmentCommands.PlaceAlign;
 import frc.robot.subsystems.DashboardDisplay;
 import frc.robot.subsystems.Swerve;
@@ -56,12 +57,14 @@ public class RobotContainer {
 
     /* Commands */
     private final ArmElevatorPositions m_ArmElevatorPositions = new ArmElevatorPositions(m_Arm, m_Elevator);
-    private final DeployIntake m_DeployIntake = new DeployIntake(m_Intake);
     private final ReverseIntake m_ReverseIntake = new ReverseIntake(m_Intake);
     private final StopArmElevator m_StopArmElevator = new StopArmElevator(m_Arm, m_Elevator);
 
     private final PlaceAlign m_PlacewAlign = new PlaceAlign(m_Swerve, m_Limelight, m_JetsonXavier);
     private final ArmPickupAlign m_ArmPickupAlign = new ArmPickupAlign(m_Swerve, m_Limelight, m_JetsonXavier);
+    private final IntakeAlign m_IntakeAlign = new IntakeAlign(m_Swerve, m_Limelight, m_JetsonXavier);
+
+    private final DeployIntake m_DeployIntake = new DeployIntake(m_Intake, m_IntakeAlign);
 
     /*Pathplanner Setup*/
     private FollowPathWithEvents autoCommand = null;

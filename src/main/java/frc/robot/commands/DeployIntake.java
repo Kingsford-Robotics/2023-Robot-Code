@@ -4,15 +4,20 @@
 
 package frc.robot.commands;
 
+import java.time.chrono.ThaiBuddhistChronology;
+
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import frc.robot.commands.AlignmentCommands.IntakeAlign;
 import frc.robot.subsystems.Intake;
 
 public class DeployIntake extends CommandBase {
   
   private Intake m_Intake = new Intake();
+  private IntakeAlign m_IntakeAlign;
 
-  public DeployIntake(Intake m_Intake) {
+  public DeployIntake(Intake m_Intake, IntakeAlign m_IntakeAlign) {
     this.m_Intake = m_Intake;
+    this.m_IntakeAlign = m_IntakeAlign;
 
     addRequirements(m_Intake);
   }
@@ -22,6 +27,7 @@ public class DeployIntake extends CommandBase {
   public void initialize() {
     m_Intake.deployIntake();
     m_Intake.intakeIn();
+    m_IntakeAlign.schedule();
   }
 
   // Called every time the scheduler runs while the command is scheduled.
