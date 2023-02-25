@@ -25,30 +25,7 @@ import frc.robot.subsystems.DashboardDisplay;
 import frc.robot.subsystems.Pneumatics;
 import frc.robot.subsystems.Swerve;
 
-/**
- * This class is where the bulk of the robot should be declared. Since
- * Command-based is a
- * "declarative" paradigm, very little robot logic should actually be handled in
- * the {@link Robot}
- * periodic methods (other than the scheduler calls). Instead, the structure of
- * the robot (including
- * subsystems, commands, and trigger mappings) should be declared here.
- */
 public class RobotContainer {
-
-    private final IntSupplier centerOfRotation = () -> {
-        if (OIConstants.centerOfRotationFrontLeft.getAsBoolean()) {
-            return 0;
-        } else if (OIConstants.centerOfRotationFrontRight.getAsBoolean()) {
-            return 1;
-        } else if (OIConstants.centerOfRotationBackLeft.getAsBoolean()) {
-            return 2;
-        } else if (OIConstants.centerOfRotationBackRight.getAsBoolean()) {
-            return 3;
-        } else {
-            return -1;
-        }
-    };
     /* Subsystems */
     private final Swerve m_Swerve = new Swerve();
     private final Arm m_Arm = new Arm();
@@ -62,6 +39,7 @@ public class RobotContainer {
     private final ArmElevatorPositions m_ArmElevatorPositions = new ArmElevatorPositions(m_Arm, m_Elevator);
     
     HashMap<String, Command> eventMap = new HashMap<>();
+    
     /**
      * The container for the robot. Contains subsystems, OI devices, and commands.
      */
@@ -74,11 +52,20 @@ public class RobotContainer {
                         () -> -OIConstants.rotationSupplier.get(),
                         () -> OIConstants.robotCentric.getAsBoolean(),
                         () -> OIConstants.slowSpeed.getAsBoolean(),
-                        () -> centerOfRotation.getAsInt()));
+                        () -> OIConstants.centerOfRotation.getAsInt())
+                    );
         
         // Configure the button bindings
         configureButtonBindings();
         configureAutoCommands();
+
+        m_Arm.setDefaultCommand(
+            new InstantCommand(() -> m_Arm.setArmSpeed(OIConstants.armSpeed.getAsDouble()), m_Arm)
+        );
+
+        m_Elevator.setDefaultCommand(
+            new InstantCommand(() -> m_Elevator.setElevatorSpeed(OIConstants.elevatorSpeed.getAsDouble()), m_Elevator)
+        );
     }
 
     /**
@@ -90,8 +77,20 @@ public class RobotContainer {
      * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
      */
     private void configureButtonBindings() {
+        OIConstants.intakeDeploy.whileTrue(null);
         // Reset Gyro when button is pressed
         OIConstants.resetGyro.onTrue(new InstantCommand(() -> m_Swerve.zeroGyro()));
+        OIConstants.openClaw.onTrue(null);
+        OIConstants.closeClaw.onTrue(null);
+        OIConstants.alignPlace.whileTrue(null);
+        OIConstants.groundPickup.whileTrue(null);
+        OIConstants.turntablePickup.onTrue(null);
+        OIConstants.armHome.onTrue(null);
+        OIConstants.increaseLevel.onTrue(null);
+        OIConstants.decreaseLevel.onTrue(null);
+
+        OIConstants.toggleAutoAlign.onTrue(null);
+        OIConstants.toggleConeCube.onTrue(null);
     }
 
     private void configureAutoCommands()

@@ -19,16 +19,19 @@ public class DashboardDisplay extends SubsystemBase {
   private Swerve m_Swerve;
 
   /*Camera Streams*/
-  private UsbCamera leftCamera;
-  private UsbCamera rightCamera;
+  private UsbCamera turnTableCamera;
+  private UsbCamera armCamera;
 
   /*Shuffleboard Tab*/
   private ShuffleboardTab competitionTab;
 
   /*Shuffleboard Data*/
 
-  //Drivetrain Data
   private GenericEntry gyroAngle;
+  private GenericEntry targetType;
+  private GenericEntry scoreLocation;
+  private GenericEntry targetDistance;
+  
   private Field2d field = new Field2d();
 
 
@@ -37,14 +40,14 @@ public class DashboardDisplay extends SubsystemBase {
     this.m_Swerve = m_Swerve;
     competitionTab = Shuffleboard.getTab("Competition");
 
-    //leftCamera = CameraServer.startAutomaticCapture(0);
-    //rightCamera = CameraServer.startAutomaticCapture(1);
+    turnTableCamera = CameraServer.startAutomaticCapture(0);
+    armCamera = CameraServer.startAutomaticCapture(1);
 
-    //leftCamera.setVideoMode(PixelFormat.kMJPEG, 480, 320, 10);
-    //rightCamera.setVideoMode(PixelFormat.kMJPEG, 480, 320, 10);
+    turnTableCamera.setVideoMode(PixelFormat.kMJPEG, 480, 320, 10);
+    armCamera.setVideoMode(PixelFormat.kMJPEG, 480, 320, 10);
 
-    //competitionTab.add("Left Camera", leftCamera);
-    //competitionTab.add("Right Camera", rightCamera);
+    competitionTab.add("Turntable", turnTableCamera);
+    competitionTab.add("Arm", armCamera);
 
     /*Shuffleboard Data Instantiation*/
     gyroAngle = competitionTab.add("Gyro Angle", 0).getEntry();

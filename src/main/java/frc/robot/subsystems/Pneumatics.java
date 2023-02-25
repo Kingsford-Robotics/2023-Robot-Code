@@ -14,11 +14,8 @@ public class Pneumatics extends SubsystemBase {
   PneumaticsControlModule pcm = new PneumaticsControlModule(1);
   Compressor compressor = new Compressor(1, PneumaticsModuleType.CTREPCM);
 
-  public Pneumatics() {
+  public Pneumatics() 
+  {
   }
 
-  @Override
-  public void periodic() {
-    // This method will be called once per scheduler run
-  }
 }

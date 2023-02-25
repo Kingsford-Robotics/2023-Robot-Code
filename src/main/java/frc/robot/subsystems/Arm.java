@@ -119,7 +119,7 @@ public class Arm extends SubsystemBase {
         return armExtension.get() == kForward;
     }
 
-    public void setArmSpeedPercent(double speed){
+    public void setArmSpeed(double speed){
         //Stop motor if beyond limit and moving into the restricted area.
         if(armMotor.getSelectedSensorPosition() >= RobotConstants.ArmConstants.armMaxAngle && speed > 0){
             speed = 0;

@@ -6,6 +6,7 @@ package frc.robot.Constants;
 
 import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
+import java.util.function.IntSupplier;
 import java.util.function.Supplier;
 
 import edu.wpi.first.wpilibj.Joystick;
@@ -41,10 +42,24 @@ public class OIConstants {
     public static final JoystickButton resetGyro = new JoystickButton(driveJoystickRight, LogitechJoystick.button3);    //Resets the gyro to 0 degrees.
 
     //Sets the center of the rotation to the selected wheel while held. Returns to center of robot when released.
-    public static final JoystickButton centerOfRotationFrontLeft = new JoystickButton(driveJoystickLeft, LogitechJoystick.button5);
-    public static final JoystickButton centerOfRotationFrontRight = new JoystickButton(driveJoystickLeft, LogitechJoystick.button6); 
-    public static final JoystickButton centerOfRotationBackLeft = new JoystickButton(driveJoystickLeft, LogitechJoystick.button3);
-    public static final JoystickButton centerOfRotationBackRight = new JoystickButton(driveJoystickLeft, LogitechJoystick.button4);
+    private static final JoystickButton centerOfRotationFrontLeft = new JoystickButton(driveJoystickLeft, LogitechJoystick.button5);
+    private static final JoystickButton centerOfRotationFrontRight = new JoystickButton(driveJoystickLeft, LogitechJoystick.button6); 
+    private static final JoystickButton centerOfRotationBackLeft = new JoystickButton(driveJoystickLeft, LogitechJoystick.button3);
+    private static final JoystickButton centerOfRotationBackRight = new JoystickButton(driveJoystickLeft, LogitechJoystick.button4);
+
+    public static final IntSupplier centerOfRotation = () -> {
+        if (OIConstants.centerOfRotationFrontLeft.getAsBoolean()) {
+            return 0;
+        } else if (OIConstants.centerOfRotationFrontRight.getAsBoolean()) {
+            return 1;
+        } else if (OIConstants.centerOfRotationBackLeft.getAsBoolean()) {
+            return 2;
+        } else if (OIConstants.centerOfRotationBackRight.getAsBoolean()) {
+            return 3;
+        } else {
+            return -1;
+        }
+    };
 
     /*Operator Joystick Setup*/
     public static final XboxController handheldController = new XboxController(2);
