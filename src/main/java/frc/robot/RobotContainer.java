@@ -94,7 +94,7 @@ public class RobotContainer {
      * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
      */
     private void configureButtonBindings() {
-        OIConstants.intakeDeploy.whileTrue(DeployIntake);
+        OIConstants.intakeDeploy.whileTrue(m_DeployIntake);
         // Reset Gyro when button is pressed
         OIConstants.resetGyro.onTrue(new InstantCommand(() -> m_Swerve.zeroGyro()));
         OIConstants.openClaw.onTrue(null);
