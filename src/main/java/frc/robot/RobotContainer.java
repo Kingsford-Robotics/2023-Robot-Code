@@ -60,11 +60,11 @@ public class RobotContainer {
         configureAutoCommands();
 
         m_Arm.setDefaultCommand(
-            new InstantCommand(() -> m_Arm.setArmSpeed(OIConstants.armSpeed.getAsDouble()), m_Arm)
+            new InstantCommand(() -> m_Arm.setArmSpeed(OIConstants.armSpeed.getAsDouble() * 0.3), m_Arm)
         );
 
         m_Elevator.setDefaultCommand(
-            new InstantCommand(() -> m_Elevator.setElevatorSpeed(OIConstants.elevatorSpeed.getAsDouble()), m_Elevator)
+            new InstantCommand(() -> m_Elevator.setElevatorSpeed(OIConstants.elevatorSpeed.getAsDouble() * 0.3), m_Elevator)
         );
     }
 

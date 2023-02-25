@@ -7,7 +7,10 @@ package frc.robot.subsystems;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
 
+import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.RobotConstants;
 
@@ -18,7 +21,21 @@ public class Elevator extends SubsystemBase {
   //Wired normally open (true = pressed)
   private DigitalInput topLimitSwitch;
   private DigitalInput bottomLimitSwitch;
+
+  /*Shuffleboard Setup*/
+  private ShuffleboardTab elevatorTab;
   
+  private GenericEntry elevatorHeight;
+  private GenericEntry elevatorEncoder;
+  private GenericEntry elevatorSpeed;
+
+  private GenericEntry elevatorTopLimitSwitch;
+  private GenericEntry elevatorBottomLimitSwitch;
+
+  private GenericEntry isToPosition;
+
+  private GenericEntry targetEncoderPosition;
+
   public Elevator(double initialPosition) {
     elevatorMotor = new TalonFX(RobotConstants.ElevatorConstants.elevatorMotorID);
     elevatorMotor.configFactoryDefault();
@@ -41,6 +58,20 @@ public class Elevator extends SubsystemBase {
     bottomLimitSwitch = new DigitalInput(RobotConstants.ElevatorConstants.elevatorBottomLimitSwitchID);
 
     calibrateElevator(initialPosition);
+
+    /*Shuffleboard Setup*/
+    elevatorTab = Shuffleboard.getTab("Elevator");
+
+    elevatorHeight = elevatorTab.add("Elevator Height", 0.0).getEntry();
+    elevatorEncoder = elevatorTab.add("Elevator Encoder", 0.0).getEntry();
+    elevatorSpeed = elevatorTab.add("Elevator Speed", 0.0).getEntry();
+
+    elevatorTopLimitSwitch = elevatorTab.add("Top Limit Switch", false).getEntry();
+    elevatorBottomLimitSwitch = elevatorTab.add("Bottom Limit Switch", false).getEntry();
+
+    isToPosition = elevatorTab.add("Is To Position", false).getEntry();
+
+    targetEncoderPosition = elevatorTab.add("Target Encoder Position", 0.0).getEntry();
   }
 
   public void calibrateElevator(double currentHeight)
@@ -66,6 +97,9 @@ public class Elevator extends SubsystemBase {
   //Set elevator height in meters relative to lowest position.
   public void setElevatorHeight(double height){
     double encoderPosition = height / RobotConstants.ElevatorConstants.elevatorTravelEncoderTick;
+
+    targetEncoderPosition.setDouble(encoderPosition);
+
     elevatorMotor.set(ControlMode.MotionMagic, encoderPosition);
   }
 
@@ -117,5 +151,16 @@ public class Elevator extends SubsystemBase {
         elevatorMotor.set(ControlMode.PercentOutput, 0);
       }
     }
+
+    elevatorHeight.setDouble(getElevatorPosition());
+    elevatorEncoder.setDouble(getElevatorEncoder());
+    elevatorSpeed.setDouble(elevatorMotor.getMotorOutputPercent());
+
+    elevatorTopLimitSwitch.setBoolean(getTopLimitSwitch());
+    elevatorBottomLimitSwitch.setBoolean(getBottomLimitSwitch());
+
+    isToPosition.setBoolean(isElevatorToPosition());
+
+    targetEncoderPosition.setDouble(elevatorMotor.getClosedLoopTarget());
   }
 }
