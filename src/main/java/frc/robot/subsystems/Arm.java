@@ -18,9 +18,12 @@ import com.ctre.phoenix.sensors.SensorInitializationStrategy;
 import com.ctre.phoenix.sensors.SensorTimeBase;
 
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 
 import static edu.wpi.first.wpilibj.DoubleSolenoid.Value.*;
 
@@ -31,6 +34,20 @@ public class Arm extends SubsystemBase {
 
     private DoubleSolenoid armExtension;
     private DoubleSolenoid armGrab;
+
+    /*Shuffleboard Data*/
+    private ShuffleboardTab armTab;
+
+    private GenericEntry encoderAngle;
+    private GenericEntry cancoderAngle;
+
+    private GenericEntry extensionState;
+    private GenericEntry grabState;
+
+    private GenericEntry armMotorOutput;
+
+    private GenericEntry isArmToPosition;
+    private GenericEntry closedLoopError;
 
     public Arm() {
         /*Arm Motor Setup*/
@@ -82,6 +99,20 @@ public class Arm extends SubsystemBase {
         armExtension.set(kReverse); //Arm retracted
         armGrab.set(kForward);      //Claw open
 
+        /*Shuffleboard Setup*/
+        armTab = Shuffleboard.getTab("Arm");
+
+        encoderAngle = armTab.add("Encoder Angle", 0).getEntry();
+        cancoderAngle = armTab.add("CANCoder Angle", 0).getEntry();
+
+        extensionState = armTab.add("Extension State", "Retracted").getEntry();
+        grabState = armTab.add("Grab State", "Open").getEntry();
+
+        armMotorOutput = armTab.add("Arm Motor Output", 0).getEntry();
+        isArmToPosition = armTab.add("Is Arm to Position", false).getEntry();
+        closedLoopError = armTab.add("Arm Closed Loop Error", 0).getEntry();
+
+        /*Reset to Absolute */
         Timer.delay(0.5);   //Check to see if this is needed. May be good from delay when initializing Swerve subsystem.
         //Reset encoder to absolute position
         resetToAbsolute();
@@ -184,5 +215,27 @@ public class Arm extends SubsystemBase {
 
     public double getRPM(){
         return Conversions.falconToRPM(armMotor.getSelectedSensorVelocity(), RobotConstants.ArmConstants.armGearRatio);
+    }
+
+    @Override
+    public void periodic() {
+        if(armMotor.getSelectedSensorPosition() >= RobotConstants.ArmConstants.armMaxAngle && armMotor.getMotorOutputPercent() > 0){
+            armMotor.set(ControlMode.PercentOutput, 0);
+        }
+
+        if(armMotor.getSelectedSensorPosition() <= RobotConstants.ArmConstants.armMinAngle && armMotor.getMotorOutputPercent() < 0){
+            armMotor.set(ControlMode.PercentOutput, 0);
+        }
+
+        //Update Shuffleboard
+        encoderAngle.setDouble(getAngle().getDegrees());
+        cancoderAngle.setDouble(getCanCoder().getDegrees());
+
+        extensionState.setString(isExtended() ? "Extended" : "Retracted");
+        grabState.setString(isOpen() ? "Open" : "Closed");
+
+        armMotorOutput.setDouble(armMotor.getMotorOutputPercent());
+        isArmToPosition.setBoolean(isArmToPosition());
+        closedLoopError.setDouble(armMotor.getClosedLoopError());
     }
 }
