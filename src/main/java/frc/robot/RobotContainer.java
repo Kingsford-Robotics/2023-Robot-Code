@@ -18,6 +18,7 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.PrintCommand;
 import frc.robot.Constants.OIConstants;
 import frc.robot.subsystems.ArmElevator;
+import frc.robot.commands.ArmElevatorPositions;
 import frc.robot.commands.TeleopSwerve;
 import frc.robot.subsystems.DashboardDisplay;
 import frc.robot.subsystems.Pneumatics;
@@ -55,6 +56,9 @@ public class RobotContainer {
     
     FollowPathWithEvents autoCommand = null;
 
+    /* Commands */
+    private final ArmElevatorPositions m_ArmElevatorPositions = new ArmElevatorPositions(m_ArmElevator);
+    
     HashMap<String, Command> eventMap = new HashMap<>();
     /**
      * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -69,6 +73,7 @@ public class RobotContainer {
                         () -> OIConstants.robotCentric.getAsBoolean(),
                         () -> OIConstants.slowSpeed.getAsBoolean(),
                         () -> centerOfRotation.getAsInt()));
+        
         // Configure the button bindings
         configureButtonBindings();
         configureAutoCommands();
@@ -91,6 +96,8 @@ public class RobotContainer {
 
         //Set elevator height when button is pressed
         OIConstants.elevatorHeight15.onTrue(new InstantCommand(() -> m_ArmElevator.setElevatorHeight(10)));
+
+        OIConstants.testElevatorArmCommand.onTrue(m_ArmElevatorPositions.getArmElevatorCommand(ArmElevatorPositions.Positions.CONE_TOP));
     }
 
     private void configureAutoCommands()

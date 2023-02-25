@@ -9,6 +9,7 @@ import com.ctre.phoenix.motorcontrol.can.TalonFX;
 
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants.OIConstants;
 import frc.robot.Constants.RobotConstants;
 
 public class Elevator extends SubsystemBase {
@@ -70,6 +71,15 @@ public class Elevator extends SubsystemBase {
     elevatorMotor.set(ControlMode.MotionMagic, encoderPosition);
   }
 
+  public boolean isElevatorToPosition() {
+    if(Math.abs(elevatorMotor.getSelectedSensorPosition() - elevatorMotor.getClosedLoopTarget()) < 1.0 / RobotConstants.ElevatorConstants.elevatorTravelEncoderTick)
+    {
+      return true;
+    }
+
+    return false;
+  }
+
   public boolean getTopLimitSwitch(){
     return topLimitSwitch.get();
   }
@@ -99,5 +109,7 @@ public class Elevator extends SubsystemBase {
     {
       calibrateElevator(RobotConstants.ElevatorConstants.elevatorPivotStartHeight);
     }
+
+    setElevatorSpeed(OIConstants.elevatorSpeed.get());
   }
 }

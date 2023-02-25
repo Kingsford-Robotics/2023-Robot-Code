@@ -51,4 +51,6 @@ public class OIConstants {
 
     //Create controller button to set elevator height to 15 when pressed
     public static final JoystickButton elevatorHeight15 = new JoystickButton(controller, XboxController.Button.kB.value);
+
+    public static final JoystickButton testElevatorArmCommand = new JoystickButton(controller, XboxController.Button.kX.value);
 }

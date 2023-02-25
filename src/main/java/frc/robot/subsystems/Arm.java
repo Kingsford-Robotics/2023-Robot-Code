@@ -147,6 +147,17 @@ public class Arm extends SubsystemBase {
         armMotor.set(ControlMode.MotionMagic, position, DemandType.ArbitraryFeedForward, Math.cos(getAngle().getRadians()) * RobotConstants.ArmConstants.armMaxGravityComp);
     }
 
+    public boolean isArmToPosition()
+    {
+        if(Math.abs(armMotor.getSelectedSensorPosition() - armMotor.getClosedLoopTarget()) < Conversions.degreesToFalcon(2, RobotConstants.ArmConstants.armGearRatio))
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
     public void resetToAbsolute(){
         double angle;
         if(getCanCoder().getDegrees() - RobotConstants.ArmConstants.armEncoderOffset <= -180)

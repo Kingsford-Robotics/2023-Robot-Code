@@ -29,7 +29,6 @@ public class ArmElevator extends SubsystemBase {
   private GenericEntry bottomLimitSwitch;
   private GenericEntry topLimitSwitch;
 
-
   public ArmElevator() {
     /*Initialize Subsystems*/
     arm = new Arm();
@@ -54,12 +53,20 @@ public class ArmElevator extends SubsystemBase {
     arm.setArmAngle(angle);
   }
 
+  public boolean isArmToPosition() {
+    return arm.isArmToPosition();
+  }
+
   public void setArmPercent(double percent) {
     arm.setArmSpeedPercent(percent);
   }
 
   public void setElevatorHeight(double height) {
     elevator.setElevatorHeight(height);
+  }
+
+  public boolean isElevatorToPosition() {
+    return elevator.isElevatorToPosition();
   }
 
   public void setElevatorPercent(double percent)
@@ -98,7 +105,6 @@ public class ArmElevator extends SubsystemBase {
 
   @Override
   public void periodic() {
-    
     /*Output Shuffleboard Data*/
 
     //Arm Data
