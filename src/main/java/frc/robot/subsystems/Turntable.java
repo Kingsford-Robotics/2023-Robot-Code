@@ -4,14 +4,20 @@
 
 package frc.robot.subsystems;
 
+import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.ctre.phoenix.motorcontrol.can.VictorSPX;
+
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants.RobotConstants;
 
 public class Turntable extends SubsystemBase {
-  /** Creates a new Turntable. */
-  public Turntable() {}
+  private VictorSPX turntableMotor;
 
-  @Override
-  public void periodic() {
-    // This method will be called once per scheduler run
+  public Turntable() {
+    turntableMotor = new VictorSPX(RobotConstants.Turntable.turntableMotorID);
+  }
+
+  public void setTurntableMotor(double speed) {
+    turntableMotor.set(ControlMode.PercentOutput, speed);
   }
 }
