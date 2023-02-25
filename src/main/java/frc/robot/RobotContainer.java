@@ -30,6 +30,7 @@ import frc.robot.commands.DeployIntake;
 import frc.robot.commands.ReverseIntake;
 import frc.robot.commands.StopArmElevator;
 import frc.robot.commands.TeleopSwerve;
+import frc.robot.commands.AlignmentCommands.ArmPickupAlign;
 import frc.robot.commands.AlignmentCommands.PlaceAlign;
 import frc.robot.subsystems.DashboardDisplay;
 import frc.robot.subsystems.Swerve;
@@ -60,7 +61,8 @@ public class RobotContainer {
     private final StopArmElevator m_StopArmElevator = new StopArmElevator(m_Arm, m_Elevator);
 
     private final PlaceAlign m_PlacewAlign = new PlaceAlign(m_Swerve, m_Limelight, m_JetsonXavier);
-    
+    private final ArmPickupAlign m_ArmPickupAlign = new ArmPickupAlign(m_Swerve, m_Limelight, m_JetsonXavier);
+
     /*Pathplanner Setup*/
     private FollowPathWithEvents autoCommand = null;
     private final HashMap<String, Command> eventMap = new HashMap<>();
@@ -114,13 +116,18 @@ public class RobotContainer {
         OIConstants.alignPlace.whileTrue(
             new ParallelCommandGroup(
                 m_PlacewAlign,    
-                m_ArmElevatorPositions.getArmElevatorCommand(ArmElevatorPositions.Positions.CONE_TOP)  //TODO: Change to dynamic position based on selected level.
+                m_ArmElevatorPositions.getArmElevatorCommand(getPosition(level, isCone))
             )
         );
-
         OIConstants.alignPlace.onFalse(m_StopArmElevator);
 
-        OIConstants.groundPickup.whileTrue(null);
+        OIConstants.groundPickup.whileTrue(
+            new ParallelCommandGroup(
+                m_ArmPickupAlign,
+                m_ArmElevatorPositions.getArmElevatorCommand(ArmElevatorPositions.Positions.GROUND_PICKUP)
+            )
+        );
+        OIConstants.groundPickup.onFalse(m_StopArmElevator);
 
         OIConstants.turntablePickup.onTrue(m_ArmElevatorPositions.getArmElevatorCommand(ArmElevatorPositions.Positions.TURNTABLE_PICKUP));
         OIConstants.turntablePickup.onFalse(m_StopArmElevator);
@@ -137,6 +144,37 @@ public class RobotContainer {
         OIConstants.toggleConeCube.onTrue(new InstantCommand(() -> isCone = !isCone));
     }
 
+    private ArmElevatorPositions.Positions getPosition(int level, boolean isCone)
+    {
+        if(isCone)
+        {
+            switch(level)
+            {
+                case 0:
+                    return ArmElevatorPositions.Positions.CONE_FLOOR;
+                case 1:
+                    return ArmElevatorPositions.Positions.CONE_MIDDLE;
+                case 2:
+                    return ArmElevatorPositions.Positions.CONE_TOP;
+                default:
+                    return ArmElevatorPositions.Positions.HOME;
+            }
+        }
+
+        else{
+            switch(level)
+            {
+                case 0:
+                    return ArmElevatorPositions.Positions.CUBE_FLOOR;
+                case 1:
+                    return ArmElevatorPositions.Positions.CUBE_MIDDLE;
+                case 2:
+                    return ArmElevatorPositions.Positions.CUBE_TOP;
+                default:
+                    return ArmElevatorPositions.Positions.HOME;
+            }
+        }
+    }
     private void configureAutoCommands()
     {
         eventMap.put("event1", new PrintCommand("Event 1"));
