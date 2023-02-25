@@ -95,10 +95,11 @@ public class RobotContainer {
      */
     private void configureButtonBindings() {
         OIConstants.intakeDeploy.whileTrue(m_DeployIntake);
-        // Reset Gyro when button is pressed
         OIConstants.resetGyro.onTrue(new InstantCommand(() -> m_Swerve.zeroGyro()));
-        OIConstants.openClaw.onTrue(null);
-        OIConstants.closeClaw.onTrue(null);
+
+        OIConstants.openClaw.onTrue(new InstantCommand(() -> m_Arm.open()));
+        OIConstants.closeClaw.onTrue(new InstantCommand(() -> m_Arm.close()));
+        
         OIConstants.alignPlace.whileTrue(null);
         OIConstants.groundPickup.whileTrue(null);
         OIConstants.turntablePickup.onTrue(null);
