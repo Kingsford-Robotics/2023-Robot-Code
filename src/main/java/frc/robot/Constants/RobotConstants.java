@@ -108,6 +108,9 @@ public final class RobotConstants {
         public static final int intakeMotorID = 0;
         public static final int intakeSolenoidFWD = 5;
         public static final int intakeSolenoidREV = 6;
+
+        public static final double intakeSpeed = 0.5;
+        public static final double outtakeSpeed = -0.5;
     }
 
     public final class Turntable{
