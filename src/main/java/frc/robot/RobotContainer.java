@@ -12,6 +12,7 @@ import com.pathplanner.lib.PathPlannerTrajectory;
 import com.pathplanner.lib.commands.FollowPathWithEvents;
 import com.pathplanner.lib.PathConstraints;
 
+import edu.wpi.first.wpilibj.PneumaticsControlModule;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.PrintCommand;
@@ -21,7 +22,6 @@ import frc.robot.subsystems.Elevator;
 import frc.robot.commands.ArmElevatorPositions;
 import frc.robot.commands.TeleopSwerve;
 import frc.robot.subsystems.DashboardDisplay;
-import frc.robot.subsystems.Pneumatics;
 import frc.robot.subsystems.Swerve;
 
 public class RobotContainer {
@@ -30,7 +30,8 @@ public class RobotContainer {
     private final Arm m_Arm = new Arm();
     private final Elevator m_Elevator = new Elevator(0);
     private final DashboardDisplay m_Display = new DashboardDisplay(m_Swerve);
-    private final Pneumatics m_Pneumatics = new Pneumatics();
+
+    private final PneumaticsControlModule pcm = new PneumaticsControlModule(1);
     
     FollowPathWithEvents autoCommand = null;
 
