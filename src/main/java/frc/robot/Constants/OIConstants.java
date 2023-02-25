@@ -62,5 +62,13 @@ public class OIConstants {
     public static final DoubleSupplier elevatorSpeed = () -> handheldController.getLeftY();
     public static final DoubleSupplier armSpeed = () -> handheldController.getRightY();
 
+    public static final int turntableLeftPOV = 270;
+    public static final int turntableRightPOV = 90;
+
+    //Mounted Controller
+    public static final JoystickButton increaseLevel = new JoystickButton(mountedController, XboxController.Button.kY.value);
+    public static final JoystickButton decreaseLevel = new JoystickButton(mountedController, XboxController.Button.kA.value);
     
+    public static final JoystickButton toggleAutoAlign = new JoystickButton(mountedController, XboxController.Button.kB.value);
+    public static final JoystickButton toggleConeCube = new JoystickButton(mountedController, XboxController.Button.kX.value);
 }
