@@ -17,7 +17,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.PrintCommand;
 import frc.robot.Constants.OIConstants;
-import frc.robot.Constants.RobotConstants.Intake;
+import frc.robot.subsystems.Intake;
 import frc.robot.Constants.RobotConstants.Turntable;
 import frc.robot.subsystems.Arm;
 import frc.robot.subsystems.Elevator;
@@ -25,6 +25,7 @@ import frc.robot.subsystems.JetsonXavier;
 import frc.robot.subsystems.Limelight;
 import frc.robot.subsystems.Power;
 import frc.robot.commands.ArmElevatorPositions;
+import frc.robot.commands.DeployIntake;
 import frc.robot.commands.TeleopSwerve;
 import frc.robot.subsystems.DashboardDisplay;
 import frc.robot.subsystems.Swerve;
@@ -50,6 +51,7 @@ public class RobotContainer {
 
     /* Commands */
     private final ArmElevatorPositions m_ArmElevatorPositions = new ArmElevatorPositions(m_Arm, m_Elevator);
+    private final DeployIntake m_DeployIntake = new DeployIntake(m_Intake);
     
     /*Pathplanner Setup*/
     private FollowPathWithEvents autoCommand = null;
@@ -70,17 +72,17 @@ public class RobotContainer {
                         () -> OIConstants.centerOfRotation.getAsInt())
                     );
         
-        // Configure the button bindings
-        configureButtonBindings();
-        configureAutoCommands();
-
         m_Arm.setDefaultCommand(
             new InstantCommand(() -> m_Arm.setArmSpeed(OIConstants.armSpeed.getAsDouble() * 0.3), m_Arm)
         );
-
+            
         m_Elevator.setDefaultCommand(
             new InstantCommand(() -> m_Elevator.setElevatorSpeed(OIConstants.elevatorSpeed.getAsDouble() * 0.3), m_Elevator)
         );
+
+        // Configure the button bindings
+        configureButtonBindings();
+        configureAutoCommands();  
     }
 
     /**
@@ -92,7 +94,7 @@ public class RobotContainer {
      * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
      */
     private void configureButtonBindings() {
-        OIConstants.intakeDeploy.whileTrue(null);
+        OIConstants.intakeDeploy.whileTrue(DeployIntake);
         // Reset Gyro when button is pressed
         OIConstants.resetGyro.onTrue(new InstantCommand(() -> m_Swerve.zeroGyro()));
         OIConstants.openClaw.onTrue(null);
