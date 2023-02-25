@@ -66,7 +66,6 @@ public class Elevator extends SubsystemBase {
   //Set elevator height in meters relative to lowest position.
   public void setElevatorHeight(double height){
     double encoderPosition = height / RobotConstants.ElevatorConstants.elevatorTravelEncoderTick;
-    System.out.println("Set elevator to height:" + encoderPosition);
     elevatorMotor.set(ControlMode.MotionMagic, encoderPosition);
   }
 

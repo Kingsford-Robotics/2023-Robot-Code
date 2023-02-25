@@ -9,7 +9,8 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
-import frc.robot.subsystems.ArmElevator;
+import frc.robot.subsystems.Arm;
+import frc.robot.subsystems.Elevator;
 
 public class ArmElevatorPositions extends CommandBase {
   
@@ -28,32 +29,34 @@ public class ArmElevatorPositions extends CommandBase {
     TURNTABLE_PICKUP,
   };
   
-  private ArmElevator m_ArmElevator;
+  private Arm arm;
+  private Elevator elevator;
 
   private final SequentialCommandGroup elevatorClearance = new SequentialCommandGroup(
-    new InstantCommand(() -> m_ArmElevator.setElevatorHeight(clearanceHeight)),
-    new WaitUntilCommand(() -> m_ArmElevator.isElevatorToPosition())
+    new InstantCommand(() -> elevator.setElevatorHeight(clearanceHeight)),
+    new WaitUntilCommand(() -> elevator.isElevatorToPosition())
   );
 
   private final SequentialCommandGroup waitToPosition = new SequentialCommandGroup(
-    new WaitUntilCommand(() -> m_ArmElevator.isArmToPosition()),
-    new WaitUntilCommand(() -> m_ArmElevator.isElevatorToPosition())
+    new WaitUntilCommand(() -> arm.isArmToPosition()),
+    new WaitUntilCommand(() -> elevator.isElevatorToPosition())
   );
 
   private final SequentialCommandGroup setArmElevatorPosition(double armAngle, double elevatorHeight)
   {
     return new SequentialCommandGroup(
       new ParallelCommandGroup(
-        new InstantCommand(() -> m_ArmElevator.setArmAngle(armAngle)),
-        new InstantCommand(() -> m_ArmElevator.setElevatorHeight(elevatorHeight))
+        new InstantCommand(() -> arm.setArmAngle(armAngle)),
+        new InstantCommand(() -> elevator.setElevatorHeight(elevatorHeight))
       ),
       waitToPosition
     );
   }
   
-  public ArmElevatorPositions(ArmElevator armElevator)
+  public ArmElevatorPositions(Arm arm, Elevator elevator)
   {
-    m_ArmElevator = armElevator;
+    this.arm = arm;
+    this.elevator = elevator;
   }
 
   public SequentialCommandGroup getArmElevatorCommand(Positions position)
@@ -111,14 +114,14 @@ public class ArmElevatorPositions extends CommandBase {
       case GROUND_PICKUP:
         return new SequentialCommandGroup(
           elevatorClearance,
-          new InstantCommand(() -> m_ArmElevator.openClaw()),
+          new InstantCommand(() -> arm.open()),
           setArmElevatorPosition(0, 0)
         );
 
       case TURNTABLE_PICKUP:
         return new SequentialCommandGroup(
           elevatorClearance,
-          new InstantCommand(() -> m_ArmElevator.openClaw()),
+          new InstantCommand(() -> arm.open()),
           setArmElevatorPosition(0, 0)
         );
 

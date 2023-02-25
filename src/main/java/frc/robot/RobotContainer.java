@@ -17,7 +17,8 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.PrintCommand;
 import frc.robot.Constants.OIConstants;
-import frc.robot.subsystems.ArmElevator;
+import frc.robot.subsystems.Arm;
+import frc.robot.subsystems.Elevator;
 import frc.robot.commands.ArmElevatorPositions;
 import frc.robot.commands.TeleopSwerve;
 import frc.robot.subsystems.DashboardDisplay;
@@ -50,14 +51,15 @@ public class RobotContainer {
     };
     /* Subsystems */
     private final Swerve m_Swerve = new Swerve();
-    private final ArmElevator m_ArmElevator = new ArmElevator();
+    private final Arm m_Arm = new Arm();
+    private final Elevator m_Elevator = new Elevator(0);
     private final DashboardDisplay m_Display = new DashboardDisplay(m_Swerve);
     private final Pneumatics m_Pneumatics = new Pneumatics();
     
     FollowPathWithEvents autoCommand = null;
 
     /* Commands */
-    private final ArmElevatorPositions m_ArmElevatorPositions = new ArmElevatorPositions(m_ArmElevator);
+    private final ArmElevatorPositions m_ArmElevatorPositions = new ArmElevatorPositions(m_Arm, m_Elevator);
     
     HashMap<String, Command> eventMap = new HashMap<>();
     /**
