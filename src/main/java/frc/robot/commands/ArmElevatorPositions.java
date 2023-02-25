@@ -13,7 +13,7 @@ import frc.robot.subsystems.ArmElevator;
 
 public class ArmElevatorPositions extends CommandBase {
   
-  private static final double clearanceHeight = 5.0;
+  private final double clearanceHeight = 5.0;
 
   public enum Positions{
     CONE_TOP, 
@@ -51,7 +51,6 @@ public class ArmElevatorPositions extends CommandBase {
     );
   }
   
-  
   public ArmElevatorPositions(ArmElevator armElevator)
   {
     m_ArmElevator = armElevator;
@@ -64,70 +63,62 @@ public class ArmElevatorPositions extends CommandBase {
       case CONE_TOP:
         return new SequentialCommandGroup(
           elevatorClearance,
-
           setArmElevatorPosition(0, 0)
         );
 
       case CONE_MIDDLE:
         return new SequentialCommandGroup(
           elevatorClearance,
-
           setArmElevatorPosition(0, 0)
         );
 
       case CONE_FLOOR:
         return new SequentialCommandGroup(
           elevatorClearance,
-
           setArmElevatorPosition(0, 0)
         );
       
       case CUBE_TOP:
         return new SequentialCommandGroup(
           elevatorClearance,
-
           setArmElevatorPosition(0, 0)
         );
 
       case CUBE_MIDDLE:
         return new SequentialCommandGroup(
           elevatorClearance,
-
           setArmElevatorPosition(0, 0)
         );
 
       case CUBE_FLOOR:
         return new SequentialCommandGroup(
           elevatorClearance,
-
           setArmElevatorPosition(0, 0)
         );
       
       case HOME:
         return new SequentialCommandGroup(
           elevatorClearance,
-
           setArmElevatorPosition(0, 0)
         );
 
       case STARTING:
         return new SequentialCommandGroup(
           elevatorClearance,
-
           setArmElevatorPosition(0, 0)
         );
 
       case GROUND_PICKUP:
         return new SequentialCommandGroup(
           elevatorClearance,
-
+          new InstantCommand(() -> m_ArmElevator.openClaw()),
           setArmElevatorPosition(0, 0)
         );
 
       case TURNTABLE_PICKUP:
         return new SequentialCommandGroup(
           elevatorClearance,
-
+          new InstantCommand(() -> m_ArmElevator.openClaw()),
           setArmElevatorPosition(0, 0)
         );
 
