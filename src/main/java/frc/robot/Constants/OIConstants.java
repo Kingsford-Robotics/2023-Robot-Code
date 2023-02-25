@@ -5,6 +5,7 @@
 package frc.robot.Constants;
 
 import java.util.function.BooleanSupplier;
+import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
 
 import edu.wpi.first.wpilibj.Joystick;
@@ -14,9 +15,12 @@ import frc.robot.LogitechJoystick;
 
 /** Add your docs here. */
 public class OIConstants {
+
+    /*Drive Joysticks Setup*/
     public static final Joystick driveJoystickLeft = new Joystick(0);
     public static final Joystick driveJoystickRight = new Joystick(1);
 
+    //Drive Joysticks Suppliers
     public static final Supplier<Double> translationSupplier = () -> driveJoystickRight.getRawAxis(Joystick.kDefaultYChannel);
     public static final Supplier<Double> strafeSupplier = () -> driveJoystickRight.getRawAxis(Joystick.kDefaultXChannel);
     public static final Supplier<Double> rotationSupplier = () -> driveJoystickLeft.getRawAxis(Joystick.kDefaultXChannel);
@@ -32,6 +36,7 @@ public class OIConstants {
     public static final double translationDeadBand = 0.1;
     public static final double turnDeadBand = 0.1;
 
+    //Drive Joysticks Buttons
     public static final JoystickButton intakeDeploy = new JoystickButton(driveJoystickRight, LogitechJoystick.trigger);    //Intake deploy while held. Retract when released.
     public static final JoystickButton resetGyro = new JoystickButton(driveJoystickRight, LogitechJoystick.button3);    //Resets the gyro to 0 degrees.
 
@@ -41,16 +46,21 @@ public class OIConstants {
     public static final JoystickButton centerOfRotationBackLeft = new JoystickButton(driveJoystickLeft, LogitechJoystick.button3);
     public static final JoystickButton centerOfRotationBackRight = new JoystickButton(driveJoystickLeft, LogitechJoystick.button4);
 
-    public static final XboxController controller = new XboxController(2);
+    /*Operator Joystick Setup*/
+    public static final XboxController handheldController = new XboxController(2);
+    public static final XboxController mountedController = new XboxController(3);
 
-    public static final Supplier<Double> armSpeed = () ->controller.getRawAxis(XboxController.Axis.kLeftY.value);
-    public static final Supplier<Double> elevatorSpeed = () -> controller.getRawAxis(XboxController.Axis.kRightY.value);
+    //Handheld Controller
+    public static final JoystickButton openClaw = new JoystickButton(handheldController, XboxController.Button.kLeftBumper.value);
+    public static final JoystickButton closeClaw = new JoystickButton(handheldController, XboxController.Button.kRightBumper.value);
 
-    //Create controller button to set arm angle to 0 when pressed
-    public static final JoystickButton armAngle0 = new JoystickButton(controller, XboxController.Button.kA.value);
+    public static final JoystickButton alignPlace = new JoystickButton(handheldController, XboxController.Button.kY.value);
+    public static final JoystickButton groundPickup = new JoystickButton(handheldController, XboxController.Button.kB.value);
+    public static final JoystickButton turntablePickup = new JoystickButton(handheldController, XboxController.Button.kX.value);
+    public static final JoystickButton armHome = new JoystickButton(handheldController, XboxController.Button.kA.value);
 
-    //Create controller button to set elevator height to 15 when pressed
-    public static final JoystickButton elevatorHeight15 = new JoystickButton(controller, XboxController.Button.kB.value);
+    public static final DoubleSupplier elevatorSpeed = () -> handheldController.getLeftY();
+    public static final DoubleSupplier armSpeed = () -> handheldController.getRightY();
 
-    public static final JoystickButton testElevatorArmCommand = new JoystickButton(controller, XboxController.Button.kX.value);
+    
 }
