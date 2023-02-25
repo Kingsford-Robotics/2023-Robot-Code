@@ -26,6 +26,8 @@ import frc.robot.subsystems.Limelight;
 import frc.robot.subsystems.Power;
 import frc.robot.commands.ArmElevatorPositions;
 import frc.robot.commands.DeployIntake;
+import frc.robot.commands.ReverseIntake;
+import frc.robot.commands.StopArmElevator;
 import frc.robot.commands.TeleopSwerve;
 import frc.robot.subsystems.DashboardDisplay;
 import frc.robot.subsystems.Swerve;
@@ -52,6 +54,8 @@ public class RobotContainer {
     /* Commands */
     private final ArmElevatorPositions m_ArmElevatorPositions = new ArmElevatorPositions(m_Arm, m_Elevator);
     private final DeployIntake m_DeployIntake = new DeployIntake(m_Intake);
+    private final ReverseIntake m_ReverseIntake = new ReverseIntake(m_Intake);
+    private final StopArmElevator m_StopArmElevator = new StopArmElevator(m_Arm, m_Elevator);
     
     /*Pathplanner Setup*/
     private FollowPathWithEvents autoCommand = null;
@@ -102,11 +106,15 @@ public class RobotContainer {
 
         OIConstants.alignPlace.whileTrue(null);
         OIConstants.groundPickup.whileTrue(null);
-        OIConstants.turntablePickup.onTrue(null);
-        OIConstants.armHome.onTrue(null);
 
-        OIConstants.reverseIntake.onTrue(new InstantCommand(() -> m_Intake.reverse()));
+        OIConstants.turntablePickup.onTrue(m_ArmElevatorPositions.getArmElevatorCommand(ArmElevatorPositions.Positions.TURNTABLE_PICKUP));
+        OIConstants.turntablePickup.onFalse(m_StopArmElevator);
         
+        OIConstants.armHome.onTrue(m_ArmElevatorPositions.getArmElevatorCommand(ArmElevatorPositions.Positions.HOME));
+        OIConstants.armHome.onFalse(m_StopArmElevator);
+
+        OIConstants.reverseIntake.onTrue(m_ReverseIntake);
+
         OIConstants.increaseLevel.onTrue(null);
         OIConstants.decreaseLevel.onTrue(null);
 
