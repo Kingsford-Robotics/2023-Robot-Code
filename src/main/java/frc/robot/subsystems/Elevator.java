@@ -79,7 +79,7 @@ public class Elevator extends SubsystemBase {
    */
   public void calibrateElevator(double currentHeight)
   {
-    double encoderPosition = currentHeight * RobotConstants.ElevatorConstants.elevatorTravelEncoderTick;
+    double encoderPosition = currentHeight / RobotConstants.ElevatorConstants.elevatorTravelEncoderTick;
     elevatorMotor.setSelectedSensorPosition(encoderPosition);
   }
 
@@ -106,6 +106,15 @@ public class Elevator extends SubsystemBase {
    * @param height Height, in inches, above the lowest elevator position.
    */
   public void setElevatorHeight(double height){
+    if(height > RobotConstants.ElevatorConstants.elevatorMaxTravel - RobotConstants.ElevatorConstants.safeZone)
+    {
+      height = RobotConstants.ElevatorConstants.elevatorMaxTravel - RobotConstants.ElevatorConstants.safeZone;
+    }
+    else if(height < RobotConstants.ElevatorConstants.safeZone)
+    {
+      height = RobotConstants.ElevatorConstants.safeZone;
+    }
+
     double encoderPosition = height / RobotConstants.ElevatorConstants.elevatorTravelEncoderTick;
 
     targetEncoderPosition.setDouble(encoderPosition);
@@ -145,7 +154,7 @@ public class Elevator extends SubsystemBase {
   public void periodic() {
     if(getTopLimitSwitch())
     {
-      calibrateElevator(RobotConstants.ElevatorConstants.elevatorMaxTravel);
+      calibrateElevator(16.5);
 
       if(elevatorMotor.getMotorOutputPercent() > 0)
       {

@@ -11,6 +11,8 @@ import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.RobotContainer;
+import frc.robot.Constants.RobotConstants;
 
 public class DashboardDisplay extends SubsystemBase {
   /*Subsystem References for Data and Commands*/
@@ -28,7 +30,7 @@ public class DashboardDisplay extends SubsystemBase {
   private GenericEntry gyroAngle;
   private GenericEntry targetType;
   private GenericEntry scoreLocation;
-  private GenericEntry targetDistance;
+  //private GenericEntry targetDistance;
   
   private Field2d field = new Field2d();
 
@@ -49,11 +51,31 @@ public class DashboardDisplay extends SubsystemBase {
     /*Shuffleboard Data Instantiation*/
     gyroAngle = competitionTab.add("Gyro Angle", 0).getEntry();
     competitionTab.add(field);
+
+    targetType = competitionTab.add("Target Type", "Unknown").getEntry();
+    scoreLocation = competitionTab.add("Score Location", "Unknown").getEntry();
   }
 
   @Override
   public void periodic() {
     field.setRobotPose(m_Swerve.getPose());
     gyroAngle.setDouble(m_Swerve.getYaw().getDegrees());
+
+    targetType.setString(RobotContainer.isCone ? "Cone" : "Cube");
+    
+    switch(RobotContainer.level){
+      case 0:
+        scoreLocation.setString("Ground");
+        break;
+      case 1:
+        scoreLocation.setString("Mid");
+        break;
+      case 2:
+        scoreLocation.setString("High");
+        break;
+      default:
+        scoreLocation.setString("Unknown");
+        break;
+    }
   }
 }

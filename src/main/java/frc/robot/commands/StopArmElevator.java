@@ -4,14 +4,14 @@
 
 package frc.robot.commands;
 
-import edu.wpi.first.wpilibj2.command.CommandBase;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import frc.robot.subsystems.Arm;
 import frc.robot.subsystems.Elevator;
 
-public class StopArmElevator extends CommandBase {
+public class StopArmElevator extends InstantCommand {
   
-  private Arm arm;
-  private Elevator elevator;
+  public Arm arm;
+  public Elevator elevator;
 
   public StopArmElevator(Arm arm, Elevator elevator) {
     this.arm = arm;
@@ -22,22 +22,9 @@ public class StopArmElevator extends CommandBase {
 
   // Called when the command is initially scheduled.
   @Override
+
   public void initialize() {
     arm.setArmSpeed(0.0);
     elevator.setElevatorSpeed(0.0);
-  }
-
-  // Called every time the scheduler runs while the command is scheduled.
-  @Override
-  public void execute() {}
-
-  // Called once the command ends or is interrupted.
-  @Override
-  public void end(boolean interrupted) {}
-
-  // Returns true when the command should end.
-  @Override
-  public boolean isFinished() {
-    return false;
   }
 }

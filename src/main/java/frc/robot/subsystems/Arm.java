@@ -155,11 +155,11 @@ public class Arm extends SubsystemBase {
 
     public void setArmSpeed(double speed){
         //Stop motor if beyond limit and moving into the restricted area.
-        if(armMotor.getSelectedSensorPosition() >= RobotConstants.ArmConstants.armMaxAngle && speed > 0){
+        if(getAngle().getDegrees() >= RobotConstants.ArmConstants.armMaxAngle && speed > 0){
             speed = 0;
         }
 
-        else if(armMotor.getSelectedSensorPosition() <= RobotConstants.ArmConstants.armMinAngle && speed < 0){
+        else if(getAngle().getDegrees() <= RobotConstants.ArmConstants.armMinAngle && speed < 0){
             speed = 0;
         }
 
@@ -223,14 +223,6 @@ public class Arm extends SubsystemBase {
 
     @Override
     public void periodic() {
-        if(armMotor.getSelectedSensorPosition() >= RobotConstants.ArmConstants.armMaxAngle && armMotor.getMotorOutputPercent() > 0){
-            armMotor.set(ControlMode.PercentOutput, 0);
-        }
-
-        if(armMotor.getSelectedSensorPosition() <= RobotConstants.ArmConstants.armMinAngle && armMotor.getMotorOutputPercent() < 0){
-            armMotor.set(ControlMode.PercentOutput, 0);
-        }
-
         //Update Shuffleboard
         encoderAngle.setDouble(getAngle().getDegrees());
         cancoderAngle.setDouble(getCanCoder().getDegrees());

@@ -19,19 +19,16 @@ import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.PrintCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.Constants.OIConstants;
-import frc.robot.subsystems.Intake;
 import frc.robot.Constants.RobotConstants.Turntable;
 import frc.robot.subsystems.Arm;
 import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.JetsonXavier;
 import frc.robot.subsystems.Limelight;
+import frc.robot.subsystems.Ramp;
 import frc.robot.commands.ArmElevatorPositions;
-import frc.robot.commands.DeployIntake;
-import frc.robot.commands.ReverseIntake;
 import frc.robot.commands.StopArmElevator;
 import frc.robot.commands.TeleopSwerve;
 import frc.robot.commands.AlignmentCommands.ArmPickupAlign;
-import frc.robot.commands.AlignmentCommands.IntakeAlign;
 import frc.robot.commands.AlignmentCommands.PlaceAlign;
 import frc.robot.subsystems.DashboardDisplay;
 import frc.robot.subsystems.Swerve;
@@ -44,7 +41,7 @@ public class RobotContainer {
     private final Elevator m_Elevator = new Elevator(0);
 
     private final Turntable m_Turntable = new Turntable();
-    //private final Intake m_Intake = new Intake();
+    private final Ramp m_Ramp = new Ramp();
 
     private final JetsonXavier m_JetsonXavier = new JetsonXavier();
     private final Limelight m_Limelight = new Limelight();
@@ -55,22 +52,17 @@ public class RobotContainer {
 
     /* Commands */
     private final ArmElevatorPositions m_ArmElevatorPositions = new ArmElevatorPositions(m_Arm, m_Elevator);
-    //private final ReverseIntake m_ReverseIntake = new ReverseIntake(m_Intake);
     private final StopArmElevator m_StopArmElevator = new StopArmElevator(m_Arm, m_Elevator);
-
     private final PlaceAlign m_PlacewAlign = new PlaceAlign(m_Swerve, m_Limelight, m_JetsonXavier);
-    private final ArmPickupAlign m_ArmPickupAlign = new ArmPickupAlign(m_Swerve, m_Limelight, m_JetsonXavier);
-    private final IntakeAlign m_IntakeAlign = new IntakeAlign(m_Swerve, m_Limelight, m_JetsonXavier);
-
-    //private final DeployIntake m_DeployIntake = new DeployIntake(m_Intake, m_IntakeAlign);
+    private final ArmPickupAlign m_ArmPickupAlign = new ArmPickupAlign(m_Swerve, m_JetsonXavier);
 
     /*Pathplanner Setup*/
     private FollowPathWithEvents autoCommand = null;
     private final HashMap<String, Command> eventMap = new HashMap<>();
 
-    private int level = 2;    //Levels 0 - 2 represent FLOOR, MIDDLE, and TOP
-    private boolean isCone = true;
-    private boolean autoAlign = true;
+    public static int level = 2;    //Levels 0 - 2 represent FLOOR, MIDDLE, and TOP
+    public static boolean isCone = true;
+    public static boolean autoAlign = true;
     
     /**
      * The container for the robot. Contains subsystems, OI devices, and commands.

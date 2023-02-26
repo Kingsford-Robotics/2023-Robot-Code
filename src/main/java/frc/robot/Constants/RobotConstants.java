@@ -55,7 +55,7 @@ public final class RobotConstants {
 
         /*Arm Limits*/
         //Horizontal is 0, up is negative.
-        public static final double armMaxAngle = 115;
+        public static final double armMaxAngle = 180;
         public static final double armMinAngle = -10;
     }
   
