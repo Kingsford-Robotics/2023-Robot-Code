@@ -24,7 +24,6 @@ import frc.robot.subsystems.Arm;
 import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.JetsonXavier;
 import frc.robot.subsystems.Limelight;
-import frc.robot.subsystems.Power;
 import frc.robot.commands.ArmElevatorPositions;
 import frc.robot.commands.DeployIntake;
 import frc.robot.commands.ReverseIntake;
@@ -44,27 +43,25 @@ public class RobotContainer {
     private final Elevator m_Elevator = new Elevator(0);
 
     private final Turntable m_Turntable = new Turntable();
-    private final Intake m_Intake = new Intake();
+    //private final Intake m_Intake = new Intake();
 
     private final JetsonXavier m_JetsonXavier = new JetsonXavier();
     private final Limelight m_Limelight = new Limelight();
     
     private final DashboardDisplay m_Display = new DashboardDisplay(m_Swerve);
 
-    private final Power m_Power = new Power();
-
     private final PneumaticsControlModule pcm = new PneumaticsControlModule(1);
 
     /* Commands */
     private final ArmElevatorPositions m_ArmElevatorPositions = new ArmElevatorPositions(m_Arm, m_Elevator);
-    private final ReverseIntake m_ReverseIntake = new ReverseIntake(m_Intake);
+    //private final ReverseIntake m_ReverseIntake = new ReverseIntake(m_Intake);
     private final StopArmElevator m_StopArmElevator = new StopArmElevator(m_Arm, m_Elevator);
 
     private final PlaceAlign m_PlacewAlign = new PlaceAlign(m_Swerve, m_Limelight, m_JetsonXavier);
     private final ArmPickupAlign m_ArmPickupAlign = new ArmPickupAlign(m_Swerve, m_Limelight, m_JetsonXavier);
     private final IntakeAlign m_IntakeAlign = new IntakeAlign(m_Swerve, m_Limelight, m_JetsonXavier);
 
-    private final DeployIntake m_DeployIntake = new DeployIntake(m_Intake, m_IntakeAlign);
+    //private final DeployIntake m_DeployIntake = new DeployIntake(m_Intake, m_IntakeAlign);
 
     /*Pathplanner Setup*/
     private FollowPathWithEvents autoCommand = null;
@@ -72,6 +69,7 @@ public class RobotContainer {
 
     private int level = 2;    //Levels 0 - 2 represent FLOOR, MIDDLE, and TOP
     private boolean isCone = true;
+    private boolean autoAlign = true;
     
     /**
      * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -110,40 +108,44 @@ public class RobotContainer {
      * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
      */
     private void configureButtonBindings() {
-        OIConstants.intakeDeploy.whileTrue(m_DeployIntake);
+        //OIConstants.intakeDeploy.whileTrue(m_DeployIntake);
         OIConstants.resetGyro.onTrue(new InstantCommand(() -> m_Swerve.zeroGyro()));
 
         OIConstants.openClaw.onTrue(new InstantCommand(() -> m_Arm.open()));
         OIConstants.closeClaw.onTrue(new InstantCommand(() -> m_Arm.close()));
 
-        OIConstants.alignPlace.whileTrue(
+        OIConstants.toggleArmExtension.onTrue(new InstantCommand(() -> m_Arm.toggleExtension()));
+
+        /*OIConstants.alignPlace.whileTrue(
             new ParallelCommandGroup(
                 m_PlacewAlign,    
                 m_ArmElevatorPositions.getArmElevatorCommand(getPosition(level, isCone))
             )
         );
+        */
         OIConstants.alignPlace.onFalse(m_StopArmElevator);
 
-        OIConstants.groundPickup.whileTrue(
+        /*OIConstants.groundPickup.whileTrue(
             new ParallelCommandGroup(
                 m_ArmPickupAlign,
                 m_ArmElevatorPositions.getArmElevatorCommand(ArmElevatorPositions.Positions.GROUND_PICKUP)
             )
-        );
+        );*/
+
         OIConstants.groundPickup.onFalse(m_StopArmElevator);
 
-        OIConstants.turntablePickup.onTrue(m_ArmElevatorPositions.getArmElevatorCommand(ArmElevatorPositions.Positions.TURNTABLE_PICKUP));
+        //OIConstants.turntablePickup.onTrue(m_ArmElevatorPositions.getArmElevatorCommand(ArmElevatorPositions.Positions.TURNTABLE_PICKUP));
         OIConstants.turntablePickup.onFalse(m_StopArmElevator);
         
-        OIConstants.armHome.onTrue(m_ArmElevatorPositions.getArmElevatorCommand(ArmElevatorPositions.Positions.HOME));
+        //OIConstants.armHome.onTrue(m_ArmElevatorPositions.getArmElevatorCommand(ArmElevatorPositions.Positions.HOME));
         OIConstants.armHome.onFalse(m_StopArmElevator);
 
-        OIConstants.reverseIntake.onTrue(m_ReverseIntake);
+        //OIConstants.reverseIntake.onTrue(m_ReverseIntake);
 
         OIConstants.increaseLevel.onTrue(new InstantCommand(() -> level = Math.min(level++, 2)));
         OIConstants.decreaseLevel.onTrue(new InstantCommand(() -> level = Math.max(level--, 0)));
 
-        OIConstants.toggleAutoAlign.onTrue(null);
+        OIConstants.toggleAutoAlign.onTrue(new InstantCommand(() -> autoAlign = !autoAlign));
         OIConstants.toggleConeCube.onTrue(new InstantCommand(() -> isCone = !isCone));
     }
 

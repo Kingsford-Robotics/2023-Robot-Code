@@ -9,7 +9,7 @@ import frc.robot.subsystems.Intake;
 
 public class ReverseIntake extends CommandBase {
   
-  private Intake m_Intake = new Intake();
+  private Intake m_Intake;
   
   public ReverseIntake(Intake m_Intake) {
     this.m_Intake = m_Intake;

@@ -70,8 +70,6 @@ public class Elevator extends SubsystemBase {
     elevatorBottomLimitSwitch = elevatorTab.add("Bottom Limit Switch", false).getEntry();
 
     isToPosition = elevatorTab.add("Is To Position", false).getEntry();
-
-    targetEncoderPosition = elevatorTab.add("Target Encoder Position", 0.0).getEntry();
   }
 
   public void calibrateElevator(double currentHeight)
@@ -104,7 +102,7 @@ public class Elevator extends SubsystemBase {
   }
 
   public boolean isElevatorToPosition() {
-    if(elevatorMotor.getClosedLoopError() < 1.0 / RobotConstants.ElevatorConstants.elevatorTravelEncoderTick)
+    if(elevatorMotor.getClosedLoopError(0) < 1.0 / RobotConstants.ElevatorConstants.elevatorTravelEncoderTick)
     {
       return true;
     }
@@ -160,7 +158,5 @@ public class Elevator extends SubsystemBase {
     elevatorBottomLimitSwitch.setBoolean(getBottomLimitSwitch());
 
     isToPosition.setBoolean(isElevatorToPosition());
-
-    targetEncoderPosition.setDouble(elevatorMotor.getClosedLoopTarget());
   }
 }

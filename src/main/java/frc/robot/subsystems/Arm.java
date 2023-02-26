@@ -181,7 +181,7 @@ public class Arm extends SubsystemBase {
     //TODO: Check if function works.
     public boolean isArmToPosition()
     {
-       if(armMotor.getClosedLoopError() < Conversions.degreesToFalcon(2, RobotConstants.ElevatorConstants.elevatorTravelEncoderTick))
+       if(armMotor.getClosedLoopError(0) < Conversions.degreesToFalcon(2, RobotConstants.ElevatorConstants.elevatorTravelEncoderTick))
        {
         return true;
        }
@@ -236,6 +236,6 @@ public class Arm extends SubsystemBase {
 
         armMotorOutput.setDouble(armMotor.getMotorOutputPercent());
         isArmToPosition.setBoolean(isArmToPosition());
-        closedLoopError.setDouble(armMotor.getClosedLoopError());
+        closedLoopError.setDouble(armMotor.getClosedLoopError(0));
     }
 }

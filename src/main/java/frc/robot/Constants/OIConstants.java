@@ -76,8 +76,11 @@ public class OIConstants {
 
     public static final JoystickButton reverseIntake = new JoystickButton(handheldController, XboxController.Button.kBack.value);
 
+    public static final JoystickButton toggleArmExtension = new JoystickButton(handheldController, XboxController.Button.kStart.value);
+
     public static final DoubleSupplier elevatorSpeed = () -> handheldController.getLeftY();
     public static final DoubleSupplier armSpeed = () -> handheldController.getRightY();
+
 
     public static final int turntableLeftPOV = 270;
     public static final int turntableRightPOV = 90;
