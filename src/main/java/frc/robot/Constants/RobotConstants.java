@@ -15,11 +15,11 @@ public final class RobotConstants {
         public static final int armMotorID = 12;
         
         /*Arm Pneumatics*/
-        public static final int armExtensionSolenoidFWD = 1;
-        public static final int armExtensionSolenoidREV = 2;
+        public static final int armExtensionSolenoidFWD = 0;
+        public static final int armExtensionSolenoidREV = 1;
 
-        public static final int armGrabSolenoidFWD = 3;
-        public static final int armGrabSolenoidREV = 4;
+        public static final int armGrabSolenoidFWD = 2;
+        public static final int armGrabSolenoidREV = 3;
 
         /*Arm Encoder Values*/
         public static final int armEncoderID = 30;
