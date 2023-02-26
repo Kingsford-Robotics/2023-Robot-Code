@@ -18,7 +18,7 @@ public class Elevator extends SubsystemBase {
   /*Creates new Elevator */
   private TalonFX elevatorMotor;
   
-  //Wired normally open (true = pressed)
+  //Wired normally closed (false = pressed)
   private DigitalInput topLimitSwitch;
   private DigitalInput bottomLimitSwitch;
 
@@ -33,7 +33,6 @@ public class Elevator extends SubsystemBase {
   private GenericEntry elevatorBottomLimitSwitch;
 
   private GenericEntry isToPosition;
-
   private GenericEntry targetEncoderPosition;
 
   public Elevator(double initialPosition) {
@@ -47,6 +46,7 @@ public class Elevator extends SubsystemBase {
     elevatorMotor.config_kD(0, RobotConstants.ElevatorConstants.elevatorKd);
     elevatorMotor.config_kF(0, RobotConstants.ElevatorConstants.elevatorKF);
 
+    elevatorMotor.configAllowableClosedloopError(0, 0.25 / RobotConstants.ElevatorConstants.elevatorTravelEncoderTick); //Allows 0.25 inch error.
     //Configure Motion Magic
     elevatorMotor.configMotionCruiseVelocity(RobotConstants.ElevatorConstants.elevatorCruiseVelocity);
     elevatorMotor.configMotionAcceleration(RobotConstants.ElevatorConstants.elevatorMaxAcceleration);
@@ -73,19 +73,27 @@ public class Elevator extends SubsystemBase {
     targetEncoderPosition = elevatorTab.add("Target Encoder Position", 0.0).getEntry();
   }
 
+  /**
+   * {@summary} Use this function to calibrate the elevator position when it is at a known height relative to the lowest position.
+   * @param currentHeight The height to set the elevator encoder at.s
+   */
   public void calibrateElevator(double currentHeight)
   {
     double encoderPosition = currentHeight * RobotConstants.ElevatorConstants.elevatorTravelEncoderTick;
     elevatorMotor.setSelectedSensorPosition(encoderPosition);
   }
 
+  /**
+   * {@summary} Sets the elevator motor percent output.
+   * @param speed Elevator motor percent speed. -1.0 to 1.0.
+   */
   public void setElevatorSpeed(double speed){
     //Set speed to 0 if touching limit switch and moving towards it.
-    if(getTopLimitSwitch() && speed > 0)
+    if((getTopLimitSwitch() || getElevatorPosition() > RobotConstants.ElevatorConstants.elevatorMaxTravel - RobotConstants.ElevatorConstants.safeZone) && speed > 0)
     {
       speed = 0;
     }
-    else if(getBottomLimitSwitch() && speed < 0)
+    else if((getBottomLimitSwitch() || getElevatorPosition() < RobotConstants.ElevatorConstants.safeZone) && speed < 0)
     {
       speed = 0;
     }
@@ -93,7 +101,10 @@ public class Elevator extends SubsystemBase {
     elevatorMotor.set(ControlMode.PercentOutput, speed);
   }
 
-  //Set elevator height in meters relative to lowest position.
+  /**
+   * {@summary} Sets the elevator to the height specified using a S motion curve.
+   * @param height Height, in inches, above the lowest elevator position.
+   */
   public void setElevatorHeight(double height){
     double encoderPosition = height / RobotConstants.ElevatorConstants.elevatorTravelEncoderTick;
 
@@ -102,8 +113,9 @@ public class Elevator extends SubsystemBase {
     //elevatorMotor.set(ControlMode.MotionMagic, encoderPosition); TODO: Renable code.
   }
 
+
   public boolean isElevatorToPosition() {
-    if(Math.abs(targetEncoderPosition.getDouble(0) - elevatorMotor.getSelectedSensorPosition()) > 0.5 / RobotConstants.ElevatorConstants.elevatorTravelEncoderTick)
+    if(Math.abs(targetEncoderPosition.getDouble(0) - elevatorMotor.getSelectedSensorPosition()) < 0.3 / RobotConstants.ElevatorConstants.elevatorTravelEncoderTick)
     {
       return true;
     }

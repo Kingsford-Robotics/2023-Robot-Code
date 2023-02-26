@@ -57,10 +57,6 @@ public final class RobotConstants {
         //Horizontal is 0, up is negative.
         public static final double armMaxAngle = 115;
         public static final double armMinAngle = -10;
-
-        //Arm Lengths from pivot point to end of arm.
-        public static final double armRetractedLength = Units.inchesToMeters(41.0);
-        public static final double armExtendedLength = Units.inchesToMeters(49.0);
     }
   
     public static final class ElevatorConstants{
@@ -99,9 +95,9 @@ public final class RobotConstants {
         public static final double elevatorGearRatio = 9.0 * 72.0 /22.0; //Motor revolutions to output shaft revolutions.
 
         //Total travel / number revolutions. 
-        public static final double elevatorTravelEncoderTick = Units.inchesToMeters(16.5 / (288761.0 - 13301.0));
-        public static final double elevatorMaxTravel = Units.inchesToMeters(16.5);
-        public static final double elevatorPivotStartHeight = Units.inchesToMeters(41.5);
+        public static final double elevatorTravelEncoderTick = 16.5 / (288761.0 - 13301.0);
+        public static final double elevatorMaxTravel = 16.5;    //Distance between limit switches.
+        public static final double safeZone = 0.75;
     }
 
     public static final class Intake{

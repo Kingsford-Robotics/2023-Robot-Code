@@ -92,7 +92,7 @@ public class RobotContainer {
         );
             
         m_Elevator.setDefaultCommand(
-            new InstantCommand(() -> m_Elevator.setElevatorSpeed(OIConstants.elevatorSpeed.getAsDouble() * 0.3), m_Elevator)
+            new InstantCommand(() -> m_Elevator.setElevatorSpeed(-OIConstants.elevatorSpeed.getAsDouble() * 0.3), m_Elevator)
         );
 
         // Configure the button bindings
