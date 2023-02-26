@@ -17,6 +17,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.PrintCommand;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.Constants.OIConstants;
 import frc.robot.subsystems.Intake;
 import frc.robot.Constants.RobotConstants.Turntable;
@@ -116,13 +117,15 @@ public class RobotContainer {
 
         OIConstants.toggleArmExtension.onTrue(new InstantCommand(() -> m_Arm.toggleExtension()));
 
-        /*OIConstants.alignPlace.whileTrue(
+        OIConstants.alignPlace.whileTrue(
             new ParallelCommandGroup(
                 m_PlacewAlign,    
-                m_ArmElevatorPositions.getArmElevatorCommand(getPosition(level, isCone))
-            )
+                new SequentialCommandGroup(
+                    new PrintCommand("Print Something"),
+                    new PrintCommand("Print Something Else"))
+                )  
         );
-        */
+        
         OIConstants.alignPlace.onFalse(m_StopArmElevator);
 
         /*OIConstants.groundPickup.whileTrue(

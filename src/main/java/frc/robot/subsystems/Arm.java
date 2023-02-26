@@ -47,7 +47,9 @@ public class Arm extends SubsystemBase {
     private GenericEntry armMotorOutput;
 
     private GenericEntry isArmToPosition;
-    private GenericEntry closedLoopError;
+    private GenericEntry targetEncoderPosition;
+
+    private GenericEntry encoderValue;
 
     public Arm() {
         /*Arm Motor Setup*/
@@ -110,7 +112,8 @@ public class Arm extends SubsystemBase {
 
         armMotorOutput = armTab.add("Arm Motor Output", 0).getEntry();
         isArmToPosition = armTab.add("Is Arm to Position", false).getEntry();
-        closedLoopError = armTab.add("Arm Closed Loop Error", 0).getEntry();
+        targetEncoderPosition = armTab.add("Target Encoder Position", 0).getEntry();
+        encoderValue = armTab.add("Encoder Value", 0.0).getEntry();
 
         /*Reset to Absolute */
         Timer.delay(0.5);   //Check to see if this is needed. May be good from delay when initializing Swerve subsystem.
@@ -175,13 +178,14 @@ public class Arm extends SubsystemBase {
         }
 
         double position = Conversions.degreesToFalcon(angle, RobotConstants.ArmConstants.armGearRatio);
+        targetEncoderPosition.setDouble(position);
         armMotor.set(ControlMode.MotionMagic, position, DemandType.ArbitraryFeedForward, Math.cos(getAngle().getRadians()) * RobotConstants.ArmConstants.armMaxGravityComp);
     }
 
     //TODO: Check if function works.
     public boolean isArmToPosition()
     {
-       if(armMotor.getClosedLoopError(0) < Conversions.degreesToFalcon(2, RobotConstants.ElevatorConstants.elevatorTravelEncoderTick))
+       if(Math.abs(armMotor.getSelectedSensorPosition() - targetEncoderPosition.getDouble(0.0)) < Conversions.degreesToFalcon(2, RobotConstants.ElevatorConstants.elevatorTravelEncoderTick))
        {
         return true;
        }
@@ -236,6 +240,6 @@ public class Arm extends SubsystemBase {
 
         armMotorOutput.setDouble(armMotor.getMotorOutputPercent());
         isArmToPosition.setBoolean(isArmToPosition());
-        closedLoopError.setDouble(armMotor.getClosedLoopError(0));
+        encoderValue.setDouble(armMotor.getSelectedSensorPosition());
     }
 }

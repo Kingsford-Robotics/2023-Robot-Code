@@ -32,7 +32,6 @@ public class DashboardDisplay extends SubsystemBase {
   
   private Field2d field = new Field2d();
 
-
   public DashboardDisplay(Swerve m_Swerve) {
     /*Subsystem Instantiation */
     this.m_Swerve = m_Swerve;
