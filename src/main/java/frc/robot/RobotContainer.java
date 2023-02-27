@@ -125,17 +125,9 @@ public class RobotContainer {
 
         OIConstants.toggleConeCube.onTrue(new InstantCommand(() -> isCone = !isCone));
 
-        OIConstants.toggleRamp.onTrue(m_Ramp.toggle());
-        
+        OIConstants.toggleRamp.onTrue(new InstantCommand(() -> m_Ramp.toggleRamp()));
+
         OIConstants.resetGyro.onTrue(new InstantCommand(() -> m_Swerve.zeroGyro()));
-
-        
-
-       
-
-       
-
-        OIConstants.alignPlace.whileTrue(elevatorToHeight);
     }
 
     private void configureAutoCommands()
