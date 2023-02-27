@@ -4,14 +4,37 @@
 
 package frc.robot.subsystems;
 
+import edu.wpi.first.wpilibj.DoubleSolenoid;
+import edu.wpi.first.wpilibj.PneumaticsModuleType;
+import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants.RobotConstants;
 
 public class Ramp extends SubsystemBase {
-  /** Creates a new Ramp. */
-  public Ramp() {}
+  DoubleSolenoid rampSolenoid;
 
-  @Override
-  public void periodic() {
-    // This method will be called once per scheduler run
+  public Ramp() {
+
+    rampSolenoid = new DoubleSolenoid(
+      1,
+      PneumaticsModuleType.CTREPCM, 
+      RobotConstants.RampConstants.rampSolenoidFWD, 
+      RobotConstants.RampConstants.rampSolenoidREV
+    );
+
+    rampSolenoid.set(Value.kReverse); //Starts retracted.
+  }
+
+  public void extendRamp() {
+    rampSolenoid.set(DoubleSolenoid.Value.kForward);
+  }
+
+  public void retractRamp() {
+    rampSolenoid.set(DoubleSolenoid.Value.kReverse);
+  }
+
+  public void toggleRamp()
+  {
+    rampSolenoid.toggle();
   }
 }

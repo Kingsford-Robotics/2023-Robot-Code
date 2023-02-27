@@ -96,13 +96,9 @@ public final class RobotConstants {
         public static final double safeZone = 0.75;
     }
 
-    public static final class Intake{
-        public static final int intakeMotorID = 0;
-        public static final int intakeSolenoidFWD = 4;
-        public static final int intakeSolenoidREV = 5;
-
-        public static final double intakeSpeed = 0.5;
-        public static final double outtakeSpeed = -0.5;
+    public static final class RampConstants{
+        public static final int rampSolenoidFWD = 4;
+        public static final int rampSolenoidREV = 5;
     }
 
     public static final class Turntable{
