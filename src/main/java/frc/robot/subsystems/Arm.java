@@ -98,8 +98,8 @@ public class Arm extends SubsystemBase {
         );
 
         //Set default arm position
-        armExtension.set(kReverse); //Arm retracted
-        armGrab.set(kForward);      //Claw open
+        retract();
+        open();
 
         /*Shuffleboard Setup*/
         armTab = Shuffleboard.getTab("Arm");
@@ -168,6 +168,12 @@ public class Arm extends SubsystemBase {
 
     //Set arm angle in degrees.
     public void setArmAngle(double angle){
+        setArmAngle(angle, 1);
+    }
+
+    public void setArmAngle(double angle, double speedPercent){
+        armMotor.configMotionCruiseVelocity(RobotConstants.ArmConstants.armCruiseVelocity * speedPercent);
+
         //Check if angle is within range.
         if(angle > RobotConstants.ArmConstants.armMaxAngle){
             angle = RobotConstants.ArmConstants.armMaxAngle;

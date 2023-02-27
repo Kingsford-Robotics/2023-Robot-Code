@@ -15,7 +15,10 @@ import com.pathplanner.lib.PathConstraints;
 import edu.wpi.first.wpilibj.PneumaticsControlModule;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.PrintCommand;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import frc.robot.Constants.OIConstants;
 import frc.robot.subsystems.Turntable;
 import frc.robot.subsystems.Arm;
@@ -25,7 +28,6 @@ import frc.robot.subsystems.Limelight;
 import frc.robot.subsystems.Ramp;
 import frc.robot.commands.ArmPickupAlign;
 import frc.robot.commands.PlaceAlign;
-import frc.robot.commands.SetElevatorToHeight;
 import frc.robot.commands.StopArmElevator;
 import frc.robot.commands.TeleopSwerve;
 import frc.robot.subsystems.DashboardDisplay;
@@ -52,7 +54,6 @@ public class RobotContainer {
     private final StopArmElevator m_StopArmElevator = new StopArmElevator(m_Arm, m_Elevator);
     private final PlaceAlign m_PlacewAlign = new PlaceAlign(m_Swerve, m_Limelight, m_JetsonXavier);
     private final ArmPickupAlign m_ArmPickupAlign = new ArmPickupAlign(m_Swerve, m_JetsonXavier);
-    private final SetElevatorToHeight elevatorToHeight = new SetElevatorToHeight(m_Elevator, 3.0);
 
     /*Pathplanner Setup*/
     private FollowPathWithEvents autoCommand = null;
@@ -62,6 +63,7 @@ public class RobotContainer {
     private int level = 2;    //Levels 0 - 2 represent FLOOR, MIDDLE, and TOP
     private boolean isCone = true;
     private boolean autoAlign = true;
+    private boolean isFrontArm = false;
     
     public int getLevel() { return level; }
 
@@ -74,6 +76,10 @@ public class RobotContainer {
     public boolean getAutoAlign() { return autoAlign; }
 
     public void setAutoAlign(boolean autoAlign) { this.autoAlign = autoAlign; }
+
+    public boolean getIsFrontArm() { return isFrontArm; }
+
+    public void setIsFrontArm(boolean isFrontArm) { this.isFrontArm = isFrontArm; }
 
     /**
      * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -126,8 +132,26 @@ public class RobotContainer {
         OIConstants.toggleConeCube.onTrue(new InstantCommand(() -> isCone = !isCone));
 
         OIConstants.toggleRamp.onTrue(new InstantCommand(() -> m_Ramp.toggleRamp()));
+        
+        OIConstants.alignPlace.onTrue(
+            new ParallelCommandGroup(
+                m_PlacewAlign,
+                new SequentialCommandGroup(
+                    new InstantCommand(() -> m_Elevator.setElevatorHeight(5.0), m_Elevator),
+                    new InstantCommand(() -> m_Arm.setArmAngle(0.0), m_Arm),
+                    new WaitUntilCommand(() -> m_Elevator.isElevatorToPosition() && m_Arm.isArmToPosition())
+                )
+                )
+        );
+        OIConstants.alignPlace.onFalse(m_StopArmElevator);
 
+        //OIConstants.turntablePickup.onTrue();
+        //OIConstants.groundPickup.onTrue();
+        //OIConstants.armHome.onTrue();
+
+        /*Main Driver Button Bindings*/
         OIConstants.resetGyro.onTrue(new InstantCommand(() -> m_Swerve.zeroGyro()));
+        OIConstants.toggleFront.onTrue(new InstantCommand(() -> isFrontArm = !isFrontArm));
     }
 
     private void configureAutoCommands()

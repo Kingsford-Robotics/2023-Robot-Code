@@ -49,7 +49,7 @@ public class Elevator extends SubsystemBase {
     elevatorMotor.config_kD(0, RobotConstants.ElevatorConstants.elevatorKd);
     elevatorMotor.config_kF(0, RobotConstants.ElevatorConstants.elevatorKF);
 
-    elevatorMotor.configAllowableClosedloopError(0, 0.1 / RobotConstants.ElevatorConstants.elevatorTravelEncoderTick); //Allows 0.25 inch error.
+    elevatorMotor.configAllowableClosedloopError(0, 0.15 / RobotConstants.ElevatorConstants.elevatorTravelEncoderTick);
     //Configure Motion Magic
     elevatorMotor.configMotionCruiseVelocity(RobotConstants.ElevatorConstants.elevatorCruiseVelocity);
     elevatorMotor.configMotionAcceleration(RobotConstants.ElevatorConstants.elevatorMaxAcceleration);
@@ -108,7 +108,9 @@ public class Elevator extends SubsystemBase {
    * {@summary} Sets the elevator to the height specified using a S motion curve.
    * @param height Height, in inches, above the lowest elevator position.
    */
-  public void setElevatorHeight(double height){
+  public void setElevatorHeight(double height, double percentSpeed){
+    elevatorMotor.configMotionCruiseVelocity(RobotConstants.ElevatorConstants.elevatorCruiseVelocity * percentSpeed);
+
     if(height > RobotConstants.ElevatorConstants.elevatorMaxTravel - RobotConstants.ElevatorConstants.safeZone)
     {
       height = RobotConstants.ElevatorConstants.elevatorMaxTravel - RobotConstants.ElevatorConstants.safeZone;
@@ -125,9 +127,12 @@ public class Elevator extends SubsystemBase {
     elevatorMotor.set(ControlMode.MotionMagic, encoderPosition);
   }
 
+  public void setElevatorHeight(double height){
+    setElevatorHeight(height, 1.0);
+  }
 
   public boolean isElevatorToPosition() {
-    if(Math.abs(targetEncoderPosition.getDouble(0) - elevatorMotor.getSelectedSensorPosition()) < 0.1 / RobotConstants.ElevatorConstants.elevatorTravelEncoderTick)
+    if(Math.abs(targetEncoderPosition.getDouble(0) - elevatorMotor.getSelectedSensorPosition()) < 0.15 / RobotConstants.ElevatorConstants.elevatorTravelEncoderTick)
     {
       return true;
     }

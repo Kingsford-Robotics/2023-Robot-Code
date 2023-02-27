@@ -38,7 +38,7 @@ public final class RobotConstants {
 
         //TODO: Set to minimum value that allows arm to move at horizontal.
         /*Arm Gravity Compensation*/
-        public static final double armMaxGravityComp = 0.05;    //Percent output
+        public static final double armMaxGravityComp = -0.08;    //Percent output
 
         /*Arm PID Constants*/
         //TODO: Tune PID values using Phoenix tuner.
@@ -51,7 +51,7 @@ public final class RobotConstants {
         public static final double armKF = 1.0 * 1023.0 / armMaxSpeed;    //TODO: Find actual speed at lower output percent for free motor.
 
         /*Arm Gear Ratio*/
-        public static final double armGearRatio = 90.0 * (72 / 22.0); //TODO: Check angle to make sure 90 degrees is correct.
+        public static final double armGearRatio = 335.45;//90.0 * (72 / 22.0); //TODO: Check angle to make sure 90 degrees is correct.
 
         /*Arm Limits*/
         //Horizontal is 0, up is negative.
