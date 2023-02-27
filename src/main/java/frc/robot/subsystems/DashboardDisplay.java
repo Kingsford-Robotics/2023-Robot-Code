@@ -12,10 +12,10 @@ import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.RobotContainer;
-import frc.robot.Constants.RobotConstants;
 
 public class DashboardDisplay extends SubsystemBase {
   /*Subsystem References for Data and Commands*/
+  private RobotContainer m_RobotContainer;
   private Swerve m_Swerve;
 
   /*Camera Streams*/
@@ -34,9 +34,11 @@ public class DashboardDisplay extends SubsystemBase {
   
   private Field2d field = new Field2d();
 
-  public DashboardDisplay(Swerve m_Swerve) {
+  public DashboardDisplay(RobotContainer m_RobotContainer, Swerve m_Swerve) {
     /*Subsystem Instantiation */
+    this.m_RobotContainer = m_RobotContainer;
     this.m_Swerve = m_Swerve;
+
     competitionTab = Shuffleboard.getTab("Competition");
 
     turnTableCamera = CameraServer.startAutomaticCapture(0);
@@ -61,9 +63,9 @@ public class DashboardDisplay extends SubsystemBase {
     field.setRobotPose(m_Swerve.getPose());
     gyroAngle.setDouble(m_Swerve.getYaw().getDegrees());
 
-    targetType.setString(RobotContainer.isCone ? "Cone" : "Cube");
+    targetType.setString(m_RobotContainer.getIsCone() ? "Cone" : "Cube");
     
-    switch(RobotContainer.level){
+    switch(m_RobotContainer.getLevel()){
       case 0:
         scoreLocation.setString("Ground");
         break;
