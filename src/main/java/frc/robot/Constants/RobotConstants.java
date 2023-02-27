@@ -38,11 +38,11 @@ public final class RobotConstants {
 
         //TODO: Set to minimum value that allows arm to move at horizontal.
         /*Arm Gravity Compensation*/
-        public static final double armMaxGravityComp = -0.08;    //Percent output
+        public static final double armMaxGravityComp = -0.04;    //Percent output
 
         /*Arm PID Constants*/
         //TODO: Tune PID values using Phoenix tuner.
-        public static final double armKp = 0.0;
+        public static final double armKp = 0.35;
         public static final double armKi = 0.0;
         public static final double armKd = 0.0;
 
@@ -92,8 +92,8 @@ public final class RobotConstants {
 
         //Total travel / number revolutions. 
         public static final double elevatorTravelEncoderTick = 16.5 / (288761.0 - 13301.0);
-        public static final double elevatorMaxTravel = 16.0;    //Distance between limit switches.
-        public static final double safeZone = 0.75;
+        public static final double elevatorMaxTravel = 15.6;    //Distance between limit switches.
+        public static final double safeZone = 0.1;
     }
 
     public static final class RampConstants{

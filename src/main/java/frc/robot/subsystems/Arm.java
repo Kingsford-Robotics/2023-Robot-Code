@@ -191,8 +191,7 @@ public class Arm extends SubsystemBase {
     //TODO: Check if function works.
     public boolean isArmToPosition()
     {
-       if(Math.abs(armMotor.getSelectedSensorPosition() - targetEncoderPosition.getDouble(0.0)) < Conversions.degreesToFalcon(2, RobotConstants.ElevatorConstants.elevatorTravelEncoderTick))
-       {
+       if(Math.abs(armMotor.getSelectedSensorPosition() - targetEncoderPosition.getDouble(0.0)) < Conversions.degreesToFalcon(2, RobotConstants.ArmConstants.armGearRatio)){
         return true;
        }
 
