@@ -23,11 +23,11 @@ import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.JetsonXavier;
 import frc.robot.subsystems.Limelight;
 import frc.robot.subsystems.Ramp;
+import frc.robot.commands.ArmPickupAlign;
+import frc.robot.commands.PlaceAlign;
 import frc.robot.commands.SetElevatorToHeight;
 import frc.robot.commands.StopArmElevator;
 import frc.robot.commands.TeleopSwerve;
-import frc.robot.commands.AlignmentCommands.ArmPickupAlign;
-import frc.robot.commands.AlignmentCommands.PlaceAlign;
 import frc.robot.subsystems.DashboardDisplay;
 import frc.robot.subsystems.Swerve;
 
@@ -44,7 +44,7 @@ public class RobotContainer {
     private final JetsonXavier m_JetsonXavier = new JetsonXavier();
     private final Limelight m_Limelight = new Limelight();
     
-    private final DashboardDisplay m_Display = new DashboardDisplay(m_Swerve);
+    private final DashboardDisplay m_Display = new DashboardDisplay(this, m_Swerve);
 
     private final PneumaticsControlModule pcm = new PneumaticsControlModule(1);
 
@@ -58,10 +58,23 @@ public class RobotContainer {
     private FollowPathWithEvents autoCommand = null;
     private final HashMap<String, Command> eventMap = new HashMap<>();
 
-    public static int level = 2;    //Levels 0 - 2 represent FLOOR, MIDDLE, and TOP
-    public static boolean isCone = true;
-    public static boolean autoAlign = true;
+    /*Control State Variables*/
+    private int level = 2;    //Levels 0 - 2 represent FLOOR, MIDDLE, and TOP
+    private boolean isCone = true;
+    private boolean autoAlign = true;
     
+    public int getLevel() { return level; }
+
+    public void setLevel(int level) { this.level = level; }
+
+    public boolean getIsCone() { return isCone; }
+
+    public void setIsCone(boolean isCone) { this.isCone = isCone; }
+
+    public boolean getAutoAlign() { return autoAlign; }
+
+    public void setAutoAlign(boolean autoAlign) { this.autoAlign = autoAlign; }
+
     /**
      * The container for the robot. Contains subsystems, OI devices, and commands.
      */
@@ -78,11 +91,15 @@ public class RobotContainer {
                     );
         
         m_Arm.setDefaultCommand(
-            new InstantCommand(() -> m_Arm.setArmSpeed(OIConstants.armSpeed.getAsDouble() * 0.3), m_Arm)
+            new InstantCommand(() -> m_Arm.setArmSpeed(OIConstants.armSpeed.getAsDouble() * 0.2), m_Arm)
         );
             
         m_Elevator.setDefaultCommand(
-            new InstantCommand(() -> m_Elevator.setElevatorSpeed(-OIConstants.elevatorSpeed.getAsDouble() * 0.5), m_Elevator)
+            new InstantCommand(() -> m_Elevator.setElevatorSpeed(-OIConstants.elevatorSpeed.getAsDouble() * 0.3), m_Elevator)
+        );
+
+        m_Turntable.setDefaultCommand(
+            new InstantCommand(() -> m_Turntable.setTurntableSpeed(OIConstants.turntableSpeed.getAsDouble() * 1.0), m_Turntable)
         );
 
         // Configure the button bindings
@@ -104,20 +121,12 @@ public class RobotContainer {
         OIConstants.openClaw.onTrue(new InstantCommand(() -> m_Arm.open()));
         OIConstants.closeClaw.onTrue(new InstantCommand(() -> m_Arm.close()));
 
-        OIConstants.toggleArmExtension.onTrue(new InstantCommand(() -> m_Arm.toggleExtension()));
-
         OIConstants.increaseLevel.onTrue(new InstantCommand(() -> level = Math.min(level + 1, 2)));
         OIConstants.decreaseLevel.onTrue(new InstantCommand(() -> level = Math.max(level - 1, 0)));
 
-        OIConstants.toggleAutoAlign.onTrue(new InstantCommand(() -> autoAlign = !autoAlign));
         OIConstants.toggleConeCube.onTrue(new InstantCommand(() -> isCone = !isCone));
 
-        OIConstants.turntableRight.whileTrue(
-            new InstantCommand(() -> m_Turntable.setTurntableSpeed(0.3))
-        );
-
         OIConstants.alignPlace.whileTrue(elevatorToHeight);
-
     }
 
     private void configureAutoCommands()
