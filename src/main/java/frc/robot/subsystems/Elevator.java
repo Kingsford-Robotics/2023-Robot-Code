@@ -14,6 +14,7 @@ import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Robot;
 import frc.robot.Constants.RobotConstants;
 
 public class Elevator extends SubsystemBase {
@@ -156,7 +157,7 @@ public class Elevator extends SubsystemBase {
   public void periodic() {
     if(getTopLimitSwitch())
     {
-      calibrateElevator(16.5);
+      calibrateElevator(RobotConstants.ElevatorConstants.elevatorMaxTravel);
 
       if(elevatorMotor.getMotorOutputPercent() > 0)
       {

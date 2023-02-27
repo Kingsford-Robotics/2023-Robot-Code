@@ -78,11 +78,11 @@ public class RobotContainer {
                     );
         
         m_Arm.setDefaultCommand(
-            new InstantCommand(() -> m_Arm.setArmSpeed(OIConstants.armSpeed.getAsDouble() * 1.0), m_Arm)
+            new InstantCommand(() -> m_Arm.setArmSpeed(OIConstants.armSpeed.getAsDouble() * 0.3), m_Arm)
         );
             
         m_Elevator.setDefaultCommand(
-            new InstantCommand(() -> m_Elevator.setElevatorSpeed(-OIConstants.elevatorSpeed.getAsDouble() * 1.0), m_Elevator)
+            new InstantCommand(() -> m_Elevator.setElevatorSpeed(-OIConstants.elevatorSpeed.getAsDouble() * 0.5), m_Elevator)
         );
 
         // Configure the button bindings
@@ -111,10 +111,6 @@ public class RobotContainer {
 
         OIConstants.toggleAutoAlign.onTrue(new InstantCommand(() -> autoAlign = !autoAlign));
         OIConstants.toggleConeCube.onTrue(new InstantCommand(() -> isCone = !isCone));
-
-        OIConstants.turntableLeft.whileTrue(
-            new InstantCommand(() -> m_Turntable.setTurntableSpeed(-0.3))
-        );
 
         OIConstants.turntableRight.whileTrue(
             new InstantCommand(() -> m_Turntable.setTurntableSpeed(0.3))

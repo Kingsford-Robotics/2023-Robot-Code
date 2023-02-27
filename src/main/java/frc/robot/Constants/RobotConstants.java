@@ -68,7 +68,7 @@ public final class RobotConstants {
 
         //Elevator Motion Magic Constants
         private static final double elevatorMaxSpeed = 6380.0 * (2480.0 / 600.0); //Max speed in sensor units per 100ms
-        private static final double elevatorPercentSpeed = 0.5; //Percent of max speed to cruise at.
+        private static final double elevatorPercentSpeed = 0.6; //Percent of max speed to cruise at.
 
         public static final double elevatorCruiseVelocity = elevatorMaxSpeed * elevatorPercentSpeed; //Cruise velocity in sensor units per 100ms 
     
@@ -79,9 +79,9 @@ public final class RobotConstants {
 
          /*Elevator PID constants.*/
         //TODO: Tune PID values using Phoenix tuner.
-        public static final double elevatorKp = 1.0;
-        public static final double elevatorKi = 0.0;
-        public static final double elevatorKd = 0.0;
+        public static final double elevatorKp = 0.8;
+        public static final double elevatorKi = 0.03;
+        public static final double elevatorKd = 1.5;
 
         //1023 is the max output of the motor controller.
         //kF = (PercentOutput X 1023) / Speed(Encoder Units/100ms)
@@ -92,7 +92,7 @@ public final class RobotConstants {
 
         //Total travel / number revolutions. 
         public static final double elevatorTravelEncoderTick = 16.5 / (288761.0 - 13301.0);
-        public static final double elevatorMaxTravel = 16.5;    //Distance between limit switches.
+        public static final double elevatorMaxTravel = 16.0;    //Distance between limit switches.
         public static final double safeZone = 0.75;
     }
 
