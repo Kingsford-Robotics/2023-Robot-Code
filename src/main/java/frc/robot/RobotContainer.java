@@ -15,17 +15,15 @@ import com.pathplanner.lib.PathConstraints;
 import edu.wpi.first.wpilibj.PneumaticsControlModule;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.PrintCommand;
-import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.Constants.OIConstants;
-import frc.robot.Constants.RobotConstants.Turntable;
+import frc.robot.subsystems.Turntable;
 import frc.robot.subsystems.Arm;
 import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.JetsonXavier;
 import frc.robot.subsystems.Limelight;
 import frc.robot.subsystems.Ramp;
-import frc.robot.commands.ArmElevatorPositions;
+import frc.robot.commands.SetElevatorToHeight;
 import frc.robot.commands.StopArmElevator;
 import frc.robot.commands.TeleopSwerve;
 import frc.robot.commands.AlignmentCommands.ArmPickupAlign;
@@ -51,10 +49,10 @@ public class RobotContainer {
     private final PneumaticsControlModule pcm = new PneumaticsControlModule(1);
 
     /* Commands */
-    private final ArmElevatorPositions m_ArmElevatorPositions = new ArmElevatorPositions(m_Arm, m_Elevator);
     private final StopArmElevator m_StopArmElevator = new StopArmElevator(m_Arm, m_Elevator);
     private final PlaceAlign m_PlacewAlign = new PlaceAlign(m_Swerve, m_Limelight, m_JetsonXavier);
     private final ArmPickupAlign m_ArmPickupAlign = new ArmPickupAlign(m_Swerve, m_JetsonXavier);
+    private final SetElevatorToHeight elevatorToHeight = new SetElevatorToHeight(m_Elevator, 3.0);
 
     /*Pathplanner Setup*/
     private FollowPathWithEvents autoCommand = null;
@@ -80,11 +78,11 @@ public class RobotContainer {
                     );
         
         m_Arm.setDefaultCommand(
-            new InstantCommand(() -> m_Arm.setArmSpeed(OIConstants.armSpeed.getAsDouble() * 0.3), m_Arm)
+            new InstantCommand(() -> m_Arm.setArmSpeed(OIConstants.armSpeed.getAsDouble() * 1.0), m_Arm)
         );
             
         m_Elevator.setDefaultCommand(
-            new InstantCommand(() -> m_Elevator.setElevatorSpeed(-OIConstants.elevatorSpeed.getAsDouble() * 0.3), m_Elevator)
+            new InstantCommand(() -> m_Elevator.setElevatorSpeed(-OIConstants.elevatorSpeed.getAsDouble() * 1.0), m_Elevator)
         );
 
         // Configure the button bindings
@@ -101,7 +99,6 @@ public class RobotContainer {
      * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
      */
     private void configureButtonBindings() {
-        //OIConstants.intakeDeploy.whileTrue(m_DeployIntake);
         OIConstants.resetGyro.onTrue(new InstantCommand(() -> m_Swerve.zeroGyro()));
 
         OIConstants.openClaw.onTrue(new InstantCommand(() -> m_Arm.open()));
@@ -109,72 +106,24 @@ public class RobotContainer {
 
         OIConstants.toggleArmExtension.onTrue(new InstantCommand(() -> m_Arm.toggleExtension()));
 
-        OIConstants.alignPlace.whileTrue(
-            new ParallelCommandGroup(
-                m_PlacewAlign,    
-                new SequentialCommandGroup(
-                    new PrintCommand("Print Something"),
-                    new PrintCommand("Print Something Else"))
-                )  
-        );
-        
-        OIConstants.alignPlace.onFalse(m_StopArmElevator);
-
-        /*OIConstants.groundPickup.whileTrue(
-            new ParallelCommandGroup(
-                m_ArmPickupAlign,
-                m_ArmElevatorPositions.getArmElevatorCommand(ArmElevatorPositions.Positions.GROUND_PICKUP)
-            )
-        );*/
-
-        OIConstants.groundPickup.onFalse(m_StopArmElevator);
-
-        //OIConstants.turntablePickup.onTrue(m_ArmElevatorPositions.getArmElevatorCommand(ArmElevatorPositions.Positions.TURNTABLE_PICKUP));
-        OIConstants.turntablePickup.onFalse(m_StopArmElevator);
-        
-        //OIConstants.armHome.onTrue(m_ArmElevatorPositions.getArmElevatorCommand(ArmElevatorPositions.Positions.HOME));
-        OIConstants.armHome.onFalse(m_StopArmElevator);
-
-        //OIConstants.reverseIntake.onTrue(m_ReverseIntake);
-
-        OIConstants.increaseLevel.onTrue(new InstantCommand(() -> level = Math.min(level++, 2)));
-        OIConstants.decreaseLevel.onTrue(new InstantCommand(() -> level = Math.max(level--, 0)));
+        OIConstants.increaseLevel.onTrue(new InstantCommand(() -> level = Math.min(level + 1, 2)));
+        OIConstants.decreaseLevel.onTrue(new InstantCommand(() -> level = Math.max(level - 1, 0)));
 
         OIConstants.toggleAutoAlign.onTrue(new InstantCommand(() -> autoAlign = !autoAlign));
         OIConstants.toggleConeCube.onTrue(new InstantCommand(() -> isCone = !isCone));
+
+        OIConstants.turntableLeft.whileTrue(
+            new InstantCommand(() -> m_Turntable.setTurntableSpeed(-0.3))
+        );
+
+        OIConstants.turntableRight.whileTrue(
+            new InstantCommand(() -> m_Turntable.setTurntableSpeed(0.3))
+        );
+
+        OIConstants.alignPlace.whileTrue(elevatorToHeight);
+
     }
 
-    private ArmElevatorPositions.Positions getPosition(int level, boolean isCone)
-    {
-        if(isCone)
-        {
-            switch(level)
-            {
-                case 0:
-                    return ArmElevatorPositions.Positions.CONE_FLOOR;
-                case 1:
-                    return ArmElevatorPositions.Positions.CONE_MIDDLE;
-                case 2:
-                    return ArmElevatorPositions.Positions.CONE_TOP;
-                default:
-                    return ArmElevatorPositions.Positions.HOME;
-            }
-        }
-
-        else{
-            switch(level)
-            {
-                case 0:
-                    return ArmElevatorPositions.Positions.CUBE_FLOOR;
-                case 1:
-                    return ArmElevatorPositions.Positions.CUBE_MIDDLE;
-                case 2:
-                    return ArmElevatorPositions.Positions.CUBE_TOP;
-                default:
-                    return ArmElevatorPositions.Positions.HOME;
-            }
-        }
-    }
     private void configureAutoCommands()
     {
         eventMap.put("event1", new PrintCommand("Event 1"));

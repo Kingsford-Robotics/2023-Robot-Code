@@ -15,9 +15,10 @@ public class Turntable extends SubsystemBase {
 
   public Turntable() {
     turntableMotor = new VictorSPX(RobotConstants.Turntable.turntableMotorID);
+    turntableMotor.set(ControlMode.PercentOutput, 0.0);
   }
 
-  public void setTurntableMotor(double speed) {
+  public void setTurntableSpeed(double speed) {
     turntableMotor.set(ControlMode.PercentOutput, speed);
   }
 }

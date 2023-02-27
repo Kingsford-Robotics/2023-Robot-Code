@@ -77,13 +77,9 @@ public final class RobotConstants {
 
         public static final int elevatorSCurveStrength = 3;
 
-        /*Elevator Gravity Compensation*/
-        //TODO: Set to minimum percent output needed to hold elevator up.
-        public static final double elevatorGravityComp = 0.05;    //Percent output
-
          /*Elevator PID constants.*/
         //TODO: Tune PID values using Phoenix tuner.
-        public static final double elevatorKp = 0.0;
+        public static final double elevatorKp = 1.0;
         public static final double elevatorKi = 0.0;
         public static final double elevatorKd = 0.0;
 
@@ -110,6 +106,6 @@ public final class RobotConstants {
     }
 
     public static final class Turntable{
-        public static final int turntableMotorID = 0;
+        public static final int turntableMotorID = 23;
     }
 }

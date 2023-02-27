@@ -5,8 +5,10 @@
 package frc.robot.subsystems;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.ctre.phoenix.motorcontrol.DemandType;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
 
+import edu.wpi.first.hal.simulation.ConstBufferCallback;
 import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
@@ -46,7 +48,7 @@ public class Elevator extends SubsystemBase {
     elevatorMotor.config_kD(0, RobotConstants.ElevatorConstants.elevatorKd);
     elevatorMotor.config_kF(0, RobotConstants.ElevatorConstants.elevatorKF);
 
-    elevatorMotor.configAllowableClosedloopError(0, 0.25 / RobotConstants.ElevatorConstants.elevatorTravelEncoderTick); //Allows 0.25 inch error.
+    elevatorMotor.configAllowableClosedloopError(0, 0.1 / RobotConstants.ElevatorConstants.elevatorTravelEncoderTick); //Allows 0.25 inch error.
     //Configure Motion Magic
     elevatorMotor.configMotionCruiseVelocity(RobotConstants.ElevatorConstants.elevatorCruiseVelocity);
     elevatorMotor.configMotionAcceleration(RobotConstants.ElevatorConstants.elevatorMaxAcceleration);
@@ -119,12 +121,12 @@ public class Elevator extends SubsystemBase {
 
     targetEncoderPosition.setDouble(encoderPosition);
 
-    //elevatorMotor.set(ControlMode.MotionMagic, encoderPosition); TODO: Renable code.
+    elevatorMotor.set(ControlMode.MotionMagic, encoderPosition);
   }
 
 
   public boolean isElevatorToPosition() {
-    if(Math.abs(targetEncoderPosition.getDouble(0) - elevatorMotor.getSelectedSensorPosition()) < 0.3 / RobotConstants.ElevatorConstants.elevatorTravelEncoderTick)
+    if(Math.abs(targetEncoderPosition.getDouble(0) - elevatorMotor.getSelectedSensorPosition()) < 0.1 / RobotConstants.ElevatorConstants.elevatorTravelEncoderTick)
     {
       return true;
     }

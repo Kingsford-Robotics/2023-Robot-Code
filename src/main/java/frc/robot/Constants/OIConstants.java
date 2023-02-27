@@ -12,6 +12,7 @@ import java.util.function.Supplier;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
+import edu.wpi.first.wpilibj2.command.button.POVButton;
 import frc.robot.LogitechJoystick;
 
 /** Add your docs here. */
@@ -80,10 +81,9 @@ public class OIConstants {
 
     public static final DoubleSupplier elevatorSpeed = () -> handheldController.getLeftY();
     public static final DoubleSupplier armSpeed = () -> handheldController.getRightY();
-
-
-    public static final int turntableLeftPOV = 270;
-    public static final int turntableRightPOV = 90;
+    
+    public static final POVButton turntableLeft = new POVButton(handheldController, 270);
+    public static final POVButton turntableRight = new POVButton(handheldController, 90);
 
     //Mounted Controller
     public static final JoystickButton increaseLevel = new JoystickButton(mountedController, XboxController.Button.kY.value);
