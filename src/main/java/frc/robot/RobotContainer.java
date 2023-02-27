@@ -116,8 +116,7 @@ public class RobotContainer {
      * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
      */
     private void configureButtonBindings() {
-        OIConstants.resetGyro.onTrue(new InstantCommand(() -> m_Swerve.zeroGyro()));
-
+        /*CoDriver Button Bindings*/
         OIConstants.openClaw.onTrue(new InstantCommand(() -> m_Arm.open()));
         OIConstants.closeClaw.onTrue(new InstantCommand(() -> m_Arm.close()));
 
@@ -125,6 +124,16 @@ public class RobotContainer {
         OIConstants.decreaseLevel.onTrue(new InstantCommand(() -> level = Math.max(level - 1, 0)));
 
         OIConstants.toggleConeCube.onTrue(new InstantCommand(() -> isCone = !isCone));
+
+        OIConstants.toggleRamp.onTrue(m_Ramp.toggle());
+        
+        OIConstants.resetGyro.onTrue(new InstantCommand(() -> m_Swerve.zeroGyro()));
+
+        
+
+       
+
+       
 
         OIConstants.alignPlace.whileTrue(elevatorToHeight);
     }
