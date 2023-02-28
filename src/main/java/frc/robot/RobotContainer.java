@@ -28,6 +28,7 @@ import frc.robot.subsystems.Limelight;
 import frc.robot.subsystems.Ramp;
 import frc.robot.commands.ArmPickupAlign;
 import frc.robot.commands.GoHome;
+import frc.robot.commands.GrabFromTurntable;
 import frc.robot.commands.PlaceAlign;
 import frc.robot.commands.StopArmElevator;
 import frc.robot.commands.TeleopSwerve;
@@ -57,6 +58,7 @@ public class RobotContainer {
     private final ArmPickupAlign m_ArmPickupAlign = new ArmPickupAlign(m_Swerve, m_JetsonXavier);
 
     private final GoHome m_GoHome = new GoHome(m_Arm, m_Elevator);
+    private final GrabFromTurntable m_GrabFromTurntable = new GrabFromTurntable(m_Arm, m_Elevator);
 
     /*Pathplanner Setup*/
     private FollowPathWithEvents autoCommand = null;
@@ -136,19 +138,15 @@ public class RobotContainer {
 
         OIConstants.toggleRamp.onTrue(new InstantCommand(() -> m_Ramp.toggleRamp()));
         
-        OIConstants.alignPlace.whileTrue(
-            new ParallelCommandGroup(
-                m_PlacewAlign,
-                new SequentialCommandGroup(
-                    new InstantCommand(() -> m_Elevator.setElevatorHeight(7.5), m_Elevator),
-                    new InstantCommand(() -> m_Arm.setArmAngle(103.0), m_Arm),
-                    new WaitUntilCommand(() -> m_Elevator.isElevatorToPosition() && m_Arm.isArmToPosition())
-                )
-                )
+        OIConstants.alignPlace.onTrue(
+            new InstantCommand(() -> m_Arm.toggleExtension(), m_Arm)    //TODO: Remove
         );
+
         OIConstants.alignPlace.onFalse(m_StopArmElevator);
 
-        //OIConstants.turntablePickup.onTrue();
+        OIConstants.turntablePickup.whileTrue(m_GrabFromTurntable.getCommand());
+        OIConstants.turntablePickup.onFalse(m_StopArmElevator);
+        
         //OIConstants.groundPickup.onTrue();
 
         OIConstants.armHome.whileTrue(m_GoHome.getCommand());
