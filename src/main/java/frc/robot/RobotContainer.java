@@ -27,6 +27,7 @@ import frc.robot.subsystems.JetsonXavier;
 import frc.robot.subsystems.Limelight;
 import frc.robot.subsystems.Ramp;
 import frc.robot.commands.ArmPickupAlign;
+import frc.robot.commands.GoHome;
 import frc.robot.commands.PlaceAlign;
 import frc.robot.commands.StopArmElevator;
 import frc.robot.commands.TeleopSwerve;
@@ -54,6 +55,8 @@ public class RobotContainer {
     private final StopArmElevator m_StopArmElevator = new StopArmElevator(m_Arm, m_Elevator);
     private final PlaceAlign m_PlacewAlign = new PlaceAlign(m_Swerve, m_Limelight, m_JetsonXavier);
     private final ArmPickupAlign m_ArmPickupAlign = new ArmPickupAlign(m_Swerve, m_JetsonXavier);
+
+    private final GoHome m_GoHome = new GoHome(m_Arm, m_Elevator);
 
     /*Pathplanner Setup*/
     private FollowPathWithEvents autoCommand = null;
@@ -133,12 +136,12 @@ public class RobotContainer {
 
         OIConstants.toggleRamp.onTrue(new InstantCommand(() -> m_Ramp.toggleRamp()));
         
-        OIConstants.alignPlace.onTrue(
+        OIConstants.alignPlace.whileTrue(
             new ParallelCommandGroup(
                 m_PlacewAlign,
                 new SequentialCommandGroup(
-                    new InstantCommand(() -> m_Elevator.setElevatorHeight(5.0), m_Elevator),
-                    new InstantCommand(() -> m_Arm.setArmAngle(0.0), m_Arm),
+                    new InstantCommand(() -> m_Elevator.setElevatorHeight(7.5), m_Elevator),
+                    new InstantCommand(() -> m_Arm.setArmAngle(103.0), m_Arm),
                     new WaitUntilCommand(() -> m_Elevator.isElevatorToPosition() && m_Arm.isArmToPosition())
                 )
                 )
@@ -147,7 +150,9 @@ public class RobotContainer {
 
         //OIConstants.turntablePickup.onTrue();
         //OIConstants.groundPickup.onTrue();
-        //OIConstants.armHome.onTrue();
+
+        OIConstants.armHome.whileTrue(m_GoHome.getCommand());
+        OIConstants.armHome.onFalse(m_StopArmElevator);
 
         /*Main Driver Button Bindings*/
         OIConstants.resetGyro.onTrue(new InstantCommand(() -> m_Swerve.zeroGyro()));
