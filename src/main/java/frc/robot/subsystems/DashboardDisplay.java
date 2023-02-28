@@ -54,7 +54,7 @@ public class DashboardDisplay extends SubsystemBase {
     gyroAngle = competitionTab.add("Gyro Angle", 0).getEntry();
     competitionTab.add(field);
 
-    targetType = competitionTab.add("Target Type", "Unknown").getEntry();
+    targetType = competitionTab.add("Target Type", false).getEntry();
     scoreLocation = competitionTab.add("Score Location", "Unknown").getEntry();
   }
 
@@ -63,17 +63,17 @@ public class DashboardDisplay extends SubsystemBase {
     field.setRobotPose(m_Swerve.getPose());
     gyroAngle.setDouble(m_Swerve.getYaw().getDegrees());
 
-    targetType.setString(m_RobotContainer.getIsCone() ? "Cone" : "Cube");
+    targetType.setBoolean(m_RobotContainer.getIsCone());
     
     switch(m_RobotContainer.getLevel()){
       case 0:
-        scoreLocation.setString("Ground");
+        scoreLocation.setString("GROUND");
         break;
       case 1:
-        scoreLocation.setString("Mid");
+        scoreLocation.setString("MID");
         break;
       case 2:
-        scoreLocation.setString("High");
+        scoreLocation.setString("HIGH");
         break;
       default:
         scoreLocation.setString("Unknown");
