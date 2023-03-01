@@ -20,9 +20,10 @@ public class Place {
     Elevator elevator;
     RobotContainer robotContainer;
 
-    public Place(Arm arm, Elevator elevator) {
+    public Place(Arm arm, Elevator elevator, RobotContainer robotContainer) {
         this.arm = arm;
         this.elevator = elevator;
+        this.robotContainer = robotContainer;
     }
 
     private double getTargetHeight(int level, boolean isCone)
@@ -73,7 +74,7 @@ public class Place {
         commandList.add(
             new WaitUntilCommand(() -> elevator.getElevatorPosition() > 8.0)
         );
-        
+
         commandList.add(
             new InstantCommand(() -> arm.setArmAngle(0.0, 0.2), arm)
         );
