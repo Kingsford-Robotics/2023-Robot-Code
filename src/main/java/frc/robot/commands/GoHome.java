@@ -38,54 +38,31 @@ public class GoHome {
             new InstantCommand(() -> arm.open(), elevator)
         );
         
-        if (elevator.getElevatorPosition() < 7.5)
-        {
-            commandList.add(
-                new InstantCommand(() -> elevator.setElevatorHeight(7.5, 0.7), elevator)
-            );
+        commandList.add(
+            new InstantCommand(() -> elevator.setElevatorHeight(7.5, 0.7), elevator)
+        );
 
-            commandList.add(
-                new WaitUntilCommand(() -> elevator.isElevatorToPosition())
-            );
-        }
+        commandList.add(
+            new WaitUntilCommand(() -> elevator.isElevatorToPosition())
+        );
 
-        if(arm.getAngle().getDegrees() < 104)
-        {
-            commandList.add(
-                new InstantCommand(() -> arm.setArmAngle(104, 0.5), arm)
-            );
 
-            commandList.add(
-                new WaitUntilCommand(() -> arm.isArmToPosition())
-            );
+        commandList.add(
+            new InstantCommand(() -> arm.setArmAngle(113, 0.5), arm)
+        );
 
-            commandList.add(
-                new InstantCommand(() -> arm.setArmAngle(97.5, 0.2), arm)
-            );
+        commandList.add(
+            new WaitUntilCommand(() -> arm.isArmToPosition())
+        );
+
+        commandList.add(
+            new InstantCommand(() -> arm.setArmAngle(98, 0.2), arm)
+        );
             
-            commandList.add(
-                new WaitUntilCommand(() -> arm.isArmToPosition()) 
-            );
-        }
-
-        else{
-            commandList.add(
-                new InstantCommand(() -> arm.setArmAngle(92, 0.5), arm)
-            );
-
-            commandList.add(
-                new WaitUntilCommand(() -> arm.isArmToPosition())
-            );
-
-            commandList.add(
-                new InstantCommand(() -> arm.setArmAngle(97.5, 0.2), arm)
-            );
-
-            commandList.add(
-                new WaitUntilCommand(() -> arm.isArmToPosition())
-            );
-        }
-
+        commandList.add(
+            new WaitUntilCommand(() -> arm.isArmToPosition()) 
+        );
+    
         commandList.add(
             new InstantCommand(() -> elevator.setElevatorHeight(5.3, 0.2), elevator)
         );
@@ -95,7 +72,7 @@ public class GoHome {
         );
 
         commandList.add(
-            new WaitCommand(0.6)
+            new WaitCommand(0.5)
         );
 
         commandList.add(

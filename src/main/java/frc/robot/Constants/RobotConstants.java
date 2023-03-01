@@ -51,7 +51,7 @@ public final class RobotConstants {
         public static final double armKF = 1.0 * 1023.0 / armMaxSpeed;    //TODO: Find actual speed at lower output percent for free motor.
 
         /*Arm Gear Ratio*/
-        public static final double armGearRatio = 335.45;//90.0 * (72 / 22.0); //TODO: Check angle to make sure 90 degrees is correct.
+        public static final double armGearRatio = 340.00;//90.0 * (72 / 22.0); //TODO: Check angle to make sure 90 degrees is correct.
 
         /*Arm Limits*/
         //Horizontal is 0, up is negative.
@@ -87,11 +87,8 @@ public final class RobotConstants {
         //kF = (PercentOutput X 1023) / Speed(Encoder Units/100ms)
         public static final double elevatorKF = (1.0 * 1023) / (6380 * (2048.0 / 600.0)); //TODO: Find actual speed at lower output percent for free motor.
 
-        /*Elevator Gear Ratio*/
-        public static final double elevatorGearRatio = 9.0 * 72.0 /22.0; //Motor revolutions to output shaft revolutions.
-
         //Total travel / number revolutions. 
-        public static final double elevatorTravelEncoderTick = 15.5 / 250500;
+        public static final double elevatorTravelEncoderTick = 15.5 / 224000;
         public static final double elevatorMaxTravel = 15.6;    //Distance between limit switches.
         public static final double safeZone = 0.15;
     }
