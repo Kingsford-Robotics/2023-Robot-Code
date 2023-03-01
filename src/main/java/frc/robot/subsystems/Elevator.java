@@ -159,8 +159,6 @@ public class Elevator extends SubsystemBase {
   public void periodic() {
     if(getTopLimitSwitch())
     {
-      calibrateElevator(RobotConstants.ElevatorConstants.elevatorMaxTravel);
-
       if(elevatorMotor.getMotorOutputPercent() > 0)
       {
         elevatorMotor.set(ControlMode.PercentOutput, 0);
