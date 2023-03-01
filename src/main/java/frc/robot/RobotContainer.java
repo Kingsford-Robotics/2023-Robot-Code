@@ -7,6 +7,8 @@ package frc.robot;
 import java.util.HashMap;
 import java.util.List;
 
+import javax.net.ssl.TrustManager;
+
 import com.pathplanner.lib.PathPlanner;
 import com.pathplanner.lib.PathPlannerTrajectory;
 import com.pathplanner.lib.commands.FollowPathWithEvents;
@@ -15,10 +17,8 @@ import com.pathplanner.lib.PathConstraints;
 import edu.wpi.first.wpilibj.PneumaticsControlModule;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.PrintCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import frc.robot.Constants.OIConstants;
 import frc.robot.subsystems.Turntable;
 import frc.robot.subsystems.Arm;
@@ -49,7 +49,7 @@ public class RobotContainer {
     private final JetsonXavier m_JetsonXavier = new JetsonXavier();
     private final Limelight m_Limelight = new Limelight();
     
-    private final DashboardDisplay m_Display = new DashboardDisplay(this, m_Swerve);
+    private final DashboardDisplay m_Display = new DashboardDisplay(this, m_Swerve, m_Arm);
 
     private final PneumaticsControlModule pcm = new PneumaticsControlModule(1);
 
@@ -60,7 +60,7 @@ public class RobotContainer {
 
     private final GoHome m_GoHome = new GoHome(m_Arm, m_Elevator);
     private final GrabFromTurntable m_GrabFromTurntable = new GrabFromTurntable(m_Arm, m_Elevator);
-    private final Place m_Place = new Place(m_Arm, m_Elevator, this);
+    private final Place m_Place = new Place(this, m_Arm, m_Elevator);
 
     /*Pathplanner Setup*/
     private FollowPathWithEvents autoCommand = null;
@@ -70,7 +70,7 @@ public class RobotContainer {
     private int level = 2;    //Levels 0 - 2 represent FLOOR, MIDDLE, and TOP
     private boolean isCone = true;
     private boolean autoAlign = true;
-    private boolean isFrontArm = false;
+    private boolean isFrontArm = true;
     
     public int getLevel() { return level; }
 
@@ -85,8 +85,6 @@ public class RobotContainer {
     public void setAutoAlign(boolean autoAlign) { this.autoAlign = autoAlign; }
 
     public boolean getIsFrontArm() { return isFrontArm; }
-
-    public void setIsFrontArm(boolean isFrontArm) { this.isFrontArm = isFrontArm; }
 
     /**
      * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -140,10 +138,7 @@ public class RobotContainer {
 
         OIConstants.toggleRamp.onTrue(new InstantCommand(() -> m_Ramp.toggleRamp()));
         
-        OIConstants.alignPlace.onTrue(
-            new InstantCommand()    //TODO: Remove
-        );
-
+        OIConstants.alignPlace.whileTrue(m_Place.getCommand());
         OIConstants.alignPlace.onFalse(m_StopArmElevator);
 
         OIConstants.turntablePickup.whileTrue(m_GrabFromTurntable.getCommand());
@@ -156,7 +151,12 @@ public class RobotContainer {
 
         /*Main Driver Button Bindings*/
         OIConstants.resetGyro.onTrue(new InstantCommand(() -> m_Swerve.zeroGyro()));
-        OIConstants.toggleFront.onTrue(new InstantCommand(() -> isFrontArm = !isFrontArm));
+        
+        OIConstants.toggleFront.onTrue(
+        new SequentialCommandGroup(
+            new InstantCommand(() -> isFrontArm = !isFrontArm),
+            new InstantCommand(() -> m_Swerve.setIsArmFront(isFrontArm))
+        ));
     }
 
     private void configureAutoCommands()

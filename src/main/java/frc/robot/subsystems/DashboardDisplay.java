@@ -10,6 +10,7 @@ import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.RobotContainer;
 
@@ -17,6 +18,7 @@ public class DashboardDisplay extends SubsystemBase {
   /*Subsystem References for Data and Commands*/
   private RobotContainer m_RobotContainer;
   private Swerve m_Swerve;
+  private Arm arm;
 
   /*Camera Streams*/
   private UsbCamera turnTableCamera;
@@ -30,14 +32,17 @@ public class DashboardDisplay extends SubsystemBase {
   private GenericEntry gyroAngle;
   private GenericEntry targetType;
   private GenericEntry scoreLocation;
+  private GenericEntry isArmFront;
+
   //private GenericEntry targetDistance;
   
   private Field2d field = new Field2d();
 
-  public DashboardDisplay(RobotContainer m_RobotContainer, Swerve m_Swerve) {
+  public DashboardDisplay(RobotContainer m_RobotContainer, Swerve m_Swerve, Arm arm) {
     /*Subsystem Instantiation */
     this.m_RobotContainer = m_RobotContainer;
     this.m_Swerve = m_Swerve;
+    this.arm = arm;
 
     competitionTab = Shuffleboard.getTab("Competition");
 
@@ -56,6 +61,9 @@ public class DashboardDisplay extends SubsystemBase {
 
     targetType = competitionTab.add("Target Type", false).getEntry();
     scoreLocation = competitionTab.add("Score Location", "Unknown").getEntry();
+    isArmFront = competitionTab.add("Arm Front", false).getEntry();
+
+    competitionTab.add(new InstantCommand(() -> arm.toggleExtension()));
   }
 
   @Override
@@ -64,6 +72,8 @@ public class DashboardDisplay extends SubsystemBase {
     gyroAngle.setDouble(m_Swerve.getYaw().getDegrees());
 
     targetType.setBoolean(m_RobotContainer.getIsCone());
+
+    isArmFront.setBoolean(m_RobotContainer.getIsFrontArm());
     
     switch(m_RobotContainer.getLevel()){
       case 0:

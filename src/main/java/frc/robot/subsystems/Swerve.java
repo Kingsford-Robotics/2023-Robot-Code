@@ -30,6 +30,8 @@ public class Swerve extends SubsystemBase {
     public SwerveModule[] mSwerveMods;
     public PigeonIMU gyro;
 
+    public boolean isArmFront = true;
+
     private Translation2d centerOfRotation = new Translation2d(0, 0);
 
     public Swerve() {
@@ -67,11 +69,12 @@ public class Swerve extends SubsystemBase {
                                 ), centerOfRotation);
         }
 
+        //TODO: Check if isArmFront is correct
         else{
             swerveModuleStates = DrivetrainConstants.swerveKinematics.toSwerveModuleStates(
                 new ChassisSpeeds(
-                                    translation.getX(), 
-                                    translation.getY(), 
+                                    isArmFront? translation.getX(): -translation.getX(),
+                                    isArmFront? translation.getY(): -translation.getY(), 
                                     rotation
                                 ), centerOfRotation);
         }
@@ -118,6 +121,10 @@ public class Swerve extends SubsystemBase {
 
     public void zeroGyro(){
         gyro.setYaw(0);
+    }
+
+    public void setIsArmFront(boolean isArmFront){
+        this.isArmFront = isArmFront;
     }
 
     public Rotation2d getYaw() {
