@@ -10,6 +10,7 @@ import java.util.List;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import frc.robot.subsystems.Arm;
 import frc.robot.subsystems.Elevator;
@@ -38,24 +39,35 @@ public class GrabFromTurntable {
         );
 
         commandList.add(
-            new InstantCommand(() -> elevator.setElevatorHeight(10.0, 0.2), elevator)
+            new InstantCommand(() -> elevator.setElevatorHeight(8, 1.0), elevator)
+        );
+
+        if (arm.getAngle().getDegrees() < 80.0)
+        {
+            commandList.add(
+                new InstantCommand(() -> arm.setArmAngle(80, 1.0), arm)
+            );
+        }
+
+        commandList.add(
+            new WaitUntilCommand(() -> elevator.isElevatorToPosition())
         );
 
         commandList.add(
-            new WaitUntilCommand(() -> elevator.getElevatorPosition() > 5.0)
-        );
-
-        commandList.add(
-            new InstantCommand(() -> arm.setArmAngle(110, 0.2), arm)
+            new InstantCommand(() -> arm.setArmAngle(125.0, 0.5), arm)
         );
 
         commandList.add(
             new WaitUntilCommand(() -> arm.isArmToPosition())
         );
 
-        /*commandList.add(
+        commandList.add(
+            new WaitCommand(0.4)
+        );
+
+        commandList.add(
             new InstantCommand(() -> arm.extend(), arm)
-        );*/
+        );
 
         group = new SequentialCommandGroup(commandList.toArray(new CommandBase[commandList.size()]));
         return group;
