@@ -29,6 +29,7 @@ import frc.robot.subsystems.Ramp;
 import frc.robot.commands.ArmPickupAlign;
 import frc.robot.commands.GoHome;
 import frc.robot.commands.GrabFromTurntable;
+import frc.robot.commands.Place;
 import frc.robot.commands.PlaceAlign;
 import frc.robot.commands.StopArmElevator;
 import frc.robot.commands.TeleopSwerve;
@@ -59,6 +60,7 @@ public class RobotContainer {
 
     private final GoHome m_GoHome = new GoHome(m_Arm, m_Elevator);
     private final GrabFromTurntable m_GrabFromTurntable = new GrabFromTurntable(m_Arm, m_Elevator);
+    private final Place m_Place = new Place(m_Arm, m_Elevator, this);
 
     /*Pathplanner Setup*/
     private FollowPathWithEvents autoCommand = null;
@@ -139,7 +141,7 @@ public class RobotContainer {
         OIConstants.toggleRamp.onTrue(new InstantCommand(() -> m_Ramp.toggleRamp()));
         
         OIConstants.alignPlace.onTrue(
-            new InstantCommand(() -> m_Arm.toggleExtension(), m_Arm)    //TODO: Remove
+            new InstantCommand()    //TODO: Remove
         );
 
         OIConstants.alignPlace.onFalse(m_StopArmElevator);
