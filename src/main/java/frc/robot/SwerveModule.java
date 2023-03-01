@@ -95,7 +95,7 @@ public class SwerveModule {
         mAngleMotor.configAllSettings(Robot.ctreConfigs.swerveAngleFXConfig);
         mAngleMotor.setInverted(DrivetrainConstants.angleMotorInvert);
         mAngleMotor.setNeutralMode(DrivetrainConstants.angleNeutralMode);
-        mAngleMotor.configAllowableClosedloopError(0, Conversions.degreesToFalcon(1.0, DrivetrainConstants.angleGearRatio));
+        mAngleMotor.configAllowableClosedloopError(0, Conversions.degreesToFalcon(1.5, DrivetrainConstants.angleGearRatio));
         resetToAbsolute();
     }
 

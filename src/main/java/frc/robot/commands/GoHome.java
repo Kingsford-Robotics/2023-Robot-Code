@@ -49,7 +49,7 @@ public class GoHome {
             );
         }
 
-        if(arm.getAngle().getDegrees() < 98)
+        if(arm.getAngle().getDegrees() < 104)
         {
             commandList.add(
                 new InstantCommand(() -> arm.setArmAngle(104, 0.5), arm)
@@ -60,7 +60,7 @@ public class GoHome {
             );
 
             commandList.add(
-                new InstantCommand(() -> arm.setArmAngle(98, 0.2), arm)
+                new InstantCommand(() -> arm.setArmAngle(97.5, 0.2), arm)
             );
             
             commandList.add(
@@ -78,7 +78,7 @@ public class GoHome {
             );
 
             commandList.add(
-                new InstantCommand(() -> arm.setArmAngle(98, 0.2), arm)
+                new InstantCommand(() -> arm.setArmAngle(97.5, 0.2), arm)
             );
 
             commandList.add(
@@ -95,7 +95,7 @@ public class GoHome {
         );
 
         commandList.add(
-            new WaitCommand(2.0)
+            new WaitCommand(0.6)
         );
 
         commandList.add(

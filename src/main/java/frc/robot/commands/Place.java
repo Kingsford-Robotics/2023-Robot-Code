@@ -68,6 +68,10 @@ public class Place {
         );
 
         commandList.add(
+            new InstantCommand(() -> arm.close(), arm)
+        );
+
+        commandList.add(
             new InstantCommand(() -> elevator.setElevatorHeight(getTargetHeight(robotContainer.getLevel(), robotContainer.getIsCone()), 0.2), elevator)
         );
 
