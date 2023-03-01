@@ -91,9 +91,9 @@ public final class RobotConstants {
         public static final double elevatorGearRatio = 9.0 * 72.0 /22.0; //Motor revolutions to output shaft revolutions.
 
         //Total travel / number revolutions. 
-        public static final double elevatorTravelEncoderTick = 16.5 / (288761.0 - 13301.0);
+        public static final double elevatorTravelEncoderTick = 15.5 / 250500;
         public static final double elevatorMaxTravel = 15.6;    //Distance between limit switches.
-        public static final double safeZone = 0.1;
+        public static final double safeZone = 0.15;
     }
 
     public static final class RampConstants{

@@ -6,7 +6,6 @@ package frc.robot.subsystems;
 
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
-import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.RobotConstants;
 
@@ -16,13 +15,12 @@ public class Ramp extends SubsystemBase {
   public Ramp() {
 
     rampSolenoid = new DoubleSolenoid(
-      1,
       PneumaticsModuleType.CTREPCM, 
-      RobotConstants.RampConstants.rampSolenoidFWD, 
-      RobotConstants.RampConstants.rampSolenoidREV
+      RobotConstants.RampConstants.rampSolenoidREV, 
+      RobotConstants.RampConstants.rampSolenoidFWD
     );
 
-    rampSolenoid.set(Value.kReverse); //Starts retracted.
+    retractRamp();; //Starts retracted.
   }
 
   public void extendRamp() {

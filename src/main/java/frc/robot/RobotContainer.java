@@ -7,8 +7,6 @@ package frc.robot;
 import java.util.HashMap;
 import java.util.List;
 
-import javax.net.ssl.TrustManager;
-
 import com.pathplanner.lib.PathPlanner;
 import com.pathplanner.lib.PathPlannerTrajectory;
 import com.pathplanner.lib.commands.FollowPathWithEvents;

@@ -73,8 +73,8 @@ public class Swerve extends SubsystemBase {
         else{
             swerveModuleStates = DrivetrainConstants.swerveKinematics.toSwerveModuleStates(
                 new ChassisSpeeds(
-                                    isArmFront? translation.getX(): -translation.getX(),
-                                    isArmFront? translation.getY(): -translation.getY(), 
+                                    isArmFront? -translation.getX(): translation.getX(),
+                                    isArmFront? -translation.getY(): translation.getY(), 
                                     rotation
                                 ), centerOfRotation);
         }
