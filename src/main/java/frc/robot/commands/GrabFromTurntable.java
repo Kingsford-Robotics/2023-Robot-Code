@@ -39,7 +39,7 @@ public class GrabFromTurntable {
         );
 
         commandList.add(
-            new InstantCommand(() -> elevator.setElevatorHeight(8, 1.0), elevator)
+            new InstantCommand(() -> elevator.setElevatorHeight(7.3, 1.0), elevator)
         );
 
         if (arm.getAngle().getDegrees() < 80.0)
@@ -54,7 +54,7 @@ public class GrabFromTurntable {
         );
 
         commandList.add(
-            new InstantCommand(() -> arm.setArmAngle(125.0, 0.5), arm)
+            new InstantCommand(() -> arm.setArmAngle(126.0, 0.5), arm)
         );
 
         commandList.add(

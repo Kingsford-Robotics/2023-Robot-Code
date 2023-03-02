@@ -10,6 +10,7 @@ import java.util.List;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import frc.robot.RobotContainer;
 import frc.robot.subsystems.Arm;
@@ -47,13 +48,13 @@ public class Place {
             switch(level)
             {
                 case 0:
-                    return 7;
+                    return 10;
                 case 1:
                     return 10;
                 case 2:
-                    return 13;
+                    return 10;
                 default:
-                    return 0.0;
+                    return 15;
             }
         }
     }
@@ -64,23 +65,28 @@ public class Place {
         SequentialCommandGroup group;
 
         commandList.add(
+            new InstantCommand(() -> elevator.setElevatorHeight(15.5, 0.2), elevator)
+        );
+
+
+        commandList.add(
+            new WaitUntilCommand(() -> elevator.isElevatorToPosition())
+        );
+
+        commandList.add(
             new InstantCommand(() -> arm.retract(), arm)
         );
 
         commandList.add(
-            new InstantCommand(() -> arm.close(), arm)
+            new InstantCommand(() -> arm.setArmAngle(-4.0, 0.2), arm)
         );
 
         commandList.add(
-            new InstantCommand(() -> elevator.setElevatorHeight(getTargetHeight(robotContainer.getLevel(), robotContainer.getIsCone()), 0.2), elevator)
+            new WaitUntilCommand(() -> arm.getAngle().getDegrees() < 80)
         );
 
         commandList.add(
-            new WaitUntilCommand(() -> elevator.getElevatorPosition() > 8.0)
-        );
-
-        commandList.add(
-            new InstantCommand(() -> arm.setArmAngle(0.0, 0.2), arm)
+            new InstantCommand(() -> elevator.setElevatorHeight(getTargetHeight(robotContainer.getLevel(), robotContainer.getIsCone()), 0.2))
         );
 
         commandList.add(
