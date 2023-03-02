@@ -184,4 +184,8 @@ public class Elevator extends SubsystemBase {
 
     isToPosition.setBoolean(isElevatorToPosition());
   }
+
+public Object isAtHeight(double d) {
+    return null;
+}
 }

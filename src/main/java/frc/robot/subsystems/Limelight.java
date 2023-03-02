@@ -4,8 +4,11 @@
 
 package frc.robot.subsystems;
 
+import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Limelight extends SubsystemBase {
@@ -24,40 +27,56 @@ public class Limelight extends SubsystemBase {
   private LedMode ledMode;
   private int tx;
   private int ty;
-
-  private double distance;
+  private int tz;
 
   private NetworkTableInstance inst;
   private NetworkTable limelightTable;
 
+  private ShuffleboardTab limelightTab;
+  private GenericEntry txEntry;
+  private GenericEntry tyEntry;
+  private GenericEntry tzEntry;
+
+
   public Limelight() {
     ledMode = LedMode.kOff;
-    tx = 0;
-    ty = 0;
-    distance = 0;
+    limelightTab = Shuffleboard.getTab("Limelight");
 
-    inst = NetworkTableInstance.getDefault();
-    limelightTable = inst.getTable("limelight");
+    txEntry = limelightTab.add("tx", 0.0).getEntry();
+    tyEntry = limelightTab.add("ty", 0.0).getEntry();
+    tzEntry = limelightTab.add("tz", 0.0).getEntry();
   }
 
   public void setLedMode(LedMode ledMode) {
     this.ledMode = ledMode;
+    NetworkTableInstance.getDefault().getTable("limelight-rok").getEntry("ledMode").setNumber(ledMode.value);
   }
 
-  public int getTx() {
-    return tx;
+  public double getTx() {
+    //Get target x pose
+    return NetworkTableInstance.getDefault().getTable("limelight-rok").getEntry("targetpose_cameraspace").getDoubleArray(new double[3])[0];
   }
 
-  public int getTy() {
-    return ty;
+  public double getTy() {
+    //Get target y pose
+    return NetworkTableInstance.getDefault().getTable("limelight-rok").getEntry("targetpose_cameraspace").getDoubleArray(new double[3])[1];
   }
 
-  public double getDistance() {
-    return distance;
+  public double getTz() {
+    //Get target z pose
+    return NetworkTableInstance.getDefault().getTable("limelight-rok").getEntry("targetpose_cameraspace").getDoubleArray(new double[3])[2];
+  }
+
+  public double getAngle()
+  {
+    return NetworkTableInstance.getDefault().getTable("limelight-rok").getEntry("tx").getDouble(0.0);
   }
 
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
+    txEntry.setDouble(getTx());
+    tyEntry.setDouble(getTy());
+    tzEntry.setDouble(getTz());
   }
 }

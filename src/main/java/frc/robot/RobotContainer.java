@@ -24,11 +24,12 @@ import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.JetsonXavier;
 import frc.robot.subsystems.Limelight;
 import frc.robot.subsystems.Ramp;
+import frc.robot.commands.AlignCone;
 import frc.robot.commands.ArmPickupAlign;
 import frc.robot.commands.GoHome;
 import frc.robot.commands.GrabFromTurntable;
+import frc.robot.commands.GroundGrab;
 import frc.robot.commands.Place;
-import frc.robot.commands.PlaceAlign;
 import frc.robot.commands.StopArmElevator;
 import frc.robot.commands.TeleopSwerve;
 import frc.robot.subsystems.DashboardDisplay;
@@ -53,12 +54,13 @@ public class RobotContainer {
 
     /* Commands */
     private final StopArmElevator m_StopArmElevator = new StopArmElevator(m_Arm, m_Elevator);
-    private final PlaceAlign m_PlacewAlign = new PlaceAlign(m_Swerve, m_Limelight, m_JetsonXavier);
     private final ArmPickupAlign m_ArmPickupAlign = new ArmPickupAlign(m_Swerve, m_JetsonXavier);
 
     private final GoHome m_GoHome = new GoHome(m_Arm, m_Elevator);
     private final GrabFromTurntable m_GrabFromTurntable = new GrabFromTurntable(m_Arm, m_Elevator);
     private final Place m_Place = new Place(this, m_Arm, m_Elevator);
+    private final GroundGrab m_GroundGrab = new GroundGrab(m_Arm, m_Elevator);
+    private final AlignCone m_AlignCone = new AlignCone(this, m_Swerve, m_Limelight);
 
     /*Pathplanner Setup*/
     private FollowPathWithEvents autoCommand = null;
@@ -83,6 +85,10 @@ public class RobotContainer {
     public void setAutoAlign(boolean autoAlign) { this.autoAlign = autoAlign; }
 
     public boolean getIsFrontArm() { return isFrontArm; }
+
+    public void setIsArmFront(boolean isArmFront) {
+        this.isFrontArm = isArmFront;
+    }
 
     /**
      * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -136,13 +142,16 @@ public class RobotContainer {
 
         OIConstants.toggleRamp.onTrue(new InstantCommand(() -> m_Ramp.toggleRamp()));
         
-        OIConstants.alignPlace.whileTrue(m_Place.getCommand());
-        OIConstants.alignPlace.onFalse(m_StopArmElevator);
+        OIConstants.place.whileTrue(m_Place.getCommand());
+        OIConstants.place.onFalse(m_StopArmElevator);
+
+        OIConstants.alignLeft.whileTrue(m_AlignCone);
 
         OIConstants.turntablePickup.whileTrue(m_GrabFromTurntable.getCommand());
         OIConstants.turntablePickup.onFalse(m_StopArmElevator);
         
-        //OIConstants.groundPickup.onTrue();
+        OIConstants.groundPickup.whileTrue(m_GroundGrab.getCommand());
+        OIConstants.groundPickup.onFalse(m_StopArmElevator);
 
         OIConstants.armHome.whileTrue(m_GoHome.getCommand());
         OIConstants.armHome.onFalse(m_StopArmElevator);
@@ -162,7 +171,7 @@ public class RobotContainer {
         eventMap.put("event1", new PrintCommand("Event 1"));
         eventMap.put("event2", new PrintCommand("Event 2"));
 
-        List<PathPlannerTrajectory> pathGroup = PathPlanner.loadPathGroup("FullAuto", new PathConstraints(3, 3));
+        List<PathPlannerTrajectory> pathGroup = PathPlanner.loadPathGroup("Left 2 Cone Station", new PathConstraints(3, 3));
     
         autoCommand = new FollowPathWithEvents(
             m_Swerve.followTrajectoryCommand(pathGroup.get(0), true),

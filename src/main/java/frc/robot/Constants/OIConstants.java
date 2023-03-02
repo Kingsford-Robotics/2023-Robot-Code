@@ -30,10 +30,10 @@ public class OIConstants {
     public static final BooleanSupplier robotCentric = () -> driveJoystickRight.getRawButton(LogitechJoystick.trigger);
 
     public static final double highTranslationSpeed = 1.0;
-    public static final double lowTranslationSpeed = 0.25;
+    public static final double lowTranslationSpeed = 0.15;
 
     public static final double highRotationSpeed = 1.0;
-    public static final double lowRotationSpeed = 0.25;
+    public static final double lowRotationSpeed = 0.15;
 
     public static final double translationDeadBand = 0.1;
     public static final double turnDeadBand = 0.1;
@@ -62,6 +62,10 @@ public class OIConstants {
         }
     };
 
+    //Alignment Buttons
+    public static final JoystickButton alignLeft = new JoystickButton(driveJoystickRight, LogitechJoystick.button5);
+    public static final JoystickButton alignRight = new JoystickButton(driveJoystickRight, LogitechJoystick.button6);
+
     /*Operator Joystick Setup*/
     public static final XboxController coDriverController = new XboxController(2);
 
@@ -69,7 +73,7 @@ public class OIConstants {
     public static final JoystickButton openClaw = new JoystickButton(coDriverController, XboxController.Button.kLeftBumper.value);
     public static final JoystickButton closeClaw = new JoystickButton(coDriverController, XboxController.Button.kRightBumper.value);
 
-    public static final JoystickButton alignPlace = new JoystickButton(coDriverController, XboxController.Button.kY.value);
+    public static final JoystickButton place = new JoystickButton(coDriverController, XboxController.Button.kY.value);
     public static final JoystickButton groundPickup = new JoystickButton(coDriverController, XboxController.Button.kB.value);
     public static final JoystickButton turntablePickup = new JoystickButton(coDriverController, XboxController.Button.kX.value);
     public static final JoystickButton armHome = new JoystickButton(coDriverController, XboxController.Button.kA.value);

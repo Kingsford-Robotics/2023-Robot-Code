@@ -22,7 +22,7 @@ public class DashboardDisplay extends SubsystemBase {
 
   /*Camera Streams*/
   private UsbCamera turnTableCamera;
-  private UsbCamera armCamera;
+  private UsbCamera frontCamera;
 
   /*Shuffleboard Tab*/
   private ShuffleboardTab competitionTab;
@@ -47,13 +47,13 @@ public class DashboardDisplay extends SubsystemBase {
     competitionTab = Shuffleboard.getTab("Competition");
 
     turnTableCamera = CameraServer.startAutomaticCapture(0);
-    armCamera = CameraServer.startAutomaticCapture(1);
+    frontCamera = CameraServer.startAutomaticCapture(1);
 
     turnTableCamera.setVideoMode(PixelFormat.kMJPEG, 480, 320, 10);
-    armCamera.setVideoMode(PixelFormat.kMJPEG, 480, 320, 10);
+    frontCamera.setVideoMode(PixelFormat.kMJPEG, 480, 320, 10);
 
     competitionTab.add("Turntable", turnTableCamera);
-    competitionTab.add("Arm", armCamera);
+    competitionTab.add("Front", frontCamera);
 
     /*Shuffleboard Data Instantiation*/
     gyroAngle = competitionTab.add("Gyro Angle", 0).getEntry();

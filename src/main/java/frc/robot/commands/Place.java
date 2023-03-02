@@ -8,9 +8,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.PrintCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import frc.robot.RobotContainer;
 import frc.robot.subsystems.Arm;
@@ -27,45 +28,13 @@ public class Place {
         this.elevator = elevator;
     }
 
-    private double getTargetHeight(int level, boolean isCone)
-    {
-        if (isCone)
-        {
-            switch(level)
-            {
-                case 0:
-                    return 7;
-                case 1:
-                    return 10;
-                case 2:
-                    return 13;
-                default:
-                    return 0.0;
-            }
-        }
-
-        else{
-            switch(level)
-            {
-                case 0:
-                    return 10;
-                case 1:
-                    return 10;
-                case 2:
-                    return 10;
-                default:
-                    return 15;
-            }
-        }
-    }
-
     public SequentialCommandGroup getCommand()
     {
         List<CommandBase> commandList = new ArrayList<CommandBase>();
         SequentialCommandGroup group;
 
         commandList.add(
-            new InstantCommand(() -> elevator.setElevatorHeight(15.5, 0.2), elevator)
+            new InstantCommand(() -> elevator.setElevatorHeight(15.5, 0.4), elevator)
         );
 
 
@@ -78,7 +47,19 @@ public class Place {
         );
 
         commandList.add(
-            new InstantCommand(() -> arm.setArmAngle(-4.0, 0.2), arm)
+            new InstantCommand(() -> arm.setArmAngle(80, 0.35), arm)
+        );
+
+        commandList.add(
+            new WaitUntilCommand(() -> arm.getAngle().getDegrees() < 85)
+        );
+
+        commandList.add(
+            new ConditionalCommand(
+                new InstantCommand(() -> arm.setArmAngle(-3, 0.50), arm),
+                new InstantCommand(() -> arm.setArmAngle(10, 0.50), arm),
+                () -> robotContainer.getLevel() == 2
+            )
         );
 
         commandList.add(
@@ -86,19 +67,28 @@ public class Place {
         );
 
         commandList.add(
-            new InstantCommand(() -> elevator.setElevatorHeight(getTargetHeight(robotContainer.getLevel(), robotContainer.getIsCone()), 0.2))
-        );
+            new ConditionalCommand(
+                new InstantCommand(() -> elevator.setElevatorHeight(13, 0.2), elevator), 
+                new ConditionalCommand(
+                    new InstantCommand(() -> elevator.setElevatorHeight(10, 0.2), elevator), 
+                    new InstantCommand(() -> elevator.setElevatorHeight(1.0, 0.2), elevator), 
+                    () -> robotContainer.getLevel() == 1), 
+                () -> robotContainer.getLevel() == 2
+        ));
+
+        commandList.add(new WaitUntilCommand(() -> elevator.isElevatorToPosition()));
 
         commandList.add(
             new WaitUntilCommand(() -> arm.isArmToPosition())
         );
-        
-        if(robotContainer.getLevel() == 2)
-        {
-            commandList.add(
-                new InstantCommand(() -> arm.extend(), arm)
-            );
-        }
+
+        commandList.add(
+            new ConditionalCommand(
+                new InstantCommand(() -> arm.extend(), arm), 
+                new InstantCommand(() -> arm.retract(), arm), 
+                () -> robotContainer.getLevel() == 2
+            )
+        );
 
         group = new SequentialCommandGroup(commandList.toArray(new CommandBase[commandList.size()]));
         return group;

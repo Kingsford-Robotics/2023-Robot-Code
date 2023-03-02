@@ -31,7 +31,7 @@ public class GoHome {
         SequentialCommandGroup group;
 
         commandList.add(
-            new InstantCommand(() -> arm.retract()))
+            new InstantCommand(() -> arm.retract(), arm))
         ;
 
         commandList.add(
